@@ -70,4 +70,27 @@ public class GeneralTreeNode extends Node {
             current = current.getRightSibling();
         }
     }
+    @Override
+    public Node copy() {
+        // 1. Tạo vỏ
+        GeneralTreeNode newNode = new GeneralTreeNode(this.value);
+
+        // 2. Copy con cả (Đệ quy)
+        if (this.getLeftMostChild() != null) {
+            GeneralTreeNode childCopy = (GeneralTreeNode) this.getLeftMostChild().copy();
+            newNode.setLeftMostChild(childCopy);
+            childCopy.setParent(newNode); // Nhớ nối cha
+        }
+
+        // 3. Copy em liền kề (Đệ quy)
+        // Lưu ý: Logic copy Sibling hơi đặc biệt, nó thuộc về đệ quy ngang
+        if (this.getRightSibling() != null) {
+            GeneralTreeNode siblingCopy = (GeneralTreeNode) this.getRightSibling().copy();
+            newNode.setRightSibling(siblingCopy);
+            // Sibling dùng chung cha với newNode, nhưng ở đây ta chưa gán parent cho siblingCopy
+            // Parent của siblingCopy sẽ được xử lý bởi node cha của newNode (ở tầng trên)
+        }
+
+        return newNode;
+    }
 }

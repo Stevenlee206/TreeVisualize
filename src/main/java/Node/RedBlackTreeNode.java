@@ -25,4 +25,22 @@ public class RedBlackTreeNode extends BinaryTreeNode {
             this.color = NodeColor.RED;
         }
     }
+    @Override
+    public Node copy() {
+        // 1. Tạo vỏ mới đúng kiểu RedBlack
+        RedBlackTreeNode newNode = new RedBlackTreeNode(this.getValue());
+
+        // 2. Copy thuộc tính riêng (Màu sắc)
+        newNode.changeColor(this.color);
+
+        // 3. Copy con (Logic giống BinaryTreeNode nhưng phải viết lại để gắn vào newNode này)
+        if (this.getLeftChild() != null) {
+            newNode.setLeftChild((BinaryTreeNode) this.getLeftChild().copy());
+        }
+        if (this.getRightChild() != null) {
+            newNode.setRightChild((BinaryTreeNode) this.getRightChild().copy());
+        }
+
+        return newNode;
+    }
 }

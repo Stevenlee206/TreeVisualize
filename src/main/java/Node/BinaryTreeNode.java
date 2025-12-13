@@ -59,4 +59,23 @@ public class BinaryTreeNode extends Node{
         }
         throw new NotFoundException("Node " + this.getValue() + " do not have child with value " + child.getValue());
     }
+
+    @Override
+    public Node copy() {
+        // 1. Tạo vỏ mới
+        BinaryTreeNode newNode = new BinaryTreeNode(this.getValue());
+
+        // 2. Copy con Trái (Đệ quy)
+        if (this.leftChild != null) {
+            // Gọi copy() của con, sau đó ép kiểu và gán
+            newNode.setLeftChild((BinaryTreeNode) this.leftChild.copy());
+        }
+
+        // 3. Copy con Phải (Đệ quy)
+        if (this.rightChild != null) {
+            newNode.setRightChild((BinaryTreeNode) this.rightChild.copy());
+        }
+
+        return newNode;
+    }
 }
