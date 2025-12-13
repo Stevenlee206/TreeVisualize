@@ -73,7 +73,7 @@ public class GeneralTreeNode extends Node {
     @Override
     public Node copy() {
         // 1. Tạo vỏ
-        GeneralTreeNode newNode = new GeneralTreeNode(this.value);
+        GeneralTreeNode newNode = new GeneralTreeNode(this.getValue());
 
         // 2. Copy con cả (Đệ quy)
         if (this.getLeftMostChild() != null) {
