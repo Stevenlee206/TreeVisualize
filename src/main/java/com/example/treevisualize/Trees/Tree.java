@@ -133,4 +133,63 @@ public abstract class Tree {
             resetRecursive(gNode.getRightSibling());
         }
     }
+    
+    //statistic: number of nodes, height
+    
+    public int getNodeCount() {
+        return countNodes(root);
+    }
+
+    private int countNodes(Node node) {
+        if (node == null) return 0;
+
+        // Binary Tree / BST / RBT
+        if (node instanceof com.example.treevisualize.Node.BinaryTreeNode) {
+            var b = (com.example.treevisualize.Node.BinaryTreeNode) node;
+            return 1 + countNodes(b.getLeftChild()) + countNodes(b.getRightChild());
+        }
+
+        // General Tree
+        if (node instanceof com.example.treevisualize.Node.GeneralTreeNode) {
+            var g = (com.example.treevisualize.Node.GeneralTreeNode) node;
+            return 1 + countNodes(g.getLeftMostChild())
+                       + countNodes(g.getRightSibling());
+        }
+
+        return 1;
+    }
+
+
+    public int getHeight() {
+        return height(root);
+    }
+
+    private int height(Node node) {
+        if (node == null) return 0;
+
+        // Binary Tree / BST / RBT
+        if (node instanceof com.example.treevisualize.Node.BinaryTreeNode) {
+            var b = (com.example.treevisualize.Node.BinaryTreeNode) node;
+            return 1 + Math.max(
+                    height(b.getLeftChild()),
+                    height(b.getRightChild())
+            );
+        }
+
+        // General Tree
+        if (node instanceof com.example.treevisualize.Node.GeneralTreeNode) {
+            var g = (com.example.treevisualize.Node.GeneralTreeNode) node;
+
+            int maxChildHeight = 0;
+            Node child = g.getLeftMostChild();
+
+            while (child != null) {
+                maxChildHeight = Math.max(maxChildHeight, height(child));
+                child = ((com.example.treevisualize.Node.GeneralTreeNode) child).getRightSibling();
+            }
+            return 1 + maxChildHeight;
+        }
+
+        return 1;
+    }
 }

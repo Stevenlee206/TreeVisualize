@@ -188,6 +188,16 @@ public class Main3 extends Application {
         btnReset.getStyleClass().add("button");
         btnReset.setTooltip(new Tooltip("Reset Step"));
         btnReset.setOnAction(e -> controller.reset());
+        
+        
+        //btn Statistic
+        Button btnStatistic = new Button("Stat");
+        btnStatistic.getStyleClass().add("btn-info");
+        btnStatistic.setTooltip(new Tooltip("Tree Statistics"));
+        btnStatistic.setOnAction(e -> showStatistics());
+        
+
+
 
         // Thêm tất cả vào HBox
         box.getChildren().addAll(
@@ -195,6 +205,7 @@ public class Main3 extends Application {
                 inputField, btnInsert, btnDelete, btnRandom, btnClear,
                 sep2,
                 cboTraversal, btnTraverse, // <-- Nút traversal nằm ở đây
+                btnStatistic,  
                 sep3,
                 btnPlay, btnPause, btnReset
         );
@@ -203,6 +214,23 @@ public class Main3 extends Application {
     }
 
     // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
+    
+    private void showStatistics() {
+        if (tree == null) return;
+
+        int height = tree.getHeight();
+        int nodeCount = tree.getNodeCount();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Tree Statistics");
+        alert.setHeaderText("Current Tree Information");
+        alert.setContentText(
+                "Number of nodes: " + nodeCount +
+                "\nTree height: " + height
+        );
+        alert.showAndWait();
+    }
+
 
     private void handleInsert() {
         try {
