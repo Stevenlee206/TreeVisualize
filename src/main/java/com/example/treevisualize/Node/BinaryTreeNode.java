@@ -1,4 +1,4 @@
-package Node;
+package com.example.treevisualize.Node;
 
 public class BinaryTreeNode extends Node{
     private BinaryTreeNode leftChild;
@@ -60,20 +60,25 @@ public class BinaryTreeNode extends Node{
         throw new NotFoundException("Node " + this.getValue() + " do not have child with value " + child.getValue());
     }
 
+    // Trong file BinaryTreeNode.java
+
     @Override
     public Node copy() {
         // 1. Tạo vỏ mới
         BinaryTreeNode newNode = new BinaryTreeNode(this.getValue());
 
+        // --- QUAN TRỌNG: COPY TRẠNG THÁI (Highlight) ---
+        newNode.changeStatus(this.getStatus());
+        // ----------------------------------------------
+
         // 2. Copy con Trái (Đệ quy)
-        if (this.leftChild != null) {
-            // Gọi copy() của con, sau đó ép kiểu và gán
-            newNode.setLeftChild((BinaryTreeNode) this.leftChild.copy());
+        if (getLeftChild() != null) {
+            newNode.setLeftChild((BinaryTreeNode) getLeftChild().copy());
         }
 
         // 3. Copy con Phải (Đệ quy)
-        if (this.rightChild != null) {
-            newNode.setRightChild((BinaryTreeNode) this.rightChild.copy());
+        if (getRightChild() != null) {
+            newNode.setRightChild((BinaryTreeNode) getRightChild().copy());
         }
 
         return newNode;

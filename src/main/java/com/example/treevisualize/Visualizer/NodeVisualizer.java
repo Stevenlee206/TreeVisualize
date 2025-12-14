@@ -1,5 +1,6 @@
-package Visualizer;
+package com.example.treevisualize.Visualizer;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 public class NodeVisualizer {
@@ -8,7 +9,10 @@ public class NodeVisualizer {
     private Text label;
     private double radius;
     private Color fillColor;
-
+    public NodeVisualizer() {
+        this.label = new Text();
+        this.label.setFont(new Font("Arial", 14)); // Set font mặc định
+    }
     public void draw(GraphicsContext gc){
         gc.setFill(this.fillColor);
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);

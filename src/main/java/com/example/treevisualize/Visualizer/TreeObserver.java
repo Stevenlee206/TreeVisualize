@@ -1,6 +1,6 @@
-package Visualizer;
+package com.example.treevisualize.Visualizer;
 
-import Node.Node;
+import com.example.treevisualize.Node.Node;
 
 public interface TreeObserver {
     void onNodeChanged(Node node);

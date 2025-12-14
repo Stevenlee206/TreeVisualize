@@ -1,4 +1,4 @@
-package Node;
+package com.example.treevisualize.Node;
 
 public abstract class Node {
     private Node parent;

@@ -1,11 +1,11 @@
-package Visualizer;
+package com.example.treevisualize.Visualizer;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
-import Node.Node;
+import com.example.treevisualize.Node.Node;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class PseudoCodeBlock implements TreeObserver {
     public void onNodeChanged(Node node) {
         // PseudoCodeBlock thường không quan tâm node đổi màu
         // Nên có thể để trống hoặc log ra console để debug
-        // System.out.println("CodeBlock received: Node changed " + node.getValue());
+        // System.out.println("CodeBlock received: com.example.treevisualize.Node changed " + node.getValue());
     }
 
     @Override

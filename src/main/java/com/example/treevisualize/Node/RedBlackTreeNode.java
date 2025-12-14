@@ -1,4 +1,4 @@
-package Node;
+package com.example.treevisualize.Node;
 
 public class RedBlackTreeNode extends BinaryTreeNode {
        private NodeColor  color;
@@ -25,15 +25,21 @@ public class RedBlackTreeNode extends BinaryTreeNode {
             this.color = NodeColor.RED;
         }
     }
+    // Trong file RedBlackTreeNode.java
+
     @Override
     public Node copy() {
         // 1. Tạo vỏ mới đúng kiểu RedBlack
         RedBlackTreeNode newNode = new RedBlackTreeNode(this.getValue());
 
         // 2. Copy thuộc tính riêng (Màu sắc)
-        newNode.changeColor(this.color);
+        newNode.changeColor(this.getColor());
 
-        // 3. Copy con (Logic giống BinaryTreeNode nhưng phải viết lại để gắn vào newNode này)
+        // --- QUAN TRỌNG: COPY TRẠNG THÁI ---
+        newNode.changeStatus(this.getStatus());
+        // -----------------------------------
+
+        // 3. Copy con (Logic giống BinaryTreeNode)
         if (this.getLeftChild() != null) {
             newNode.setLeftChild((BinaryTreeNode) this.getLeftChild().copy());
         }

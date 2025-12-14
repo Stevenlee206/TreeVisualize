@@ -1,0 +1,98 @@
+/* style.css - Giao diện Modern Clean */
+
+.root {
+    -fx-font-family: 'Segoe UI', 'Helvetica', sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #f0f2f5;
+}
+
+/* --- TÙY CHỈNH NÚT BẤM (BUTTONS) --- */
+.button {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #d1d5db;
+    -fx-cursor: hand;
+    -fx-padding: 8px 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #9ca3af;
+}
+
+.button:pressed {
+    -fx-background-color: #e5e7eb;
+    -fx-effect: none;
+}
+
+/* Nút Xanh (Add, Run) */
+.btn-primary {
+    -fx-background-color: #3b82f6; /* Xanh dương */
+    -fx-text-fill: white;
+    -fx-border-color: #2563eb;
+    -fx-font-weight: bold;
+}
+.btn-primary:hover { -fx-background-color: #2563eb; }
+
+/* Nút Xanh lá (Insert) */
+.btn-success {
+    -fx-background-color: #10b981; /* Xanh lá */
+    -fx-text-fill: white;
+    -fx-border-color: #059669;
+    -fx-font-weight: bold;
+}
+.btn-success:hover { -fx-background-color: #059669; }
+
+/* Nút Đỏ (Delete) */
+.btn-danger {
+    -fx-background-color: #ef4444; /* Đỏ */
+    -fx-text-fill: white;
+    -fx-border-color: #dc2626;
+    -fx-font-weight: bold;
+}
+.btn-danger:hover { -fx-background-color: #dc2626; }
+
+/* --- INPUT & COMBOBOX --- */
+.text-field {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-padding: 8px;
+}
+
+.text-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(three-pass-box, rgba(59,130,246,0.3), 5, 0, 0, 0);
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+
+/* --- PANELS --- */
+.control-bar {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px 0 0 0; /* Chỉ viền trên */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, -5);
+}
+
+.code-pane {
+    -fx-background-color: #1e293b; /* Màu tối cho bảng code trông ngầu hơn */
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.canvas-pane {
+    -fx-background-color: #ffffff;
+    /* Tạo hiệu ứng giấy caro mờ (Optional) */
+    -fx-background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyMCcgaGVpZ2h0PScyMCc+CjxyZWN0IHdpZHRoPScyMCcgaGVpZ2h0PScyMCcgZmlsbD0nI2ZmZmZmZmMnLz4KPHJlY3Qgd2lkdGg9JzIwJyBoZWlnaHQ9JzEnIGZpbGw9JyNmMmYyZjInLz4KPHJlY3Qgd2lkdGg9JzEnIGhlaWdodD0nMjAnIGZpbGw9JyNmMmYyZjInLz4KPC9zdmc+");
+}
