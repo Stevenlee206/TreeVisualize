@@ -5,6 +5,7 @@ import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
 import com.example.treevisualize.Visualizer.TreeVisualizer;
 
+import javafx.geometry.Insets;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -195,7 +196,12 @@ public class Main3 extends Application {
         btnStatistic.getStyleClass().add("btn-info");
         btnStatistic.setTooltip(new Tooltip("Tree Statistics"));
         btnStatistic.setOnAction(e -> showStatistics());
-        
+        //btn Help
+        Button btnHelp = new Button("Help");
+        btnHelp.getStyleClass().add("btn-info");
+        btnHelp.setTooltip(new Tooltip("Help & Guide"));
+        btnHelp.setOnAction(e -> openHelpWindow());
+
 
 
 
@@ -207,13 +213,81 @@ public class Main3 extends Application {
                 cboTraversal, btnTraverse, // <-- Nút traversal nằm ở đây
                 btnStatistic,  
                 sep3,
-                btnPlay, btnPause, btnReset
+                btnPlay, btnPause, btnReset,
+                btnHelp
         );
 
         return box;
     }
 
     // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
+    private void openHelpWindow() {
+        Stage helpStage = new Stage();
+        helpStage.setTitle("Help - Tree Visualization");
+
+        TabPane tabPane = new TabPane();
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
+        // --- TAB 1: ABOUT ---
+        Tab tabAbout = new Tab("About");
+        tabAbout.setContent(createAboutTab());
+
+        // --- TAB 2: HOW TO USE ---
+        Tab tabUsage = new Tab("How to Use");
+        tabUsage.setContent(createUsageTab());
+
+        // --- TAB 3: TREE TYPES ---
+        Tab tabTrees = new Tab("Tree Types");
+        tabTrees.setContent(createTreeTypesTab());
+
+        tabPane.getTabs().addAll(tabAbout, tabUsage, tabTrees);
+
+        Scene scene = new Scene(tabPane, 500, 400);
+        helpStage.setScene(scene);
+        helpStage.show();
+    }
+    private VBox createAboutTab() {
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(15));
+
+        Label title = new Label("Tree Operation Visualization GUI");
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+        Label content = new Label(
+                "Among us"
+        );
+        content.setWrapText(true);
+
+        box.getChildren().addAll(title, content);
+        return box;
+    }
+    private VBox createUsageTab() {
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(15));
+
+        Label content = new Label(
+                "1. Hello.\n" +
+                "2. Sus.\n" 
+   
+        );
+        content.setWrapText(true);
+
+        box.getChildren().add(content);
+        return box;
+    }
+    private VBox createTreeTypesTab() {
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(15));
+
+        Label content = new Label(
+                "We have some trees like .... They are....gay"
+        );
+        content.setWrapText(true);
+
+        box.getChildren().add(content);
+        return box;
+    }
+
     
     private void showStatistics() {
         if (tree == null) return;
