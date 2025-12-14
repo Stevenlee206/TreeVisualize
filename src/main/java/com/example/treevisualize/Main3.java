@@ -345,39 +345,63 @@ public class Main3 extends Application {
     // --- CÁC HÀM CẬP NHẬT MÃ GIẢ (HELPERS) ---
     // Các hàm này dùng để thay đổi nội dung bảng bên phải theo loại cây
 
+    // --- CÁC HÀM CẬP NHẬT MÃ GIẢ (Giao diện Academic/LaTeX) ---
+
     private void updatePseudoCodeForRBT() {
-        pseudoCode.setCode(Arrays.asList(
-                "RED-BLACK TREE INSERT:",
-                "1. BST Insert (Color = RED)",
-                "2. While (Parent is RED):",
-                "   3. Check Uncle color",
-                "   4. Rotate / Recolor",
-                "5. Set Root to BLACK"
+        // Sử dụng ký tự đặc biệt: ← (gán), ≠ (khác), ∅ (rỗng)
+        pseudoCode.setCode("RB-Insert(T, z)", Arrays.asList(
+                "1.  y ← ∅",
+                "2.  x ← T.root",
+                "3.  while x ≠ ∅ do",
+                "4.      y ← x",
+                "5.      if z.key < x.key then x ← x.left",
+                "6.      else x ← x.right",
+                "7.  z.p ← y",
+                "8.  if y == ∅ then T.root ← z",
+                "9.  else if z.key < y.key then y.left ← z",
+                "10. else y.right ← z",
+                "11. z.left ← ∅, z.right ← ∅",
+                "12. z.color ← RED",
+                "13. RB-Insert-Fixup(T, z)"
         ));
     }
 
     private void updatePseudoCodeForBST() {
-        pseudoCode.setCode(Arrays.asList(
-                "BINARY SEARCH TREE INSERT:",
-                "1. If root is null, create root",
-                "2. Compare val with current node",
-                "3. If val < current, go Left",
-                "4. If val > current, go Right",
-                "5. Link new node"
+        pseudoCode.setCode("BST-Insert(root, val)", Arrays.asList(
+                "1.  if root == ∅ then",
+                "2.      return new Node(val)",
+                "3.  current ← root",
+                "4.  while true do",
+                "5.      if val < current.val then",
+                "6.          if current.left == ∅ then",
+                "7.              current.left ← new Node(val)",
+                "8.              break",
+                "9.          else current ← current.left",
+                "10.     else",
+                "11.         if current.right == ∅ then",
+                "12.             current.right ← new Node(val)",
+                "13.             break",
+                "14.         else current ← current.right"
         ));
     }
 
     private void updatePseudoCodeForBinaryTree() {
-        pseudoCode.setCode(Arrays.asList(
-                "BINARY TREE (LEVEL ORDER) INSERT:",
-                "1. Create new node",
-                "2. Use Queue for BFS",
-                "3. Find first node with missing child",
-                "4. Insert Left if empty",
-                "5. Else Insert Right"
+        pseudoCode.setCode("LevelOrder-Insert(root, val)", Arrays.asList(
+                "1.  newNode ← new Node(val)",
+                "2.  Q ← Queue()",
+                "3.  Q.enqueue(root)",
+                "4.  while Q ≠ ∅ do",
+                "5.      temp ← Q.dequeue()",
+                "6.      if temp.left == ∅ then",
+                "7.          temp.left ← newNode",
+                "8.          return",
+                "9.      else Q.enqueue(temp.left)",
+                "10.     if temp.right == ∅ then",
+                "11.         temp.right ← newNode",
+                "12.         return",
+                "13.     else Q.enqueue(temp.right)"
         ));
     }
-
     public static void main(String[] args) {
         launch(args);
     }

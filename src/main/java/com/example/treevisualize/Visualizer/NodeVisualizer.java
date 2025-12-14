@@ -9,10 +9,12 @@ public class NodeVisualizer {
     private Text label;
     private double radius;
     private Color fillColor;
+
     public NodeVisualizer() {
         this.label = new Text();
         this.label.setFont(new Font("Arial", 14)); // Set font mặc định
     }
+
     public void draw(GraphicsContext gc){
         gc.setFill(this.fillColor);
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
@@ -60,6 +62,7 @@ public class NodeVisualizer {
     public void setRadius(double radius) {
         this.radius = radius;
     }
+
     public void updatePosition(double x, double y) {
         this.x = x;
         this.y = y;

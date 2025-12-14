@@ -8,6 +8,7 @@ public class RedBlackTree extends BinarySearchTree {
     public RedBlackTree() {
         super();
     }
+
     private boolean isRed(RedBlackTreeNode node) {
         if (node == null) {
             return false;
@@ -48,16 +49,13 @@ public class RedBlackTree extends BinarySearchTree {
             notifyError("Giá trị " + value + " đã tồn tại!");
             return;
         }
-
-        // 1. Chèn BST thông thường
         RedBlackTreeNode newNode = new RedBlackTreeNode(value);
         newNode.changeColor(NodeColor.RED);
 
         insertStandardBST(newNode);
 
-        // 2. Fixup
+        // Fixup
         fixInsert(newNode);
-
         notifyStructureChanged();
     }
     private void insertStandardBST(RedBlackTreeNode newNode) {
@@ -81,7 +79,7 @@ public class RedBlackTree extends BinarySearchTree {
     }
 
     private void fixInsert(RedBlackTreeNode k) {
-        RedBlackTreeNode u; // Uncle
+        RedBlackTreeNode u;
 
         while (k != root && isRed(parentOf(k))) {
 

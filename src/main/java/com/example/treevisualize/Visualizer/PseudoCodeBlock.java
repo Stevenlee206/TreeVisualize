@@ -1,84 +1,127 @@
 package com.example.treevisualize.Visualizer;
 
+import com.example.treevisualize.Node.Node;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
-import com.example.treevisualize.Node.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PseudoCodeBlock implements TreeObserver {
     private VBox container;
-    // Danh sách các Label để quản lý từng dòng (giúp truy xuất nhanh theo index)
+    private Label titleLabel;
+    private VBox codeContentBox; // Hộp chứa các dòng code (tách biệt với tiêu đề)
     private List<Label> lineLabels;
-    // Label đặc biệt dùng để hiện thông báo lỗi (từ Tree gửi sang)
     private Label statusLabel;
-    // --- STYLES (CSS Inline) ---
-    // Style cho dòng code bình thường (Nền trong suốt, chữ đen, font đơn cách)
-    public final String STYLE_NORMAL=
-            "-fx-background-color: transparent; " +
-                    "-fx-text-fill: #333333; " +
-                    "-fx-font-family: 'Consolas', 'Monospaced'; " +
-                    "-fx-font-size: 14px; " +
-                    "-fx-padding: 2 5 2 5;"; // Padding: Top Right Bottom Left;
 
-    // Style cho dòng được Highlight (Nền xanh, chữ trắng, in đậm)
+    // --- STYLES "ACADEMIC LOOK" ---
+
+    // Header: Font có chân (Serif) giống LaTeX
+    private final String STYLE_HEADER =
+            "-fx-font-family: 'Times New Roman'; " +
+                    "-fx-font-size: 16px; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-text-fill: #000000;";
+
+    // Dòng code thường: Font Monospaced để căn lề chuẩn
+    private final String STYLE_NORMAL =
+            "-fx-background-color: transparent; " +
+                    "-fx-text-fill: #000000; " +
+                    "-fx-font-family: 'Consolas', 'Menlo', 'Courier New'; " +
+                    "-fx-font-size: 14px; " +
+                    "-fx-padding: 1 5 1 5;";
+
+    // Dòng highlight: Nền xám nhẹ (kiểu sách) hoặc xanh nhạt
     private final String STYLE_HIGHLIGHT =
-            "-fx-background-color: #2E8B57; " + // SeaGreen
-                    "-fx-text-fill: white; " +
-                    "-fx-font-family: 'Consolas', 'Monospaced'; " +
+            "-fx-background-color: #e0e0e0; " + // Xám nhạt giống highlight văn bản
+                    "-fx-text-fill: #000000; " +
+                    "-fx-font-family: 'Consolas', 'Menlo', 'Courier New'; " +
                     "-fx-font-size: 14px; " +
                     "-fx-font-weight: bold; " +
-                    "-fx-padding: 2 5 2 5;";
+                    "-fx-padding: 1 5 1 5;";
 
-    // Style cho dòng lỗi (Nền đỏ nhạt) - Tuỳ chọn
+    // Lỗi: Màu đỏ
     private final String STYLE_ERROR =
-            "-fx-background-color: #FFCDD2; " +
-                    "-fx-text-fill: #C62828; " +
-                    "-fx-font-family: 'Consolas', 'Monospaced'; " +
-                    "-fx-padding: 2 5 2 5;";
+            "-fx-background-color: #ffebee; " +
+                    "-fx-text-fill: #c62828; " +
+                    "-fx-font-family: 'Consolas'; " +
+                    "-fx-font-size: 13px; " +
+                    "-fx-padding: 5;";
 
     public PseudoCodeBlock(VBox container) {
         this.container = container;
         this.lineLabels = new ArrayList<>();
 
-        // Cấu hình giao diện chung
-        this.container.setSpacing(2);
+        // 1. Cấu hình Container chính (Giống 1 tờ giấy)
+        this.container.setSpacing(5);
         this.container.setPadding(new Insets(10));
-        this.container.setBackground(new Background(new BackgroundFill(Color.web("#F4F4F4"), null, null)));
+        // Nền trắng, Viền đen mỏng
+        this.container.setStyle("-fx-background-color: white; -fx-border-color: #333; -fx-border-width: 1px;");
 
-        // Khởi tạo label thông báo (mặc định ẩn)
+        // 2. Tạo Tiêu đề (Algorithm Name)
+        this.titleLabel = new Label("Algorithm");
+        this.titleLabel.setStyle(STYLE_HEADER);
+
+        // 3. Đường kẻ ngang trên (Top Separator)
+        Separator topSep = new Separator();
+        topSep.setStyle("-fx-background-color: black;");
+
+        // 4. Hộp chứa nội dung code
+        this.codeContentBox = new VBox(2); // Khoảng cách dòng code là 2px
+
+        // 5. Đường kẻ ngang dưới (Bottom Separator)
+        Separator botSep = new Separator();
+        botSep.setStyle("-fx-background-color: black;");
+
+        // 6. Label lỗi
         this.statusLabel = new Label();
         this.statusLabel.setStyle(STYLE_ERROR);
-        this.statusLabel.setWrapText(true); // Tự xuống dòng nếu lỗi dài
-        this.statusLabel.setVisible(false); // Ẩn đi khi chưa có lỗi
-    }
-    public void setCode(List<String> lines) {
-        this.container.getChildren().clear();
-        this.lineLabels.clear();
-        this.statusLabel.setVisible(false); // Reset lỗi cũ
+        this.statusLabel.setMaxWidth(Double.MAX_VALUE);
+        this.statusLabel.setVisible(false);
 
+        // Thêm tất cả vào container
+        this.container.getChildren().addAll(titleLabel, topSep, codeContentBox, botSep, statusLabel);
+    }
+
+    /**
+     * Cập nhật tiêu đề và nội dung thuật toán
+     */
+    public void setCode(String title, List<String> lines) {
+        // Cập nhật tên thuật toán
+        this.titleLabel.setText("Algorithm: " + title);
+
+        // Xóa nội dung cũ
+        this.codeContentBox.getChildren().clear();
+        this.lineLabels.clear();
+        this.statusLabel.setVisible(false);
+
+        // Thêm từng dòng code mới
         for (String lineContent : lines) {
             Label label = new Label(lineContent);
             label.setStyle(STYLE_NORMAL);
             label.setMaxWidth(Double.MAX_VALUE);
+            // Quan trọng: Giữ nguyên khoảng trắng (Space) để thụt đầu dòng
+            label.setWrapText(false);
 
             this.lineLabels.add(label);
-            this.container.getChildren().add(label);
+            this.codeContentBox.getChildren().add(label);
         }
+    }
 
-        // Thêm statusLabel vào cuối cùng (để hiện lỗi dưới đáy)
-        this.container.getChildren().add(statusLabel);
+    // Giữ nguyên hàm cũ để tương thích (nếu lỡ gọi đâu đó)
+    public void setCode(List<String> lines) {
+        setCode("Procedure", lines);
     }
 
     public void highlightLine(int lineIndex) {
         if (lineIndex < 0 || lineIndex >= lineLabels.size()) return;
-
-        // Xóa thông báo lỗi khi bắt đầu bước mới
         this.statusLabel.setVisible(false);
 
         for (int i = 0; i < lineLabels.size(); i++) {
@@ -98,33 +141,19 @@ public class PseudoCodeBlock implements TreeObserver {
         this.statusLabel.setVisible(false);
     }
 
-    // --- IMPLEMENTS TREE OBSERVER (Phần mới thêm) ---
-
+    // --- TREE OBSERVER IMPLEMENTATION ---
     @Override
-    public void onNodeChanged(Node node) {
-        // PseudoCodeBlock thường không quan tâm node đổi màu
-        // Nên có thể để trống hoặc log ra console để debug
-        // System.out.println("CodeBlock received: com.example.treevisualize.Node changed " + node.getValue());
-    }
+    public void onNodeChanged(Node node) { }
 
     @Override
     public void onStructureChanged() {
-        // Khi cây thay đổi cấu trúc (Insert xong), ta nên clear highlight
-        // để báo hiệu thuật toán đã kết thúc.
         clearHighlight();
-
-        // Ẩn thông báo lỗi (nếu có) vì thao tác đã thành công
         this.statusLabel.setVisible(false);
     }
 
     @Override
     public void onError(String message) {
-
-        this.statusLabel.setText("⚠️ Error: " + message);
+        this.statusLabel.setText("⚠ " + message);
         this.statusLabel.setVisible(true);
-
-        // Tùy chọn: Có thể rung lắc (shake) giao diện ở đây nếu muốn
     }
-
-
 }

@@ -179,7 +179,7 @@ public class TreeVisualizer implements TreeObserver {
             }
         } else {
             // Với BinaryTree hoặc BST thường -> Màu trắng
-            vis.setFillColor(Color.WHITE);
+            vis.setFillColor(Color.BLUE);
         }
     }
 }
