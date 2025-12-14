@@ -1,7 +1,7 @@
 package com.example.treevisualize.Node;
 
 public class RedBlackTreeNode extends BinaryTreeNode {
-       private NodeColor  color;
+    private NodeColor  color;
 
     public RedBlackTreeNode(int value) {
         super(value);

@@ -1,5 +1,7 @@
 package com.example.treevisualize.Trees;
 
+import com.example.treevisualize.Node.BinaryTreeNode;
+import com.example.treevisualize.Node.GeneralTreeNode;
 import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Node.NodeStatus;
 import com.example.treevisualize.Visualizer.TreeObserver;
@@ -19,18 +21,21 @@ public abstract class Tree {
         if (this.root == null) {
             return new ArrayList<>();
         }
-        // Bước 1: Nhờ Strategy tính toán danh sách các node theo thứ tự
         List<Node> path = strategy.traverse(this.root);
-
-        // Bước 2: Duyệt qua danh sách kết quả để ghi hình (Animation)
-        // Đây là bước quan trọng để AnimationController chụp lại các frame
         for (Node node : path) {
             visit(node);
         }
-
-        // Bước 3: Trả về danh sách (đúng như chữ ký bạn yêu cầu)
         return path;
     }
+
+    protected void visit(Node node) {
+        if (node == null) return;
+        node.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(node);
+        node.changeStatus(NodeStatus.NORMAL);
+        notifyNodeChanged(node);
+    }
+
     public void addObserver(TreeObserver observer) {
         if (!observers.contains(observer)) {
             observers.add(observer);
@@ -49,12 +54,10 @@ public abstract class Tree {
     public Node getRoot() {
         return root;
     }
-    /**
-     * Cập nhật root (Thường dùng cho tính năng Undo/Restore từ Snapshot).
-     */
+
     public void setRoot(Node newRoot) {
         this.root = newRoot;
-        notifyStructureChanged(); // Báo vẽ lại ngay lập tức
+        notifyStructureChanged();
     }
 
     public void clear() {
@@ -68,67 +71,36 @@ public abstract class Tree {
         }
     }
 
-    /**
-     * Gọi khi một node thay đổi trạng thái (Đổi màu, Highlight).
-     * View sẽ vẽ lại node đó (hoặc toàn bộ) để hiển thị hiệu ứng.
-     */
     protected void notifyNodeChanged(Node node) {
         for (TreeObserver observer : observers) {
             observer.onNodeChanged(node);
         }
     }
 
-    /**
-     * Gọi khi có lỗi logic xảy ra (VD: Chèn trùng số, Xóa số không tồn tại).
-     * PseudoCodeBlock sẽ hiển thị dòng thông báo lỗi màu đỏ.
-     */
     protected void notifyError(String message) {
         for (TreeObserver observer : observers) {
             observer.onError(message);
         }
     }
 
-    protected void visit(Node node) {
-        if (node == null) return;
-
-        // BƯỚC 1: Sáng đèn (ACTIVE) - Màu CAM
-        // Để báo hiệu: "Tôi đang đứng ở đây"
-        node.changeStatus(NodeStatus.ACTIVE);
-        notifyNodeChanged(node); // -> Chụp Snapshot 1
-
-        // BƯỚC 2: [SỬA ĐỔI] Trả về màu gốc (NORMAL) ngay lập tức
-        // Thay vì dùng VISITED (sẽ lưu vệt màu xanh), ta dùng NORMAL.
-        // Khi status là NORMAL, Visualizer sẽ tự động vẽ lại màu Đỏ/Đen/Trắng gốc của node.
-        node.changeStatus(NodeStatus.NORMAL);
-        notifyNodeChanged(node); // -> Chụp Snapshot 2
-    }
-
-    /**
-     * Hàm helper: Reset màu toàn bộ cây về trạng thái bình thường.
-     * Cần gọi hàm này trước khi bắt đầu một lượt Animation mới.
-     */
     public void resetTreeStatus() {
         if (root != null) {
             resetRecursive(root);
-            notifyStructureChanged(); // Vẽ lại cây sạch sẽ
+            notifyStructureChanged();
         }
     }
 
     private void resetRecursive(Node node) {
         if (node == null) return;
-
-        // Trả về trạng thái bình thường (để Visualizer vẽ đúng màu Đỏ/Đen hoặc Trắng)
         node.changeStatus(NodeStatus.NORMAL);
 
-        // Đệ quy reset cho các con
-        // Lưu ý: Cần kiểm tra kiểu để gọi getChild cho đúng
-        if (node instanceof com.example.treevisualize.Node.BinaryTreeNode) {
-            var bNode = (com.example.treevisualize.Node.BinaryTreeNode) node;
+        if (node instanceof BinaryTreeNode) {
+            var bNode = (BinaryTreeNode) node;
             resetRecursive(bNode.getLeftChild());
             resetRecursive(bNode.getRightChild());
         }
-        else if (node instanceof com.example.treevisualize.Node.GeneralTreeNode) {
-            var gNode = (com.example.treevisualize.Node.GeneralTreeNode) node;
+        else if (node instanceof GeneralTreeNode) {
+            var gNode = (GeneralTreeNode) node;
             resetRecursive(gNode.getLeftMostChild());
             resetRecursive(gNode.getRightSibling());
         }
@@ -136,60 +108,7 @@ public abstract class Tree {
     
     //statistic: number of nodes, height
     
-    public int getNodeCount() {
-        return countNodes(root);
-    }
+    public abstract int getNodeCount() ;
+    public abstract int getHeight();
 
-    private int countNodes(Node node) {
-        if (node == null) return 0;
-
-        // Binary Tree / BST / RBT
-        if (node instanceof com.example.treevisualize.Node.BinaryTreeNode) {
-            var b = (com.example.treevisualize.Node.BinaryTreeNode) node;
-            return 1 + countNodes(b.getLeftChild()) + countNodes(b.getRightChild());
-        }
-
-        // General Tree
-        if (node instanceof com.example.treevisualize.Node.GeneralTreeNode) {
-            var g = (com.example.treevisualize.Node.GeneralTreeNode) node;
-            return 1 + countNodes(g.getLeftMostChild())
-                       + countNodes(g.getRightSibling());
-        }
-
-        return 1;
-    }
-
-
-    public int getHeight() {
-        return height(root);
-    }
-
-    private int height(Node node) {
-        if (node == null) return 0;
-
-        // Binary Tree / BST / RBT
-        if (node instanceof com.example.treevisualize.Node.BinaryTreeNode) {
-            var b = (com.example.treevisualize.Node.BinaryTreeNode) node;
-            return 1 + Math.max(
-                    height(b.getLeftChild()),
-                    height(b.getRightChild())
-            );
-        }
-
-        // General Tree
-        if (node instanceof com.example.treevisualize.Node.GeneralTreeNode) {
-            var g = (com.example.treevisualize.Node.GeneralTreeNode) node;
-
-            int maxChildHeight = 0;
-            Node child = g.getLeftMostChild();
-
-            while (child != null) {
-                maxChildHeight = Math.max(maxChildHeight, height(child));
-                child = ((com.example.treevisualize.Node.GeneralTreeNode) child).getRightSibling();
-            }
-            return 1 + maxChildHeight;
-        }
-
-        return 1;
-    }
 }
