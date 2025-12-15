@@ -1,6 +1,7 @@
 package com.example.treevisualize.Controller;
 
 import com.example.treevisualize.Node.Node;
+import com.example.treevisualize.Trees.GeneralTree;
 import com.example.treevisualize.Trees.InOrderTraversal;
 import com.example.treevisualize.Trees.TraversalStrategy;
 import com.example.treevisualize.Trees.Tree;
@@ -275,5 +276,26 @@ public class AnimationController {
 
         // 5. Kết thúc ghi hình và Phát lại
         finishRecording();
+    }
+
+    /**
+     * Hàm Insert dành riêng cho General Tree (Gọi hàm có sẵn trong GeneralTree.java)
+     */
+    public void startInsert(int parentValue, int childValue) {
+        // 1. Kiểm tra xem cây hiện tại có phải GeneralTree không
+        if (tree instanceof GeneralTree) {
+            GeneralTree generalTree = (GeneralTree) tree;
+
+            // 2. Gọi hàm insert(parent, child) ĐÃ CÓ SẴN trong file GeneralTree của bạn
+            // Hàm này trả về void nên ta không cần check true/false
+            // Nó tự động gọi notifyError bên trong nếu không tìm thấy cha
+            generalTree.insert(parentValue, childValue);
+
+            // 3. Vẽ lại cây để thấy sự thay đổi
+            visualizer.render();
+
+        } else {
+            System.err.println("Lỗi: Cây hiện tại không phải là General Tree!");
+        }
     }
 }

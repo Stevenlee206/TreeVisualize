@@ -182,4 +182,7 @@ public class TreeVisualizer implements TreeObserver {
             vis.setFillColor(Color.BLUE);
         }
     }
+    public Canvas getCanvas() {
+        return this.canvas;
+    }
 }
