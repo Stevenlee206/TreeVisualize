@@ -9,9 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class SelectScreen {

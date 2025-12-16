@@ -19,4 +19,9 @@ public class DescriptionFactory {
     public static Description getStrategy(String treeType) {
         return registry.getOrDefault(treeType, EMPTY);
     }
+
+    // --- 2. THÊM HÀM NÀY: Cho phép các module bên ngoài tự đăng ký ---
+    public static void register(String treeType, Description strategy) {
+        registry.put(treeType, strategy);
+    }
 }

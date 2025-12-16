@@ -14,14 +14,12 @@ import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PseudoCodeBlock implements TreeObserver {
+public class    PseudoCodeBlock implements TreeObserver {
     private VBox container;
     private Label titleLabel;
     private VBox codeContentBox; // Hộp chứa các dòng code (tách biệt với tiêu đề)
     private List<Label> lineLabels;
     private Label statusLabel;
-
-    // --- STYLES "ACADEMIC LOOK" ---
 
     // Header: Font có chân (Serif) giống LaTeX
     private final String STYLE_HEADER =

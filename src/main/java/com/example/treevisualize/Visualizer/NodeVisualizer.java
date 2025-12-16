@@ -12,14 +12,25 @@ public class NodeVisualizer {
 
     public NodeVisualizer() {
         this.label = new Text();
-        this.label.setFont(new Font("Arial", 14)); // Set font mặc định
+        /*
+        Font(String name, double size): Tạo font với tên họ và kích thước (ví dụ: new Font("Arial", 14)).
+         */
+        this.label.setFont(new Font("Arial", 14));
     }
-
+    /*
+    fillOval() là một phương thức của lớp GraphicsContext (thường dùng trên Canvas) dùng để vẽ
+    và tô màu đầy đặn một hình bầu dục (hoặc hình tròn nếu chiều rộng bằng chiều cao), được xác định
+     */
     public void draw(GraphicsContext gc){
+        /*
+        setFill() là phương thức dùng để thiết lập màu nền (màu tô) cho các đối tượng đồ họa như Shape (Hình dạng)
+        , Text, Label, và Button, chấp nhận một đối tượng thuộc lớp cơ sở Paint (màu đơn sắc hoặc gradient).
+         */
         gc.setFill(this.fillColor);
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
 
         // Border
+        /*setStroke() trong JavaFX dùng để thiết lập màu sắc cho đường viền (outline) của các đối tượng đồ họa */
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
         gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);
@@ -37,9 +48,6 @@ public class NodeVisualizer {
 
         // Thiết lập đường cơ sở (Baseline) là GIỮA theo chiều DỌC
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-
-        // Bây giờ bạn chỉ cần truyền đúng toạ độ TÂM (x, y)
-        // JavaFX sẽ tự động vẽ chữ nằm chính giữa tâm đó.
         gc.fillText(String.valueOf(value), x, y);
     }
     public double getX() {

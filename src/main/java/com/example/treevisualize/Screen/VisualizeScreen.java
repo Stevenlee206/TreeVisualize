@@ -12,7 +12,6 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
 import java.util.Random;
 
@@ -43,7 +42,7 @@ public class VisualizeScreen {
         // ==========================================================
         // 1. TOP BAR (Nút Home & Tiêu đề)
         // ==========================================================
-        Button btnHome = new Button("🏠 Home");
+        Button btnHome = new Button("Home");
         btnHome.getStyleClass().add("button");
         btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
 
@@ -112,7 +111,7 @@ public class VisualizeScreen {
 
         // Input
         tfInput = new TextField();
-        tfInput.setPromptText("Nhập số...");
+        tfInput.setPromptText("Enter an int ...");
         tfInput.setPrefWidth(80);
 
         tfParentInput = new TextField();
@@ -138,6 +137,12 @@ public class VisualizeScreen {
         Button btnRandom = new Button("Random (10)");
         btnRandom.getStyleClass().add("button");
         btnRandom.setOnAction(e -> handleRandom());
+
+        // Bổ sung Traverse button
+        Button btnTraverse=new Button("Traverse");
+        btnSearch.getStyleClass().add("button");
+        // Nhớ thêm code xử lý Traverse vào đây
+
 
         // Slider tốc độ
         Label lblSpeed = new Label("Speed:");
@@ -282,12 +287,13 @@ public class VisualizeScreen {
 
     private void handleRandom() {
         Random rand = new Random();
-        // Tạo 10 số ngẫu nhiên từ 1 đến 99
         for (int i = 0; i < 10; i++) {
             int val = rand.nextInt(99) + 1;
-            // Insert không animation (hoặc có, tuỳ bạn chỉnh trong controller)
-            // Ở đây giả sử controller.insert xử lý từng cái một
             controller.startInsert(val);
         }
+    }
+
+    private void handleTraverse() {
+
     }
 }

@@ -30,7 +30,7 @@ public class Main5 extends Application {
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
-        primaryStage.setTitle("Tree Visualization App - Ultimate Edition");
+        primaryStage.setTitle("Tree Visualization App");
         primaryStage.setMaximized(true);
 
         // Set Icon cho ứng dụng (Nếu có)
@@ -40,7 +40,6 @@ public class Main5 extends Application {
 
         // BẮT ĐẦU VÀO MÀN HÌNH INTRO
         switchToIntroScreen();
-
         primaryStage.show();
     }
 

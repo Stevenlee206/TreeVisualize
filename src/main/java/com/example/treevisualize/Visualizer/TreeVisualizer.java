@@ -13,7 +13,6 @@ import com.example.treevisualize.Node.BinaryTreeNode;
 import com.example.treevisualize.Node.GeneralTreeNode;
 public class TreeVisualizer implements TreeObserver {
 
-    // --- ATTRIBUTES (Theo UML) ---
     private Canvas canvas;
     private GraphicsContext gc;
     private Tree tree;
@@ -23,7 +22,7 @@ public class TreeVisualizer implements TreeObserver {
 
     // Các hằng số static (gạch chân trong UML)
     public static final double NODE_RADIUS = 20.0;
-    public static final double VERTICAL_GAP = 60.0;
+    public static final double VERTICAL_GAP = 25.0;
 
     // --- CONSTRUCTOR ---
     /**
@@ -34,11 +33,7 @@ public class TreeVisualizer implements TreeObserver {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.nodeVis = new HashMap<>();
-
-        // Đăng ký quan sát Tree
         this.tree.addObserver(this);
-
-        // Vẽ lần đầu (nếu cây đã có dữ liệu)
         render();
     }
 
@@ -179,7 +174,7 @@ public class TreeVisualizer implements TreeObserver {
             }
         } else {
             // Với BinaryTree hoặc BST thường -> Màu trắng
-            vis.setFillColor(Color.BLUE);
+            vis.setFillColor(Color.GREEN);
         }
     }
     public Canvas getCanvas() {
