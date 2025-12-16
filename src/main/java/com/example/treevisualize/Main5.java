@@ -84,7 +84,7 @@ public class Main5 extends Application {
             String css = Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm();
             scene.getStylesheets().add(css);
         } catch (Exception e) {
-            System.err.println("Error: Không tìm thấy file style.css!");
+            System.err.println("Error: file style.css not found!");
         }
 
         // Hiệu ứng chuyển cảnh (Fade In)

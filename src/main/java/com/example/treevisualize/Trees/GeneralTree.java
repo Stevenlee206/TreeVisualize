@@ -10,7 +10,7 @@ public class GeneralTree extends Tree {
         GeneralTreeNode parent = (GeneralTreeNode) search(parentVal);
 
         if (parent == null) {
-            notifyError("Không tìm thấy node cha có giá trị: " + parentVal);
+            notifyError("Cannot find parent node with value: " + parentVal);
         } else {
             parent.addChild(new GeneralTreeNode(childVal));
             notifyStructureChanged();
@@ -31,7 +31,7 @@ public class GeneralTree extends Tree {
         GeneralTreeNode targetNode = (GeneralTreeNode) search(value);
 
         if (targetNode == null) {
-            notifyError("Không tìm thấy giá trị " + value + " để xóa.");
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
         if (targetNode == root) {
@@ -46,7 +46,7 @@ public class GeneralTree extends Tree {
             parent.removeChild(new GeneralTreeNode(value));
             notifyStructureChanged();
         } else {
-            notifyError("Lỗi cấu trúc: com.example.treevisualize.Node " + value + " bị mất liên kết với cha.");
+            notifyError("Structural error: com.example.treevisualize.Node " + value + " lost connection to its parent.");
         }
     }
 
@@ -71,7 +71,8 @@ public class GeneralTree extends Tree {
                 root = new GeneralTreeNode(value);
                 notifyStructureChanged();
             } else {
-                notifyError("Cây tổng quát cần biết Parent ID. Hãy dùng chức năng: Insert(parent, child)");
+                notifyError("A general tree requires a Parent ID. Please use the function: Insert(parent, child)."
+);
             }
         }
 

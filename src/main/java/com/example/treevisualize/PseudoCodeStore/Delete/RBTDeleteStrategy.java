@@ -13,20 +13,23 @@ public class RBTDeleteStrategy implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-                "1.  y ← z, y-original-color ← y.color",
-                "2.  if z.left == ∅",
-                "3.      x ← z.right, Transplant(T, z, z.right)",
-                "4.  else if z.right == ∅",
-                "5.      x ← z.left, Transplant(T, z, z.left)",
-                "6.  else",
-                "7.      y ← Minimum(z.right)",
-                "8.      y-original-color ← y.color",
-                "9.      x ← y.right",
-                "10.     if y.p == z then x.p ← y",
-                "11.     else Transplant(T, y, y.right)",
-                "12.     Transplant(T, z, y)",
-                "13. if y-original-color == BLACK",
-                "14.     RB-Delete-Fixup(T, x)"
+                "1.  z ← search(value)",
+                "2.  if (z == ∅) return ",
+                "3.  RedBlackTreeNode x, y",
+                "4.  if (z.left == ∅ || z.right == ∅) y ← z",
+                "5.  else y ← z.successor",
+                "6.  if (y.left ≠ ∅) x ← y.left",
+                "7.  else x ← y.right",
+                "8.  if (x ≠ ∅) x.parent ← y.parent",
+                "9.  if (y.parent == ∅)",
+                "10.     root ← x",
+                "11. else if (y = y.parent.left)",
+                "12.     y.parent.left ← x",
+                "13. else",
+                "14.     y.parent.right ← x",
+                "15. if (y ≠ z) z.value ← y.value",
+                "16. if (y.color = BLACK)",
+                "17. 	 deleteFixUp(x, y.parent)"
         );
     }
 }

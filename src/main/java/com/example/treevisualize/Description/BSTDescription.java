@@ -3,7 +3,10 @@ package com.example.treevisualize.Description;
 public class BSTDescription implements Description {
     @Override
     public String getDescription() {
-        return "Binary Search Tree binary tree with the key of each internal node being greater than all the keys in the respective node's left subtree and less than the ones in its right subtree.\n\n" +
+        return "A Binary Search Tree (BST) is a type of binary tree data structure in which each node "
+        		+ "contains a unique key and satisfies a specific ordering property:\r\n"
+        		+ "+ All nodes in the left subtree of a node contain values strictly less than the node’s value.\r\n"
+        		+ "+ All nodes in the right subtree of a node contain values strictly greater than the node’s value.\n\n" +
                 "Complexity :\n" +
                 "=======================================\n" +
                 "1. Time Complexity :\n" +

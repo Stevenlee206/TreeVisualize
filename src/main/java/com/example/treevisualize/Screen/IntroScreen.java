@@ -94,7 +94,7 @@ public class IntroScreen {
             root.getChildren().add(0, view);
 
         } catch (Exception e) {
-            System.err.println("Không tìm thấy ảnh: " + path);
+            System.err.println("Picture not found: " + path);
         }
     }
 

@@ -46,7 +46,7 @@ public class RedBlackTree extends BinarySearchTree {
         }
 
         if (search(value) != null) {
-            notifyError("Giá trị " + value + " đã tồn tại!");
+            notifyError("The value " + value + " already exist!");
             return;
         }
         RedBlackTreeNode newNode = new RedBlackTreeNode(value);
@@ -130,7 +130,7 @@ public class RedBlackTree extends BinarySearchTree {
     public void delete(int value) {
         RedBlackTreeNode z = (RedBlackTreeNode) search(value);
         if (z == null) {
-            notifyError("Không tìm thấy giá trị " + value);
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
 

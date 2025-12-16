@@ -47,7 +47,7 @@ public class BinaryTree extends Tree{
         BinaryTreeNode targetNode = (BinaryTreeNode) search(value);
 
         if (targetNode == null) {
-            notifyError("Không tìm thấy giá trị " + value + " để xóa.");
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
 
@@ -63,10 +63,10 @@ public class BinaryTree extends Tree{
                 parent.removeChild(targetNode);
                 notifyStructureChanged();
             } catch (Exception e) {
-                notifyError("Lỗi khi xóa: " + e.getMessage());
+                notifyError("Error while deleting: " + e.getMessage());
             }
         } else {
-            notifyError("Lỗi cấu trúc: com.example.treevisualize.Node " + value + " không có cha (không phải Root).");
+            notifyError("Structural error: com.example.treevisualize.Node " + value + " doesn't have parent (is not Root).");
         }
     }
 
@@ -93,7 +93,7 @@ public class BinaryTree extends Tree{
         BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
 
         if (parent == null) {
-            notifyError("Không tìm thấy node cha có giá trị: " + parentVal);
+            notifyError("Cannot find parent node with value: " + parentVal);
             return;
         }
         if (parent.getLeftChild() == null) {
@@ -105,7 +105,7 @@ public class BinaryTree extends Tree{
             notifyStructureChanged();
         }
         else {
-            notifyError("Node " + parentVal + " đã đủ 2 con. Không thể chèn thêm!");
+            notifyError("Node " + parentVal + " already has 2 children. Cannot insert more!");
         }
     }
 

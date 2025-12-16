@@ -31,7 +31,7 @@ public class BinarySearchTree extends Tree{
             return;
         }
         if (search(value) != null) {
-            notifyError("Giá trị " + value + " đã tồn tại trong BST!");
+            notifyError("The value " + value + " already exist!");
             return;
         }
         insertRecursive((BinaryTreeNode) root, value);
@@ -59,7 +59,7 @@ public class BinarySearchTree extends Tree{
     public void delete(int value) {
         if (root == null) return;
         if (search(value) == null) {
-            notifyError("Không tìm thấy giá trị " + value + " để xóa.");
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
         root = deleteRecursive((BinaryTreeNode) root, value);

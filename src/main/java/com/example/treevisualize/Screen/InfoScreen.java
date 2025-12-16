@@ -46,12 +46,12 @@ public class InfoScreen {
         HBox actions = new HBox(20);
 
         // Nút Back: Quay lại màn hình chọn cây
-        Button btnBack = new Button("⬅ Chọn lại");
+        Button btnBack = new Button("⬅ Back");
         btnBack.getStyleClass().add("button");
         btnBack.setOnAction(e -> mainApp.switchToSelectScreen());
 
         // Nút Start: Vào màn hình Visualize chính
-        Button btnStart = new Button("VISUALIZE NGAY 🚀");
+        Button btnStart = new Button("START VISUALIZE 🚀");
         btnStart.getStyleClass().add("btn-primary");
         btnStart.setStyle("-fx-font-size: 16px; -fx-padding: 10 25;");
         // Gọi hàm chuyển sang Visualizer

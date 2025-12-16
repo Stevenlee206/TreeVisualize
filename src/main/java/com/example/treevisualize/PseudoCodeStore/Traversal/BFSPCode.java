@@ -13,14 +13,16 @@ public class BFSPCode implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-                "1.  if root == ∅ return",
-                "2.  Q ← Queue()",
-                "3.  Q.enqueue(root)",
-                "4.  while Q ≠ ∅ do",
-                "5.      node ← Q.dequeue()",
-                "6.      visit(node)",
-                "7.      if node.left ≠ ∅ Q.enqueue(node.left)",
-                "8.      if node.right ≠ ∅ Q.enqueue(node.right)"
+                "1.  if (root == ∅) return",
+                "2.  result ← ArrayList()",
+                "3.  Q ← Queue()",
+                "4.  Q.enqueue(root)",
+                "5.  while Q ≠ ∅ do",
+                "6.      node ← Q.dequeue()",
+                "7.      result.add(node)",
+                "8.      if (node.left ≠ ∅) Q.enqueue(node.left)",
+                "9.      if (node.right ≠ ∅) Q.enqueue(node.right)",
+                "10. return result"
         );
     }
 }

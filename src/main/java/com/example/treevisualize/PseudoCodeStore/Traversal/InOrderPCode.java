@@ -7,17 +7,20 @@ import java.util.List;
 public class InOrderPCode implements PseudoCodeStrategy {
     @Override
     public String getTitle() {
-        return "In-Order Traversal";
+        return "In-Order(root)";
     }
 
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-                "In-Order(node):",
-                "1.  if node == ∅ return",
-                "2.  In-Order(node.left)",
-                "3.  visit(node)",
-                "4.  In-Order(node.right)"
+                "1.  result ← ArrayList()",
+                "2.  inOrderRecursive(root, result)",
+                "3.  return result",
+                "4.  function inOrderRecursive(node, result)",
+                "5.  	if (node == ∅) return",
+                "6.  	inOrderRecursive(node.left, result)",
+                "7.  	result.add(node)",
+                "8.  	inOrderRecursive(node.right, result)"
         );
     }
 }

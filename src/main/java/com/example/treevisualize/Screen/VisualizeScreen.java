@@ -76,7 +76,7 @@ public class VisualizeScreen {
         rightPane.setPadding(new Insets(10));
         rightPane.setStyle("-fx-background-color: #f4f6f7; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;");
 
-        Label lblCode = new Label("Pseudo Code");
+        Label lblCode = new Label("Pseudocode");
         lblCode.setStyle("-fx-font-weight: bold; -fx-underline: true; -fx-font-size: 14px;");
 
         // Container chứa các dòng code
@@ -112,7 +112,7 @@ public class VisualizeScreen {
 
         // Input
         tfInput = new TextField();
-        tfInput.setPromptText("Nhập số...");
+        tfInput.setPromptText("Enter number...");
         tfInput.setPrefWidth(80);
 
         tfParentInput = new TextField();
@@ -256,7 +256,7 @@ public class VisualizeScreen {
             tfInput.requestFocus();
 
         } catch (NumberFormatException e) {
-            mainApp.showAlert("Lỗi nhập liệu", "Vui lòng nhập số hợp lệ!");
+            mainApp.showAlert("Input Error", "Please enter valid number!");
         }
     }
 
@@ -266,7 +266,7 @@ public class VisualizeScreen {
             controller.startDelete(value);
             tfInput.clear();
         } catch (NumberFormatException e) {
-            mainApp.showAlert("Lỗi nhập liệu", "Vui lòng nhập số cần xóa!");
+            mainApp.showAlert("Input Error", "Please enter valid number to delete!");
         }
     }
 
@@ -276,7 +276,7 @@ public class VisualizeScreen {
             controller.startSearch(value);
             tfInput.clear();
         } catch (NumberFormatException e) {
-            mainApp.showAlert("Lỗi nhập liệu", "Vui lòng nhập số cần tìm!");
+            mainApp.showAlert("Input Error", "Please enter valid number to search!");
         }
     }
 

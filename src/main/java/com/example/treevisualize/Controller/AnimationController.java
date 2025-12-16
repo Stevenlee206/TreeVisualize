@@ -264,7 +264,7 @@ public class AnimationController {
                 break;
             */
             default:
-                System.out.println("Chưa cài đặt thuật toán: " + type);
+                System.out.println("The algorithm hasn't been installed yet: " + type);
                 finishRecording(); // Kết thúc sớm để tránh lỗi
                 return;
         }
@@ -295,7 +295,7 @@ public class AnimationController {
             visualizer.render();
 
         } else {
-            System.err.println("Lỗi: Cây hiện tại không phải là General Tree!");
+            System.err.println("ERROR: Current tree is not General Tree!");
         }
     }
 }
