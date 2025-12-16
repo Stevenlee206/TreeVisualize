@@ -93,6 +93,10 @@ public class Main3 extends Application {
                 tree = new BinaryTree();
                 updatePseudoCodeForBinaryTree();
                 break;
+            case "AVL Tree" :
+                tree = new AVLTree();
+                updatePseudoCodeForAVLTree();
+                break;
             case "Red Black Tree":
             default:
                 tree = new RedBlackTree();
@@ -121,7 +125,7 @@ public class Main3 extends Application {
         // --- NHÓM 1: CHỌN LOẠI CÂY ---
         Label lblType = new Label("Type:");
         ComboBox<String> cboTreeType = new ComboBox<>();
-        cboTreeType.getItems().addAll("Red Black Tree", "Binary Search Tree", "Binary Tree (Normal)");
+        cboTreeType.getItems().addAll("Red Black Tree", "Binary Search Tree", "Binary Tree (Normal)", "AVL Tree");
         cboTreeType.setValue("Red Black Tree");
         // Khi chọn xong thì reset hệ thống
         cboTreeType.setOnAction(e -> initializeSystem(cboTreeType.getValue()));
@@ -276,7 +280,26 @@ public class Main3 extends Application {
         ));
     }
 
+    private void updatePseudoCodeForAVLTree() {
+        pseudoCode.setCode(Arrays.asList(
+            "AVL TREE INSERT (Self-Balancing):",
+            "1. Thực hiện chèn BST thông thường",
+            "2. Cập nhật chiều cao (height) của node",
+            "3. Tính hệ số cân bằng (BF = HL - HR)",
+            "4. Nếu BF > 1 & val < Left.val: Quay Phải (LL)",
+            "5. Nếu BF < -1 & val > Right.val: Quay Trái (RR)",
+            "6. Nếu BF > 1 & val > Left.val: Quay Trái-Phải (LR)",
+            "7. Nếu BF < -1 & val < Right.val: Quay Phải-Trái (RL)"
+        ));
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 }
+
+/*
+$JAVAFX_HOME = "D:/File_In_OS(C)/Downloads/openjfx-25.0.1_windows-x64_bin-sdk/javafx-sdk-25.0.1/lib"
+cd "D:\File_In_OS(C)\Documents\OOP-2025.1\TreeVisualize\src\main\java"
+java --module-path "$JAVAFX_HOME" --add-modules javafx.controls,javafx.fxml,javafx.graphics com.example.treevisualize.Main3
+*/

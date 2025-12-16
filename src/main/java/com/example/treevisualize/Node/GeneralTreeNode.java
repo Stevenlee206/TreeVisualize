@@ -27,11 +27,11 @@ public class GeneralTreeNode extends Node {
     }
     // add a child to a node
     public void addChild(GeneralTreeNode child) {
-        /* Update from gemini , check later*/
-        //---------------------------
+
+
         if (child==null){ return; }
         child.setParent(this);
-        //---------------------------
+
         if (leftMostChild == null) {
             leftMostChild = child;
             return;
@@ -44,12 +44,10 @@ public class GeneralTreeNode extends Node {
     }
     // remove a child
     public void removeChild(GeneralTreeNode child) {
-        /* Update from gemini , check later*/
-        //---------------------------
+
+
         if (this.leftMostChild == null || child == null) return;
-        //---------------------------
-        /* Update from gemini , check later*/
-        //---------------------------
+
         if (leftMostChild.getValue() == child.getValue()) {
             GeneralTreeNode nodeToRemove = leftMostChild;
             this.leftMostChild = this.leftMostChild.getRightSibling();
@@ -57,7 +55,6 @@ public class GeneralTreeNode extends Node {
             nodeToRemove.setRightSibling(null);
             return;
         }
-        //---------------------------
         GeneralTreeNode current = this.leftMostChild;
         while (current.getRightSibling() != null) {
             if (current.getRightSibling().getValue() == child.getValue()) {
@@ -70,17 +67,15 @@ public class GeneralTreeNode extends Node {
             current = current.getRightSibling();
         }
     }
-    // Trong file GeneralTreeNode.java
+
 
     @Override
     public Node copy() {
         GeneralTreeNode newNode = new GeneralTreeNode(this.getValue());
 
-        // --- QUAN TRỌNG: COPY TRẠNG THÁI ---
         newNode.changeStatus(this.getStatus());
         // -----------------------------------
 
-        // Copy con cái và anh em (giữ nguyên code cũ của bạn)
         if (this.getLeftMostChild() != null) {
             GeneralTreeNode childCopy = (GeneralTreeNode) this.getLeftMostChild().copy();
             newNode.setLeftMostChild(childCopy);

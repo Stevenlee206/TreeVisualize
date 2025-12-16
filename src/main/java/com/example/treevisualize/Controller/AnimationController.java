@@ -1,9 +1,7 @@
 package com.example.treevisualize.Controller;
 
 import com.example.treevisualize.Node.Node;
-import com.example.treevisualize.Trees.InOrderTraversal;
-import com.example.treevisualize.Trees.TraversalStrategy;
-import com.example.treevisualize.Trees.Tree;
+import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
 import com.example.treevisualize.Visualizer.TreeObserver;
 import com.example.treevisualize.Visualizer.TreeVisualizer;
@@ -15,7 +13,6 @@ import java.util.List;
 import com.example.treevisualize.Visualizer.TreeSnapShot;
 public class AnimationController {
 
-    // --- ATTRIBUTES (Theo UML) ---
     private Tree tree;
     private TreeVisualizer visualizer;
     private PseudoCodeBlock pseudoCode;
@@ -26,7 +23,6 @@ public class AnimationController {
     private boolean isPlaying;
     private double speed; // Thời gian delay (ms)
 
-    // --- CÁC THUỘC TÍNH BỔ SUNG (Để quản lý logic Snapshot) ---
     // Danh sách các khung hình (Snapshot) của hoạt cảnh hiện tại
     private List<TreeSnapShot> animationFrames;
 
@@ -42,20 +38,17 @@ public class AnimationController {
         this.animationFrames = new ArrayList<>();
         this.currentFrameIndex = 0;
         this.isPlaying = false;
-        this.speed = 1000.0; // Mặc định 1 giây/bước
+        this.speed = 1000.0;
 
         // Khởi tạo Timeline (vòng lặp vô hạn, nhưng ta sẽ control nó)
         this.timeLine = new Timeline();
         this.timeLine.setCycleCount(Timeline.INDEFINITE);
     }
 
-    // --- PUBLIC OPERATIONS (Theo UML) ---
-
     public void play() {
         if (animationFrames.isEmpty() || currentFrameIndex >= animationFrames.size() - 1) {
-            return; // Không có gì để chạy hoặc đã chạy xong
+            return;
         }
-
         this.isPlaying = true;
 
         // Tạo lại animation sequence với tốc độ hiện tại
@@ -244,14 +237,10 @@ public class AnimationController {
         prepareRecording();
 
         TraversalStrategy strategy = null;
-
-        // 3. Chọn chiến lược dựa trên tên (Factory Pattern)
         switch (type) {
             case "In-Order (LNR)":
                 strategy = new InOrderTraversal();
                 break;
-            // Nếu bạn chưa tạo các class Strategy kia thì tạm thời comment lại để tránh lỗi compile
-            /*
             case "Pre-Order (NLR)":
                 strategy = new PreOrderTraversal();
                 break;
@@ -261,19 +250,28 @@ public class AnimationController {
             case "BFS (Level Order)":
                 strategy = new BFSTraversal();
                 break;
-            */
             default:
-                System.out.println("Chưa cài đặt thuật toán: " + type);
+                System.out.println("Not Found " + type);
                 finishRecording(); // Kết thúc sớm để tránh lỗi
                 return;
         }
-
-        // 4. Chạy thuật toán (Quan trọng: Tree sẽ thực hiện loop và visit tại đây)
         if (strategy != null) {
             tree.traverse(strategy);
         }
-
-        // 5. Kết thúc ghi hình và Phát lại
         finishRecording();
+    }
+
+    /**
+     * Hàm Insert dành riêng cho General Tree (Gọi hàm có sẵn trong GeneralTree.java)
+     */
+    public void startInsert(int parentValue, int childValue) {
+        if (tree instanceof GeneralTree) {
+            GeneralTree generalTree = (GeneralTree) tree;
+            generalTree.insert(parentValue, childValue);
+            visualizer.render();
+
+        } else {
+            System.err.println("Error! Not General Tree.");
+        }
     }
 }

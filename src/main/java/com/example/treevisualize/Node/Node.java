@@ -33,9 +33,5 @@ public abstract class Node {
         this.status = status;
     }
 
-    /**
-     * Phương thức abstract bắt buộc các con phải tự định nghĩa.
-     * Trả về một bản sao sâu (Deep Copy) của chính nó.
-     */
     public abstract Node copy();
 }

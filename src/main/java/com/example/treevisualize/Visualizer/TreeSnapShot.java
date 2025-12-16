@@ -4,7 +4,9 @@ import com.example.treevisualize.Node.Node;
 
 public class TreeSnapShot {
     private Node rootCopy;
+
     private int pseudoLineIndex;
+
     private String statusMessage;
 
     public Node getRootCopy() {
