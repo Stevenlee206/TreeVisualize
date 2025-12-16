@@ -65,51 +65,15 @@ public class GeneralTree extends Tree {
         return searchRecursive(node.getRightSibling(), value);
         }
 
-        @Override
-        public void insert(int value) {
-            if (root == null) {
-                root = new GeneralTreeNode(value);
-                notifyStructureChanged();
-            } else {
-                notifyError("Cây tổng quát cần biết Parent ID. Hãy dùng chức năng: Insert(parent, child)");
-            }
+    @Override
+    public void insert(int value) {
+        if (root == null) {
+            root = new GeneralTreeNode(value); // OK: Tạo gốc
+            notifyStructureChanged();
+        } else {
+            // Thay vì chỉ báo lỗi, có thể chọn mặc định chèn vào con đầu tiên?
+            // Hoặc giữ nguyên báo lỗi nhưng ném Exception rõ ràng thay vì notifyError string.
+            throw new UnsupportedOperationException("General Tree insert requires Parent ID. Use insert(parent, child) instead.");
         }
-
-    public int getHeight() {
-        return height(root);
-    }
-
-    private int height(Node node) {
-        if (node == null) return 0;
-        if (node instanceof GeneralTreeNode) {
-            var g = (GeneralTreeNode) node;
-
-            int maxChildHeight = 0;
-            Node child = g.getLeftMostChild();
-
-            while (child != null) {
-                maxChildHeight = Math.max(maxChildHeight, height(child));
-                child = ((GeneralTreeNode) child).getRightSibling();
-            }
-            return 1 + maxChildHeight;
-        }
-
-        return 1;
-    }
-
-    public int getNodeCount() {
-        return countNodes(root);
-    }
-
-    private int countNodes(Node node) {
-        if (node == null) return 0;
-        // General Tree
-        if (node instanceof GeneralTreeNode) {
-            var g = (GeneralTreeNode) node;
-            return 1 + countNodes(g.getLeftMostChild())
-                    + countNodes(g.getRightSibling());
-        }
-
-        return 1;
     }
 }

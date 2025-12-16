@@ -107,8 +107,34 @@ public abstract class Tree {
     }
     
     //statistic: number of nodes, height
-    
-    public abstract int getNodeCount() ;
-    public abstract int getHeight();
 
+    public int getNodeCount() {
+        return countNodesRecursive(root);
+    }
+
+    private int countNodesRecursive(Node node) {
+        if (node == null) return 0;
+
+        int count = 1;
+        for (Node child : node.getChildren()) {
+            count += countNodesRecursive(child);
+        }
+        return count;
+    }
+    public int getHeight() {
+        return calculateHeightRecursive(root);
+    }
+
+    private int calculateHeightRecursive(Node node) {
+        if (node == null) return 0;
+
+        int maxChildHeight = 0;
+
+        for (Node child : node.getChildren()) {
+            int h = calculateHeightRecursive(child);
+            if (h > maxChildHeight) maxChildHeight = h;
+        }
+
+        return 1 + maxChildHeight;
+    }
 }

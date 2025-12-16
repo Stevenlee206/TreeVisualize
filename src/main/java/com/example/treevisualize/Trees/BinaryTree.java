@@ -108,36 +108,4 @@ public class BinaryTree extends Tree{
             notifyError("Node " + parentVal + " đã đủ 2 con. Không thể chèn thêm!");
         }
     }
-
-    public int getHeight() {
-        return height(root);
-    }
-
-    private int height(Node node) {
-        if (node == null) return 0;
-        // Binary Tree / BST / RBT
-        if (node instanceof BinaryTreeNode) {
-            var b = (BinaryTreeNode) node;
-            return 1 + Math.max(
-                    height(b.getLeftChild()),
-                    height(b.getRightChild())
-            );
-        }
-        return 1;
-    }
-
-    public int getNodeCount() {
-        return countNodes(root);
-    }
-
-    private int countNodes(Node node) {
-        if (node == null) return 0;
-
-        // Binary Tree / BST / RBT
-        if (node instanceof BinaryTreeNode) {
-            var b = (BinaryTreeNode) node;
-            return 1 + countNodes(b.getLeftChild()) + countNodes(b.getRightChild());
-        }
-        return 1;
-    }
 }
