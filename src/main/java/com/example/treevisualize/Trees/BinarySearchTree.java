@@ -92,8 +92,6 @@ public class BinarySearchTree extends Tree{
                 return current.getLeftChild();
             }
 
-            // CASE 3: Có đủ 2 con (Phức tạp nhất)
-            // Chiến thuật: Tìm "Người thừa kế" (Successor) - com.example.treevisualize.Node nhỏ nhất bên phải
             int smallestValue = findSmallestValue(current.getRightChild());
             current.changeValue(smallestValue);
             BinaryTreeNode newRight = deleteRecursive(current.getRightChild(), smallestValue);
@@ -102,9 +100,7 @@ public class BinarySearchTree extends Tree{
             return current;
         }
     }
-    /**
-     * Tìm giá trị nhỏ nhất trong một nhánh cây (Đi hết về bên trái).
-     */
+
     private int findSmallestValue(BinaryTreeNode root) {
         int min = root.getValue();
         while (root.getLeftChild() != null) {
@@ -120,7 +116,6 @@ public class BinarySearchTree extends Tree{
 
     private int height(Node node) {
         if (node == null) return 0;
-        // Binary Tree / BST / RBT
         if (node instanceof BinaryTreeNode) {
             var b = (BinaryTreeNode) node;
             return 1 + Math.max(
@@ -138,7 +133,6 @@ public class BinarySearchTree extends Tree{
     private int countNodes(Node node) {
         if (node == null) return 0;
 
-        // Binary Tree / BST / RBT
         if (node instanceof BinaryTreeNode) {
             var b = (BinaryTreeNode) node;
             return 1 + countNodes(b.getLeftChild()) + countNodes(b.getRightChild());

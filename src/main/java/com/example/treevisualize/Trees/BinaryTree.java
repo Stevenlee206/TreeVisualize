@@ -115,7 +115,6 @@ public class BinaryTree extends Tree{
 
     private int height(Node node) {
         if (node == null) return 0;
-        // Binary Tree / BST / RBT
         if (node instanceof BinaryTreeNode) {
             var b = (BinaryTreeNode) node;
             return 1 + Math.max(
@@ -133,7 +132,6 @@ public class BinaryTree extends Tree{
     private int countNodes(Node node) {
         if (node == null) return 0;
 
-        // Binary Tree / BST / RBT
         if (node instanceof BinaryTreeNode) {
             var b = (BinaryTreeNode) node;
             return 1 + countNodes(b.getLeftChild()) + countNodes(b.getRightChild());

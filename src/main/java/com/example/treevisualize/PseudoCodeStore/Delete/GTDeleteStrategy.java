@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GTDeleteStrategy implements PseudoCodeStrategy {
+	@Override
 	public String getTitle() {
 		return "GeneralTree-Delete(value)";
 	}
+	
+	@Override
 	public List<String> getLines() {
 		return Arrays.asList(
 				"1.  if (root == ∅) return",
@@ -18,6 +21,6 @@ public class GTDeleteStrategy implements PseudoCodeStrategy {
 				"6.  parent ← target.parent",
 				"7.  if (parent ≠ ∅) parent.removeChild(value)",
 				"8.  else return"
-				);
+		);
 	}
 }

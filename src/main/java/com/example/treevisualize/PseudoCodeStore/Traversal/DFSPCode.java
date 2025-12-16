@@ -5,9 +5,12 @@ import java.util.Arrays;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
 
 public class DFSPCode implements PseudoCodeStrategy {
+	@Override
 	public String getTitle() {
 		return "DFS(root)";
 	}
+	
+	@Override
 	public List<String> getLines() {
 		return Arrays.asList(
 				"1.  result ← ArrayList()",
@@ -18,6 +21,6 @@ public class DFSPCode implements PseudoCodeStrategy {
 				"6.  	result.add(node)",
 				"7.  	dfsRecursive(node.left, result)",
 				"8.  	defRecursive(node.right, result)"
-				);
+		);
 	}
 }

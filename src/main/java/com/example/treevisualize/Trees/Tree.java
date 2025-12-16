@@ -106,8 +106,6 @@ public abstract class Tree {
         }
     }
     
-    //statistic: number of nodes, height
-    
     public abstract int getNodeCount() ;
     public abstract int getHeight();
 

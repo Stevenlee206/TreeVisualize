@@ -104,7 +104,6 @@ public class GeneralTree extends Tree {
 
     private int countNodes(Node node) {
         if (node == null) return 0;
-        // General Tree
         if (node instanceof GeneralTreeNode) {
             var g = (GeneralTreeNode) node;
             return 1 + countNodes(g.getLeftMostChild())

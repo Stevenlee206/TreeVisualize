@@ -7,7 +7,6 @@ public class DescriptionFactory {
 
     private static final Map<String, Description> registry = new HashMap<>();
 
-    // Default Strategy
     private static final Description EMPTY = () -> "No description.";
 
     static {
