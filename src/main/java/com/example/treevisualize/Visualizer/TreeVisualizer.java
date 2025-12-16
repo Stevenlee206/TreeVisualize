@@ -19,8 +19,8 @@ public class TreeVisualizer implements TreeObserver {
     private Tree tree;
 
     private Map<Node, NodeVisualizer> nodeVis;
-    public static final double NODE_RADIUS = 20.0;
-    public static final double VERTICAL_GAP = 50.0;
+    public static final double NODE_RADIUS = 15.0;
+    public static final double VERTICAL_GAP = 80.0;
 
     // --- CONSTRUCTOR ---
     public TreeVisualizer(Tree tree, Canvas canvas) {
@@ -64,7 +64,7 @@ public class TreeVisualizer implements TreeObserver {
         // 2. TÍNH TOÁN KÍCH THƯỚC CẦN THIẾT 
         // Khoảng cách ngang tối thiểu ở tầng dưới cùng (để 2 node lá không đè lên nhau)
         // Node radius = 20 -> Đường kính 40 -> Cần ít nhất 50-60px khoảng cách
-        double minGapAtBottom = NODE_RADIUS * 2 + 10; 
+        double minGapAtBottom = NODE_RADIUS * 2 + 3; 
         
         // Tính khoảng cách offset ban đầu cho Root dựa trên chiều cao cây
         // Công thức: Gap tại root = MinGap * 2^(height - 2)
