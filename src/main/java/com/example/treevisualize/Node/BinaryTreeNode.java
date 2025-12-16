@@ -17,7 +17,7 @@ public class BinaryTreeNode extends Node{
     public BinaryTreeNode getRightChild() {
         return rightChild;
     }
-    // Update from gemini , check later
+
     public void setLeftChild(BinaryTreeNode child) {
         this.leftChild = child;
         if (child != null) {
@@ -31,7 +31,7 @@ public class BinaryTreeNode extends Node{
             child.setParent(this);
         }
     }
-    //-------------------------------------------------------
+
     public void addChild(BinaryTreeNode child) throws FullNodeException {
         if (child==null){ return; }
         if (this.leftChild == null) {
@@ -60,23 +60,22 @@ public class BinaryTreeNode extends Node{
         throw new NotFoundException("Node " + this.getValue() + " do not have child with value " + child.getValue());
     }
 
-    // Trong file BinaryTreeNode.java
 
     @Override
     public Node copy() {
-        // 1. Tạo vỏ mới
+
         BinaryTreeNode newNode = new BinaryTreeNode(this.getValue());
 
-        // --- QUAN TRỌNG: COPY TRẠNG THÁI (Highlight) ---
-        newNode.changeStatus(this.getStatus());
-        // ----------------------------------------------
 
-        // 2. Copy con Trái (Đệ quy)
+        newNode.changeStatus(this.getStatus());
+
+
+
         if (getLeftChild() != null) {
             newNode.setLeftChild((BinaryTreeNode) getLeftChild().copy());
         }
 
-        // 3. Copy con Phải (Đệ quy)
+
         if (getRightChild() != null) {
             newNode.setRightChild((BinaryTreeNode) getRightChild().copy());
         }
