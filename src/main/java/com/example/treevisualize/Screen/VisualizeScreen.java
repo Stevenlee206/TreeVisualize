@@ -56,16 +56,21 @@ public class VisualizeScreen {
         // 2. CENTER (Màn hình vẽ - Canvas)
         // ==========================================================
         // Pane bao ngoài để Canvas có thể resize theo cửa sổ
-        Pane canvasPane = new Pane();
-        canvasPane.setStyle("-fx-background-color: #ffffff;");
+     // ================= CENTER (Canvas + Scroll) =================
+        Canvas canvas = new Canvas(1200, 1000); 
 
-        Canvas canvas = new Canvas(1000, 600);
-        // Bind kích thước Canvas theo Pane cha để không bị vỡ giao diện khi phóng to
-        canvas.widthProperty().bind(canvasPane.widthProperty());
-        canvas.heightProperty().bind(canvasPane.heightProperty());
+        StackPane canvasWrapper = new StackPane(canvas);
+        canvasWrapper.setStyle("-fx-background-color: white;");
 
-        canvasPane.getChildren().add(canvas);
-        root.setCenter(canvasPane);
+        ScrollPane scrollPane = new ScrollPane(canvasWrapper);
+        scrollPane.setPannable(true); 
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        root.setCenter(scrollPane);
+
 
         // ==========================================================
         // 3. RIGHT (Mã giả - Pseudo Code)
