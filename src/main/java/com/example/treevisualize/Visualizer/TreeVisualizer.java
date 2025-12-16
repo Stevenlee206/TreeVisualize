@@ -11,23 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 import com.example.treevisualize.Node.BinaryTreeNode;
 import com.example.treevisualize.Node.GeneralTreeNode;
+
 public class TreeVisualizer implements TreeObserver {
 
     private Canvas canvas;
     private GraphicsContext gc;
     private Tree tree;
 
-    // Map lưu trữ NodeVisualizer (Key: com.example.treevisualize.Node, Value: NodeVisualizer)
     private Map<Node, NodeVisualizer> nodeVis;
-
-    // Các hằng số static (gạch chân trong UML)
     public static final double NODE_RADIUS = 20.0;
-    public static final double VERTICAL_GAP = 25.0;
+    public static final double VERTICAL_GAP = 50.0;
 
     // --- CONSTRUCTOR ---
-    /**
-     * Khởi tạo com.example.treevisualize.Visualizer với cây và canvas có sẵn.
-     */
     public TreeVisualizer(Tree tree, Canvas canvas) {
         this.tree = tree;
         this.canvas = canvas;
@@ -41,45 +36,64 @@ public class TreeVisualizer implements TreeObserver {
 
     @Override
     public void onNodeChanged(Node node) {
-        // Khi một node thay đổi (VD: đổi màu), ta vẽ lại
-        // (Trong tương lai có thể tối ưu chỉ vẽ lại vùng node đó)
         render();
     }
 
     @Override
     public void onStructureChanged() {
-        // Khi cấu trúc cây thay đổi (thêm/xóa), map cũ không còn đúng -> Clear
         nodeVis.clear();
         render();
     }
 
     @Override
     public void onError(String message) {
-        // Xử lý lỗi (com.example.treevisualize.Visualizer có thể bỏ qua hoặc log ra console)
         System.err.println("TreeVisualizer Error: " + message);
     }
-
-    // --- CORE LOGIC METHODS (Theo UML) ---
 
     /**
      * Hàm chính để vẽ lại toàn bộ cây.
      */
     public void render() {
-        // 1. Xóa sạch màn hình
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
+        // 1. Lấy chiều cao cây
         if (tree == null || tree.getRoot() == null) {
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             return;
         }
+        int height = tree.getHeight();
 
-        // 2. Tính toán toạ độ bắt đầu (Giữa màn hình, cách lề trên)
+        // 2. TÍNH TOÁN KÍCH THƯỚC CẦN THIẾT 
+        // Khoảng cách ngang tối thiểu ở tầng dưới cùng (để 2 node lá không đè lên nhau)
+        // Node radius = 20 -> Đường kính 40 -> Cần ít nhất 50-60px khoảng cách
+        double minGapAtBottom = NODE_RADIUS * 2 + 10; 
+        
+        // Tính khoảng cách offset ban đầu cho Root dựa trên chiều cao cây
+        // Công thức: Gap tại root = MinGap * 2^(height - 2)
+        // Ví dụ: Cây cao 1 (chỉ root) -> shift 0
+        // Cây cao 2 (root + con) -> shift = minGap
+        double initialHGap = minGapAtBottom * Math.pow(2, Math.max(0, height - 2));
+
+        // Tính chiều rộng tổng thể cần thiết:
+        // Root ở giữa, cây xòe ra 2 bên -> Width = initialHGap * 4 (ước lượng an toàn)
+        // Hoặc tính theo số lượng lá tối đa: 2^(h-1) * minGapAtBottom
+        double requiredWidth = Math.max(1000, initialHGap * 4 + 100); 
+        double requiredHeight = Math.max(600, height * VERTICAL_GAP + 100);
+
+        // 3. CẬP NHẬT KÍCH THƯỚC CANVAS
+        // Bước này cực kỳ quan trọng để ScrollPane hoạt động
+        canvas.setWidth(requiredWidth);
+        canvas.setHeight(requiredHeight);
+
+        // 4. Xóa sạch màn hình (Sau khi resize)
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        // 5. Tính toán toạ độ bắt đầu
+        // Luôn bắt đầu từ chính giữa Canvas hiện tại
         double startX = canvas.getWidth() / 2;
-        double startY = NODE_RADIUS * 2.5;
-        double initialHGap = canvas.getWidth() / 4;
+        double startY = NODE_RADIUS * 2;
 
-        // 3. Bắt đầu tính toán layout và vẽ đệ quy
         calculateLayout(tree.getRoot(), startX, startY, initialHGap);
     }
+
 
     /**
      * Hàm đệ quy tính toán vị trí và vẽ các thành phần.
@@ -114,19 +128,26 @@ public class TreeVisualizer implements TreeObserver {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
 
+        // Khoảng cách cho tầng tiếp theo (giảm dần nhưng không quá nhỏ)
+        double nextHGap = hGap * 0.5;
+
         // Đệ quy TRÁI
         if (left != null) {
-            gc.strokeLine(x, y, x - hGap, y + VERTICAL_GAP);
-            calculateLayout(left, x - hGap, y + VERTICAL_GAP, hGap / 2);
+            double leftX = x - hGap;
+            double nextY = y + VERTICAL_GAP;
+            gc.strokeLine(x, y, leftX, nextY);
+            calculateLayout(left, leftX, nextY, nextHGap);
         }
 
         // Đệ quy PHẢI
         if (right != null) {
-            gc.strokeLine(x, y, x + hGap, y + VERTICAL_GAP);
-            calculateLayout(right, x + hGap, y + VERTICAL_GAP, hGap / 2);
+            double rightX = x + hGap;
+            double nextY = y + VERTICAL_GAP;
+            gc.strokeLine(x, y, rightX, nextY);
+            calculateLayout(right, rightX, nextY, nextHGap);
         }
 
-        // B5: Cuối cùng mới vẽ com.example.treevisualize.Node (để đè lên dây)
+        // B5: Cuối cùng mới vẽ Node (để đè lên dây)
         vis.draw(gc);
     }
 
@@ -146,17 +167,16 @@ public class TreeVisualizer implements TreeObserver {
      */
     private void updateNodeColor(NodeVisualizer vis, Node node) {
         // 1. ƯU TIÊN CAO NHẤT: Kiểm tra NodeStatus (Trạng thái hoạt động)
-        // Nếu status khác NORMAL, tức là đang có hoạt động (Duyệt, Tìm kiếm...)
         if (node.getStatus() != null && node.getStatus() != com.example.treevisualize.Node.NodeStatus.NORMAL) {
             switch (node.getStatus()) {
                 case ACTIVE:
-                    vis.setFillColor(Color.ORANGE); // Node đang đứng tại đó
-                    return; // Thoát ngay, không xét Đỏ/Đen nữa
+                    vis.setFillColor(Color.ORANGE);
+                    return;
                 case VISITED:
-                    vis.setFillColor(Color.LIGHTBLUE); // Node đã đi qua (Vệt đường đi)
+                    vis.setFillColor(Color.LIGHTBLUE);
                     return;
                 case FOUND:
-                    vis.setFillColor(Color.LIMEGREEN); // Tìm thấy (Search)
+                    vis.setFillColor(Color.LIMEGREEN);
                     return;
                 case DELETED:
                     vis.setFillColor(Color.GRAY);
@@ -173,10 +193,11 @@ public class TreeVisualizer implements TreeObserver {
                 vis.setFillColor(Color.BLACK);
             }
         } else {
-            // Với BinaryTree hoặc BST thường -> Màu trắng
+            // Với BinaryTree hoặc BST thường -> Màu xanh
             vis.setFillColor(Color.GREEN);
         }
     }
+    
     public Canvas getCanvas() {
         return this.canvas;
     }
