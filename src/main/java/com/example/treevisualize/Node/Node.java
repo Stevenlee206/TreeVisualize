@@ -1,5 +1,7 @@
 package com.example.treevisualize.Node;
 
+import java.util.List;
+
 public abstract class Node {
     private Node parent;
     private int value;
@@ -34,4 +36,6 @@ public abstract class Node {
     }
 
     public abstract Node copy();
+
+    public abstract List<Node> getChildren();
 }

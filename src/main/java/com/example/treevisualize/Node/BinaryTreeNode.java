@@ -1,5 +1,8 @@
 package com.example.treevisualize.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BinaryTreeNode extends Node{
     private BinaryTreeNode leftChild;
     private BinaryTreeNode rightChild;
@@ -81,5 +84,17 @@ public class BinaryTreeNode extends Node{
         }
 
         return newNode;
+    }
+
+    @Override
+    public List<Node> getChildren() {
+        List<Node> children = new ArrayList<>();
+        if (leftChild != null) {
+            children.add(leftChild);
+        }
+        if (rightChild != null) {
+            children.add(rightChild);
+        }
+        return children;
     }
 }

@@ -1,5 +1,8 @@
 package com.example.treevisualize.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GeneralTreeNode extends Node {
     private GeneralTreeNode leftMostChild;
     private GeneralTreeNode rightSibling;
@@ -88,4 +91,15 @@ public class GeneralTreeNode extends Node {
 
         return newNode;
     }
-}
+
+    @Override
+    public List<Node> getChildren() {
+        List<Node> children = new ArrayList<>();
+        GeneralTreeNode current = this.leftMostChild;
+        while (current != null) {
+            children.add(current);
+            current = current.getRightSibling();
+        }
+
+        return children;
+    }}
