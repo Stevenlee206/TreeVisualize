@@ -3,11 +3,11 @@ package com.example.treevisualize.Visualizer;
 import com.example.treevisualize.Node.Node;
 
 public class TreeSnapShot {
-    private Node rootCopy;
+    private final Node rootCopy;
 
-    private int pseudoLineIndex;
+    private final int pseudoLineIndex;
 
-    private String statusMessage;
+    private final String statusMessage;
 
     public Node getRootCopy() {
         return rootCopy;

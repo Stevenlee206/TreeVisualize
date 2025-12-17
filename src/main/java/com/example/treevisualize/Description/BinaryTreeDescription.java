@@ -1,19 +1,26 @@
 package com.example.treevisualize.Description;
 
-public class BinaryTreeDescription implements Description {
+public class BinaryTreeDescription extends TreeDescription {
     @Override
-    public String getDescription() {
-        return "Binary Tree is a non-linear and hierarchical data structure where each node has at "
-        		+ "most two children referred to as the left child and the right child. The topmost node "
-        		+ "in a binary tree is called the root, and the bottom-most nodes(having no children) are "
-        		+ "called leaves.\n\n" +
-                "Complexity :\n" +
-                "=======================================\n" +
-                "1. Time Complexity :\n" +
-                "   - Search :  O(n)\n" +
-                "   - Insert :  O(n)\n" +
-                "   - Delete :  O(n)\n\n" +
-                "2. Space Complexity :\n" +
-                "   - O(n)";
+    protected String getTreeName() {
+        return "Binary Tree (Normal)";
+    }
+
+    @Override
+    protected String getDefinition() {
+        return "A basic hierarchical structure where each node has at most two children (referred to as the Left child and Right child). Unlike BST, there is no strict ordering constraint between nodes.";
+    }
+
+    @Override
+    protected String getTimeComplexity() {
+        return """
+               - Search : O(n) (No ordering, must scan all)
+               - Insert : O(n) (Typically Level-Order insertion)
+               - Delete : O(n) (Search target + Swap deeply)""";
+    }
+
+    @Override
+    protected String getSpaceComplexity() {
+        return "O(n)";
     }
 }

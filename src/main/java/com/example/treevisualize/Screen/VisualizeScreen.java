@@ -1,8 +1,8 @@
 package com.example.treevisualize.Screen;
 
 import com.example.treevisualize.Controller.AnimationController;
+import com.example.treevisualize.Description.TreeType;
 import com.example.treevisualize.Main5;
-import com.example.treevisualize.PseudoCodeStore.PseudoCodeFactory;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
 import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
@@ -22,9 +22,11 @@ public class VisualizeScreen {
     private TreeVisualizer visualizer;
     private AnimationController controller;
     private PseudoCodeBlock pseudoCode;
+
+    // UI Controls
     private TextField tfParentInput;
     private TextField tfInput;
-    private ComboBox<String> cboTreeType;
+    private ComboBox<TreeType> cboTreeType; // Dùng Enum cho ComboBox
     private Slider sliderSpeed;
 
     public VisualizeScreen(Main5 mainApp) {
@@ -35,58 +37,40 @@ public class VisualizeScreen {
         BorderPane root = new BorderPane();
         root.getStyleClass().add("visualizer-pane");
 
+        // Top Bar
         Button btnHome = new Button("🏠 Home");
         btnHome.getStyleClass().add("button");
         btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
-
         Label lblTitle = new Label("Visualizer Mode");
         lblTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
-
         ToolBar topBar = new ToolBar(btnHome, new Separator(), lblTitle);
         root.setTop(topBar);
 
-        Pane canvasPane = new Pane();
-        canvasPane.setStyle("-fx-background-color: #ffffff;");
-        // ==========================================================
-        // 2. CENTER (Màn hình vẽ - Canvas)
-        // ==========================================================
-        // Pane bao ngoài để Canvas có thể resize theo cửa sổ
-     // ================= CENTER (Canvas + Scroll) =================
+        // Center (Canvas)
         Canvas canvas = new Canvas(1200, 1000);
-
         StackPane canvasWrapper = new StackPane(canvas);
         canvasWrapper.setStyle("-fx-background-color: white;");
-
         ScrollPane scrollPane = new ScrollPane(canvasWrapper);
         scrollPane.setPannable(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
         root.setCenter(scrollPane);
 
-
-        // ==========================================================
-        // 3. RIGHT (Mã giả - Pseudo Code)
-        // ==========================================================
+        // Right (Pseudo Code)
         VBox rightPane = new VBox();
         rightPane.setPrefWidth(350);
         rightPane.setPadding(new Insets(10));
         rightPane.setStyle("-fx-background-color: #f4f6f7; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;");
-
         Label lblCode = new Label("Pseudo Code");
         lblCode.setStyle("-fx-font-weight: bold; -fx-underline: true; -fx-font-size: 14px;");
-
         VBox codeContainer = new VBox(5);
         pseudoCode = new PseudoCodeBlock(codeContainer);
-
         rightPane.getChildren().addAll(lblCode, codeContainer);
         root.setRight(rightPane);
 
+        // Bottom (Controls)
         HBox controls = createControls(canvas);
         root.setBottom(controls);
 
+        // [INIT] Khởi tạo hệ thống dựa trên Enum đang chọn
         initializeSystem(mainApp.getSelectedTreeType(), canvas);
 
         mainApp.switchScene(root, 1280, 800);
@@ -99,14 +83,13 @@ public class VisualizeScreen {
         box.setStyle("-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;");
 
         tfInput = new TextField();
-        tfInput.setPromptText("Enter an int ...");
-        tfInput.setPrefWidth(80);
+        tfInput.setPromptText("Val...");
+        tfInput.setPrefWidth(60);
 
         tfParentInput = new TextField();
         tfParentInput.setPromptText("Parent");
-        tfParentInput.setPrefWidth(70);
-        tfParentInput.setVisible(false);
-        tfParentInput.setManaged(false);
+        tfParentInput.setPrefWidth(60);
+        // Trạng thái ẩn/hiện sẽ do initializeSystem quyết định
 
         Button btnInsert = new Button("Insert");
         btnInsert.getStyleClass().add("btn-primary");
@@ -118,112 +101,94 @@ public class VisualizeScreen {
         btnDelete.setOnAction(e -> handleDelete());
 
         Button btnSearch = new Button("Search");
-        btnSearch.getStyleClass().add("button");
         btnSearch.setOnAction(e -> handleSearch());
 
-        Button btnRandom = new Button("Random (10)");
-        btnRandom.getStyleClass().add("button");
+        Button btnRandom = new Button("Rand(10)");
         btnRandom.setOnAction(e -> handleRandom());
 
-        // Bổ sung Traverse button
-        Button btnTraverse=new Button("Traverse");
-        btnSearch.getStyleClass().add("button");
-        // Nhớ thêm code xử lý Traverse vào đây
-
-
-        // Slider tốc độ
+        // Slider Speed
         Label lblSpeed = new Label("Speed:");
         sliderSpeed = new Slider(1, 5, 2);
         sliderSpeed.setShowTickMarks(true);
-        sliderSpeed.setShowTickLabels(true);
         sliderSpeed.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (controller != null) controller.setSpeed(newVal.doubleValue());
         });
 
+        // ComboBox Type
         Label lblType = new Label("Type:");
         cboTreeType = new ComboBox<>();
-        cboTreeType.getItems().addAll(
-                "Red Black Tree",
-                "Binary Search Tree",
-                "Binary Tree (Normal)",
-                "General Tree"
-        );
+        cboTreeType.getItems().addAll(TreeType.values()); // Nạp toàn bộ Enum
+
+        // Hiển thị tên đẹp (DisplayName) thay vì tên Enum thô
+        cboTreeType.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(TreeType item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? "" : item.getDisplayName());
+            }
+        });
+        cboTreeType.setButtonCell(cboTreeType.getCellFactory().call(null)); // Hiển thị cả khi đã chọn
+
         cboTreeType.setValue(mainApp.getSelectedTreeType());
         cboTreeType.setOnAction(e -> {
-            String newType = cboTreeType.getValue();
+            TreeType newType = cboTreeType.getValue();
             mainApp.setSelectedTreeType(newType);
             initializeSystem(newType, cv);
         });
 
-        box.getChildren().addAll(tfParentInput,
-                tfInput, btnInsert, btnDelete, btnSearch, new Separator(),
-                btnRandom, new Separator(),
-                lblSpeed, sliderSpeed, new Separator(),
-                lblType, cboTreeType
-        );
+        box.getChildren().addAll(tfParentInput, tfInput, btnInsert, btnDelete, btnSearch, new Separator(),
+                btnRandom, new Separator(), lblSpeed, sliderSpeed, new Separator(),
+                lblType, cboTreeType);
         return box;
     }
 
-    private void initializeSystem(String treeType, Canvas cv) {
-        if ("General Tree".equals(treeType)) {
+    // [HÀM QUAN TRỌNG] Khởi tạo hệ thống dựa trên Enum
+    private void initializeSystem(TreeType type, Canvas cv) {
+        // 1. Cấu hình ô nhập Parent (Dựa trên cờ trong Enum)
+        if (type.isRequiresParentInput()) {
             tfParentInput.setVisible(true);
             tfParentInput.setManaged(true);
         } else {
             tfParentInput.setVisible(false);
             tfParentInput.setManaged(false);
         }
-        switch (treeType) {
-            case "Binary Search Tree":
-                tree = new BinarySearchTree();
-                break;
-            case "Binary Tree (Normal)":
-                tree = new BinaryTree();
-                break;
-            case "General Tree":
-                tree = new GeneralTree();
-                break;
-            case "Red Black Tree":
-            default:
-                tree = new RedBlackTree();
-                break;
-        }
 
-        PseudoCodeStrategy strategy = PseudoCodeFactory.getInsertStrategy(treeType);
+        // 2. Tạo cây mới từ Factory trong Enum (Bạn cần thêm Supplier vào TreeType như đã bàn)
+        // Nếu chưa thêm, bạn có thể dùng tạm switch case ở đây, nhưng tốt nhất là dùng type.createInstance()
+        this.tree = type.createTreeInstance();
+
+        // 3. Lấy Strategy Insert tương ứng từ Enum để hiển thị mã giả
+        PseudoCodeStrategy strategy = type.getInsertStrategy();
         pseudoCode.setCode(strategy.getTitle(), strategy.getLines());
 
-        visualizer = new TreeVisualizer(tree, cv);
+        // 4. Khởi tạo Visualizer (Nó sẽ tự lấy Renderer từ Enum)
+        visualizer = new TreeVisualizer(tree, type, cv);
 
         controller = new AnimationController(tree, visualizer, pseudoCode);
-
         controller.setSpeed(sliderSpeed != null ? sliderSpeed.getValue() : 2.0);
-
         visualizer.render();
     }
 
     private void handleInsert() {
-        String currentType = mainApp.getSelectedTreeType();
-
+        TreeType currentType = mainApp.getSelectedTreeType();
         try {
             int childValue = Integer.parseInt(tfInput.getText().trim());
 
-            if ("General Tree".equals(currentType)) {
+            // Logic Insert Đa hình
+            if (currentType.isRequiresParentInput()) {
                 String parentText = tfParentInput.getText().trim();
-
                 if (parentText.isEmpty()) {
-                    controller.startInsert(childValue);
+                    controller.startInsert(childValue); // Insert Root
                 } else {
                     int parentValue = Integer.parseInt(parentText);
                     controller.startInsert(parentValue, childValue);
                 }
-
             } else {
                 controller.startInsert(childValue);
             }
-
+            // Reset input
             tfInput.clear();
             if(tfParentInput.isVisible()) tfParentInput.clear();
             tfInput.requestFocus();
-
         } catch (NumberFormatException e) {
             mainApp.showAlert("Input Error", "Please enter valid number!");
         }
@@ -235,7 +200,7 @@ public class VisualizeScreen {
             controller.startDelete(value);
             tfInput.clear();
         } catch (NumberFormatException e) {
-            mainApp.showAlert("Input Error", "Please enter valid number to delete!");
+            mainApp.showAlert("Input Error", "Invalid number!");
         }
     }
 
@@ -245,19 +210,14 @@ public class VisualizeScreen {
             controller.startSearch(value);
             tfInput.clear();
         } catch (NumberFormatException e) {
-            mainApp.showAlert("Input Error", "Please enter valid number to search!");
+            mainApp.showAlert("Input Error", "Invalid number!");
         }
     }
 
     private void handleRandom() {
         Random rand = new Random();
         for (int i = 0; i < 10; i++) {
-            int val = rand.nextInt(99) + 1;
-            controller.startInsert(val);
+            controller.startInsert(rand.nextInt(99) + 1);
         }
-    }
-
-    private void handleTraverse() {
-
     }
 }

@@ -1,6 +1,7 @@
 package com.example.treevisualize.Controller;
 
 import com.example.treevisualize.Node.Node;
+import com.example.treevisualize.TraversalType;
 import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
 import com.example.treevisualize.Visualizer.TreeObserver;
@@ -162,43 +163,39 @@ public class AnimationController {
         return 0;
     }
 
-    public void startTraversal(String type) {
+    public void startTraversal(TraversalType type) {
         tree.resetTreeStatus();
-        prepareRecording();
-        TraversalStrategy strategy = null;
 
-        switch (type) {
-            case "In-Order (LNR)":
-                strategy = new InOrderTraversal();
-                break;
-            case "Pre-Order (NLR)":
-                strategy = new PreOrderTraversal();
-                break;
-            case "Post-Order (LRN)":
-                strategy = new PostOrderTraversal();
-                break;
-            case "BFS (Level Order)":
-                strategy = new BFSTraversal();
-                break;
-            default:
-                System.out.println("Not Found " + type);
-                finishRecording(); // Kết thúc sớm để tránh lỗi
-                return;
-        }
+        // 1. Tự động cập nhật mã giả lên màn hình từ Enum
+        // (Trước đây bạn quên bước này trong AnimationController cũ)
+        pseudoCode.setCode(type.getPseudoCode().getTitle(), type.getPseudoCode().getLines());
+
+        prepareRecording();
+
+        // 2. Lấy thuật toán trực tiếp từ Enum và chạy
+        // Không còn switch-case dài dòng nữa!
+        TraversalStrategy strategy = type.getAlgorithm();
+
         if (strategy != null) {
             tree.traverse(strategy);
+        } else {
+            System.err.println("Algorithm not found for: " + type);
         }
+
         finishRecording();
     }
 
     public void startInsert(int parentValue, int childValue) {
+        // Có thể kiểm tra linh hoạt hơn thay vì chỉ check GeneralTree
+        // Ví dụ: BinaryTree của bạn cũng có hàm insert(parent, child)
         if (tree instanceof GeneralTree) {
-            GeneralTree generalTree = (GeneralTree) tree;
-            generalTree.insert(parentValue, childValue);
+            ((GeneralTree) tree).insert(parentValue, childValue);
             visualizer.render();
-
+        } else if (tree instanceof BinaryTree) {
+            ((BinaryTree) tree).insert(parentValue, childValue);
+            visualizer.render();
         } else {
-            System.err.println("ERROR: Current tree is not General Tree!");
+            System.err.println("This tree type does not support parent-based insertion.");
         }
     }
 }

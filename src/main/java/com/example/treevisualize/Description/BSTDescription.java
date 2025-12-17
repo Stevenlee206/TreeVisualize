@@ -1,19 +1,28 @@
 package com.example.treevisualize.Description;
 
-public class BSTDescription implements Description {
+public class BSTDescription extends TreeDescription {
     @Override
-    public String getDescription() {
-        return "A Binary Search Tree (BST) is a type of binary tree data structure in which each node "
-        		+ "contains a unique key and satisfies a specific ordering property:\r\n"
-        		+ "+ All nodes in the left subtree of a node contain values strictly less than the node’s value.\r\n"
-        		+ "+ All nodes in the right subtree of a node contain values strictly greater than the node’s value.\n\n" +
-                "Complexity :\n" +
-                "=======================================\n" +
-                "1. Time Complexity :\n" +
-                "   - Search :  O(log n)\n" +
-                "   - Insert :  O(log n)\n" +
-                "   - Delete :  O(log n)\n\n" +
-                "2. Space Complexity :\n" +
-                "   - O(n)";
+    protected String getTreeName() {
+        return "Binary Search Tree";
+    }
+
+    @Override
+    protected String getDefinition() {
+        return "A rooted binary tree data structure with the key property: The value of each node must be greater than all values in its left subtree and less than all values in its right subtree.";
+    }
+
+    @Override
+    protected String getTimeComplexity() {
+        return """
+               - Search : O(log n) (Avg) / O(n) (Worst)
+               - Insert : O(log n) (Avg) / O(n) (Worst)
+               - Delete : O(log n) (Avg) / O(n) (Worst)
+               
+               * Note: Worst case O(n) happens when the tree becomes skewed (like a linked list).""";
+    }
+
+    @Override
+    protected String getSpaceComplexity() {
+        return "O(n)";
     }
 }

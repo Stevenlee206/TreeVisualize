@@ -21,34 +21,6 @@ public class PseudoCodeBlock implements TreeObserver {
     private List<Label> lineLabels;
     private Label statusLabel;
 
-    private final String STYLE_HEADER =
-            "-fx-font-family: 'Times New Roman'; " +
-                    "-fx-font-size: 16px; " +
-                    "-fx-font-weight: bold; " +
-                    "-fx-text-fill: #000000;";
-
-    private final String STYLE_NORMAL =
-            "-fx-background-color: transparent; " +
-                    "-fx-text-fill: #000000; " +
-                    "-fx-font-family: 'Consolas', 'Menlo', 'Courier New'; " +
-                    "-fx-font-size: 14px; " +
-                    "-fx-padding: 1 5 1 5;";
-
-    private final String STYLE_HIGHLIGHT =
-            "-fx-background-color: #e0e0e0; " +
-                    "-fx-text-fill: #000000; " +
-                    "-fx-font-family: 'Consolas', 'Menlo', 'Courier New'; " +
-                    "-fx-font-size: 14px; " +
-                    "-fx-font-weight: bold; " +
-                    "-fx-padding: 1 5 1 5;";
-
-    private final String STYLE_ERROR =
-            "-fx-background-color: #ffebee; " +
-                    "-fx-text-fill: #c62828; " +
-                    "-fx-font-family: 'Consolas'; " +
-                    "-fx-font-size: 13px; " +
-                    "-fx-padding: 5;";
-
     public PseudoCodeBlock(VBox container) {
         this.container = container;
         this.lineLabels = new ArrayList<>();
@@ -58,8 +30,7 @@ public class PseudoCodeBlock implements TreeObserver {
         this.container.setStyle("-fx-background-color: white; -fx-border-color: #333; -fx-border-width: 1px;");
 
         this.titleLabel = new Label("Algorithm");
-        this.titleLabel.setStyle(STYLE_HEADER);
-
+        this.titleLabel.getStyleClass().add("pseudo-title");
         Separator topSep = new Separator();
         topSep.setStyle("-fx-background-color: black;");
 
@@ -69,8 +40,7 @@ public class PseudoCodeBlock implements TreeObserver {
         botSep.setStyle("-fx-background-color: black;");
 
         this.statusLabel = new Label();
-        this.statusLabel.setStyle(STYLE_ERROR);
-        this.statusLabel.setMaxWidth(Double.MAX_VALUE);
+        this.statusLabel.getStyleClass().add("pseudo-status-error");        this.statusLabel.setMaxWidth(Double.MAX_VALUE);
         this.statusLabel.setVisible(false);
 
         this.container.getChildren().addAll(titleLabel, topSep, codeContentBox, botSep, statusLabel);
@@ -84,7 +54,7 @@ public class PseudoCodeBlock implements TreeObserver {
 
         for (String lineContent : lines) {
             Label label = new Label(lineContent);
-            label.setStyle(STYLE_NORMAL);
+            label.getStyleClass().add("pseudo-line-normal");
             label.setMaxWidth(Double.MAX_VALUE);
             label.setWrapText(false);
 
@@ -103,18 +73,19 @@ public class PseudoCodeBlock implements TreeObserver {
 
         for (int i = 0; i < lineLabels.size(); i++) {
             Label lbl = lineLabels.get(i);
+            lbl.getStyleClass().removeAll("pseudo-line-normal", "pseudo-line-highlight");
             if (i == lineIndex) {
-                lbl.setStyle(STYLE_HIGHLIGHT);
+                lbl.getStyleClass().add("pseudo-line-highlight");
             } else {
-                lbl.setStyle(STYLE_NORMAL);
+                lbl.getStyleClass().add("pseudo-line-normal");
             }
         }
     }
 
     public void clearHighlight() {
         for (Label lbl : lineLabels) {
-            lbl.setStyle(STYLE_NORMAL);
-        }
+            lbl.getStyleClass().removeAll("pseudo-line-normal", "pseudo-line-highlight");
+            lbl.getStyleClass().add("pseudo-line-normal");        }
         this.statusLabel.setVisible(false);
     }
 

@@ -1,5 +1,6 @@
 package com.example.treevisualize.Screen;
 
+import com.example.treevisualize.Description.TreeType;
 import com.example.treevisualize.Main5;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,12 +45,9 @@ public class SelectScreen {
         root.setTop(topHeader);
 
         GridPane grid = createGrid();
-
         VBox gridContainer = new VBox(grid);
         gridContainer.setAlignment(Pos.CENTER);
-
         root.setCenter(gridContainer);
-
         mainApp.switchScene(root, 1200, 850);
     }
 
@@ -63,63 +61,61 @@ public class SelectScreen {
         colConst.setPercentWidth(33.33);
         grid.getColumnConstraints().addAll(colConst, colConst, colConst);
 
-        RowConstraints rowConst = new RowConstraints();
-        rowConst.setPercentHeight(33.33);
-        grid.getRowConstraints().addAll(rowConst, rowConst, rowConst);
+        int col = 0;
+        int row = 0;
 
-        grid.setMaxSize(1000, 600);
+        // Duyệt qua Enum để tự động tạo Card
+        for (TreeType type : TreeType.values()) {
+            VBox card = createSelectableCard(type);
+            grid.add(card, col, row);
 
-        grid.add(createSelectableCard("Red Black Tree", "Self-Balancing Binary Tree.", "/images/RBT_icon.png"), 0, 0);
-        grid.add(createSelectableCard("Binary Search Tree", "Standard BST Structure.", "/images/BST_icon.png"), 1, 0);
-        grid.add(createSelectableCard("Binary Tree (Normal)", "Basic Level-Order Tree.", "/images/BT_icon.png"), 2, 0);
-
-        grid.add(createSelectableCard("General Tree", "N-ary Tree (Multiple children).", "/images/GT_icon.png"), 0, 1);
-        grid.add(createEmptySlot(), 1, 1);
-        grid.add(createEmptySlot(), 2, 1);
-
-        grid.add(createEmptySlot(), 0, 2);
-        grid.add(createEmptySlot(), 1, 2);
-        grid.add(createEmptySlot(), 2, 2);
+            col++;
+            if (col > 2) {
+                col = 0;
+                row++;
+            }
+        }
+        // Thêm slot trống nếu dòng chưa đầy (để bố cục đẹp)
+        while (col <= 2 && row < 2) { // Giả sử tối đa 2 dòng
+            grid.add(createEmptySlot(), col, row);
+            col++;
+        }
 
         return grid;
     }
 
-    private VBox createSelectableCard(String title, String desc, String iconPath) {
+    private VBox createSelectableCard(TreeType type) {
         VBox card = new VBox(10);
         card.getStyleClass().add("tree-card");
         card.setAlignment(Pos.CENTER);
-
-        card.setUserData(title);
-
         card.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         GridPane.setFillWidth(card, true);
         GridPane.setFillHeight(card, true);
 
+        // Load Icon từ Enum
         ImageView iconView = new ImageView();
         try {
-            String path = (iconPath != null) ? iconPath : "/images/TreeView.png";
+            String path = (type.getIconPath() != null) ? type.getIconPath() : "/images/TreeView.png";
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
             iconView.setImage(img);
             iconView.setFitHeight(50);
             iconView.setPreserveRatio(true);
-        } catch (Exception e) {
-        	
-        }
+        } catch (Exception e) { /* Ignored */ }
 
-        Label lblTitle = new Label(title);
+        Label lblTitle = new Label(type.getDisplayName());
         lblTitle.getStyleClass().add("card-title");
         lblTitle.setTextAlignment(TextAlignment.CENTER);
         lblTitle.setWrapText(true);
 
-        Label lblDesc = new Label(desc);
+        // Mô tả ngắn có thể lấy từ Enum (nếu có) hoặc để trống
+        Label lblDesc = new Label("Click to explore");
         lblDesc.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 12px;");
-        lblDesc.setTextAlignment(TextAlignment.CENTER);
-        lblDesc.setWrapText(true);
 
         card.getChildren().addAll(iconView, lblTitle, lblDesc);
 
+        // Sự kiện Click: Truyền Enum vào Main
         card.setOnMouseClicked(e -> {
-            mainApp.setSelectedTreeType(title);
+            mainApp.setSelectedTreeType(type);
             mainApp.switchToInfoScreen();
         });
         card.setStyle("-fx-cursor: hand;");
@@ -129,14 +125,10 @@ public class SelectScreen {
 
     private VBox createEmptySlot() {
         VBox slot = new VBox();
-        slot.setStyle("-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-border-style: dashed; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 15; -fx-border-radius: 15;");
+        slot.setStyle("-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-border-style: dashed; -fx-background-color: rgba(255,255,255,0.3); -fx-background-radius: 15;");
         slot.setAlignment(Pos.CENTER);
         slot.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-        Label lbl = new Label("Coming Soon");
-        lbl.setStyle("-fx-text-fill: #95a5a6; -fx-font-style: italic;");
-        slot.getChildren().add(lbl);
-
+        slot.getChildren().add(new Label("Coming Soon..."));
         return slot;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.treevisualize;
 
+import com.example.treevisualize.Description.TreeType;
 import com.example.treevisualize.Screen.InfoScreen;
 import com.example.treevisualize.Screen.IntroScreen;
 import com.example.treevisualize.Screen.SelectScreen;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class Main5 extends Application {
 
     private Stage primaryStage;
-    private String selectedTreeType = "Red Black Tree";
+    private TreeType selectedTreeType = TreeType.BST;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,21 +39,13 @@ public class Main5 extends Application {
         primaryStage.show();
     }
 
-    public void switchToIntroScreen() {
-        new IntroScreen(this).show();
-    }
+    public void switchToIntroScreen() { new IntroScreen(this).show(); }
 
-    public void switchToSelectScreen() {
-        new SelectScreen(this).show();
-    }
+    public void switchToSelectScreen() { new SelectScreen(this).show(); }
 
-    public void switchToInfoScreen() {
-        new InfoScreen(this).show();
-    }
+    public void switchToInfoScreen() { new InfoScreen(this).show(); }
 
-    public void switchToVisualizerScreen() {
-        new VisualizeScreen(this).show();
-    }
+    public void switchToVisualizerScreen() { new VisualizeScreen(this).show(); }
 
     public void switchScene(Parent root, double width, double height) {
         Scene scene = new Scene(root, width, height);
@@ -82,11 +75,11 @@ public class Main5 extends Application {
         alert.showAndWait();
     }
 
-    public String getSelectedTreeType() {
+    public TreeType getSelectedTreeType() {
         return selectedTreeType;
     }
 
-    public void setSelectedTreeType(String selectedTreeType) {
+    public void setSelectedTreeType(TreeType selectedTreeType) {
         this.selectedTreeType = selectedTreeType;
         System.out.println("Main3 Log: User selected tree -> " + selectedTreeType);
     }

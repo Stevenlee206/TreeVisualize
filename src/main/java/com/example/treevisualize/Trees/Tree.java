@@ -93,16 +93,8 @@ public abstract class Tree {
     private void resetRecursive(Node node) {
         if (node == null) return;
         node.changeStatus(NodeStatus.NORMAL);
-
-        if (node instanceof BinaryTreeNode) {
-            var bNode = (BinaryTreeNode) node;
-            resetRecursive(bNode.getLeftChild());
-            resetRecursive(bNode.getRightChild());
-        }
-        else if (node instanceof GeneralTreeNode) {
-            var gNode = (GeneralTreeNode) node;
-            resetRecursive(gNode.getLeftMostChild());
-            resetRecursive(gNode.getRightSibling());
+        for (Node child : node.getChildren()) {
+            resetRecursive(child);
         }
     }
     

@@ -1,6 +1,7 @@
 package com.example.treevisualize.Visualizer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 public class NodeVisualizer {
@@ -9,10 +10,11 @@ public class NodeVisualizer {
     private Text label;
     private double radius;
     private Color fillColor;
+    private static final Font NODE_FONT = Font.font("Arial", FontWeight.BOLD, 14);
 
     public NodeVisualizer() {
         this.label = new Text();
-        this.label.setFont(new Font("Arial", 14));
+        this.label.setFont(NODE_FONT);
     }
 
     public void draw(GraphicsContext gc){
@@ -24,7 +26,7 @@ public class NodeVisualizer {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
         gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);
-        if (isDark(this.fillColor)) {
+        if (ColorUtils.isDark(this.fillColor)) {
             gc.setFill(Color.WHITE);
         } else {
             gc.setFill(Color.BLACK);
@@ -67,11 +69,4 @@ public class NodeVisualizer {
         return radius;
     }
 
-    private boolean isDark(Color color) {
-        double r = color.getRed();
-        double g = color.getGreen();
-        double b = color.getBlue();
-        double brightness = (r * 0.299) + (g * 0.587) + (b * 0.114);
-        return brightness < 0.5;
-    }
 }

@@ -154,3 +154,43 @@
     -fx-wrap-text: true;
     -fx-line-spacing: 5px;
 }
+
+/* Pseudo Code Styles */
+.pseudo-code-container {
+    -fx-background-color: white;
+    -fx-border-color: #333;
+    -fx-border-width: 1px;
+    -fx-padding: 10;
+}
+
+.pseudo-title {
+    -fx-font-family: 'Times New Roman';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.pseudo-line-normal {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-family: 'Consolas', 'Menlo', 'Courier New';
+    -fx-font-size: 14px;
+    -fx-padding: 1 5 1 5;
+}
+
+.pseudo-line-highlight {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+    -fx-font-family: 'Consolas', 'Menlo', 'Courier New';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 1 5 1 5;
+}
+
+.pseudo-status-error {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+    -fx-font-family: 'Consolas';
+    -fx-font-size: 13px;
+    -fx-padding: 5;
+}

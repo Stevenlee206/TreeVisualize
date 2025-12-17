@@ -1,7 +1,6 @@
 package com.example.treevisualize.Visualizer;
-import com.example.treevisualize.Node.Node;
-import com.example.treevisualize.Node.NodeColor;
-import com.example.treevisualize.Node.RedBlackTreeNode;
+import com.example.treevisualize.Description.TreeType;
+import com.example.treevisualize.Node.*;
 import com.example.treevisualize.Trees.Tree;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,8 +8,6 @@ import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.example.treevisualize.Node.BinaryTreeNode;
-import com.example.treevisualize.Node.GeneralTreeNode;
 
 public class TreeVisualizer implements TreeObserver {
 
@@ -18,16 +15,18 @@ public class TreeVisualizer implements TreeObserver {
     private GraphicsContext gc;
     private Tree tree;
 
+    private TreeRenderer renderer;
+
     private Map<Node, NodeVisualizer> nodeVis;
     public static final double NODE_RADIUS = 15.0;
     public static final double VERTICAL_GAP = 80.0;
 
-    public TreeVisualizer(Tree tree, Canvas canvas) {
+    public TreeVisualizer(Tree tree, TreeType type, Canvas canvas) {
         this.tree = tree;
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.nodeVis = new HashMap<>();
-
+        this.renderer = type.getRenderer();
         this.tree.addObserver(this);
 
         render();
@@ -93,7 +92,7 @@ public class TreeVisualizer implements TreeObserver {
     /**
      * Hàm đệ quy tính toán vị trí và vẽ các thành phần.
      */
-    private void calculateLayout(Node node, double x, double y, double hGap) {
+    public void calculateLayout(Node node, double x, double y, double hGap) {
         if (node == null) return;
 
         syncNodeVisualizer(node);
@@ -102,41 +101,25 @@ public class TreeVisualizer implements TreeObserver {
         vis.updatePosition(x, y);
         vis.setValue(node.getValue());
 
-        updateNodeColor(vis, node);
-
+        Color baseColor = renderer.getNodeColor(node);
         Node left = null;
         Node right = null;
 
-        if (node instanceof BinaryTreeNode) {
-            left = ((BinaryTreeNode) node).getLeftChild();
-            right = ((BinaryTreeNode) node).getRightChild();
-        } else if (node instanceof GeneralTreeNode) {
-            left = ((GeneralTreeNode) node).getLeftMostChild();
-            right = ((GeneralTreeNode) node).getRightSibling();
+        if (node.getStatus() != null && node.getStatus() != NodeStatus.NORMAL) {
+            switch (node.getStatus()) {
+                case ACTIVE: vis.setFillColor(Color.ORANGE); break;
+                case VISITED: vis.setFillColor(Color.LIGHTBLUE); break;
+                case FOUND: vis.setFillColor(Color.LIMEGREEN); break;
+                case DELETED: vis.setFillColor(Color.GRAY); break;
+            }
+        } else {
+            vis.setFillColor(baseColor);
         }
-
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
-
-        // Khoảng cách cho tầng tiếp theo (giảm dần nhưng không quá nhỏ)
-        double nextHGap = hGap * 0.5;
-
-        // Đệ quy TRÁI
-        if (left != null) {
-            double leftX = x - hGap;
-            double nextY = y + VERTICAL_GAP;
-            gc.strokeLine(x, y, leftX, nextY);
-            calculateLayout(left, leftX, nextY, nextHGap);
-        }
-
-        if (right != null) {
-            double rightX = x + hGap;
-            double nextY = y + VERTICAL_GAP;
-            gc.strokeLine(x, y, rightX, nextY);
-            calculateLayout(right, rightX, nextY, nextHGap);
-        }
-
+        renderer.renderChildren(gc, node, x, y, hGap, this);
         vis.draw(gc);
+
     }
 
     private void syncNodeVisualizer(Node node) {
