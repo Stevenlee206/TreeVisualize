@@ -31,11 +31,13 @@ getOrDefault() là một phương thức trong Java dùng để lấy giá trị
         insertRegistry.put("Binary Search Tree",   new BSTInsert());
         insertRegistry.put("Binary Tree (Normal)", new BTInsert());
         insertRegistry.put("AVL Tree",             new AVLInsert());
+        insertRegistry.put("Scapegoat Tree",       new ScapegoatInsert());
 
         deleteRegistry.put("Red Black Tree",       new RBTDeleteStrategy());
         deleteRegistry.put("Binary Search Tree",   new BSTDeleteStrategy());
         deleteRegistry.put("Binary Tree (Normal)", new BSTDeleteStrategy());
         deleteRegistry.put("AVL Tree",             new AVLDeleteStrategy()); 
+        deleteRegistry.put("Scapegoat Tree",       new ScapegoatDeleteStrategy());
 
         traversalRegistry.put("In-Order (LNR)",      new InOrderPCode());
         traversalRegistry.put("Pre-Order (NLR)",     new PreOrderPCode());

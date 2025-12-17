@@ -88,8 +88,8 @@ public class SelectScreen {
         grid.add(createSelectableCard("Binary Tree (Normal)", "Basic Level-Order Tree.", "/images/BT_icon.png"), 2, 0);
         grid.add(createSelectableCard("General Tree", "N-ary Tree (Multiple children).", "/images/GT_icon.png"), 0, 1);
         grid.add(createSelectableCard("AVL Tree", "Strictly Self-Balancing BST.", "/images/AVL_icon.png"), 1, 1);
+        grid.add(createSelectableCard("Scapegoat Tree", "Weight-balanced BST (No extra storage).", "/images/SGT_icon.png"), 2, 1);
 
-        grid.add(createEmptySlot(), 2, 1);
         grid.add(createEmptySlot(), 0, 2);
         grid.add(createEmptySlot(), 1, 2);
         grid.add(createEmptySlot(), 2, 2);

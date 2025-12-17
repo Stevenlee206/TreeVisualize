@@ -167,7 +167,8 @@ public class VisualizeScreen {
                 "Binary Search Tree",
                 "Binary Tree (Normal)",
                 "General Tree",
-                "AVL Tree"
+                "AVL Tree",
+                "Scapegoat Tree"
         );
         cboTreeType.setValue(mainApp.getSelectedTreeType());
         // Khi chọn loại mới -> Reset lại toàn bộ hệ thống
@@ -211,6 +212,9 @@ public class VisualizeScreen {
                 break;
             case "AVL Tree":
                 tree = new AVLTree();
+                break;
+            case "Scapegoat Tree":
+                tree = new ScapegoatTree();
                 break;
             case "Red Black Tree":
             default:
@@ -262,7 +266,7 @@ public class VisualizeScreen {
                     controller.startInsert(parentValue, childValue);
                 }
             } else {
-                // Các loại cây nhị phân: BST, RBT, AVL...
+                // Các loại cây nhị phân: BST, RBT, AVL, Scapegoat...
                 controller.startInsert(childValue);
             }
 

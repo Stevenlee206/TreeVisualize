@@ -93,9 +93,13 @@ public class Main3 extends Application {
                 tree = new BinaryTree();
                 updatePseudoCodeForBinaryTree();
                 break;
-            case "AVL Tree" :
+            case "AVL Tree":
                 tree = new AVLTree();
                 updatePseudoCodeForAVLTree();
+                break;
+            case "Scapegoat Tree":
+                tree = new ScapegoatTree();
+                updatePseudoCodeForScapegoatTree();;
                 break;
             case "Red Black Tree":
             default:
@@ -125,7 +129,7 @@ public class Main3 extends Application {
         // --- NHÓM 1: CHỌN LOẠI CÂY ---
         Label lblType = new Label("Type:");
         ComboBox<String> cboTreeType = new ComboBox<>();
-        cboTreeType.getItems().addAll("Red Black Tree", "Binary Search Tree", "Binary Tree (Normal)", "AVL Tree");
+        cboTreeType.getItems().addAll("Red Black Tree", "Binary Search Tree", "Binary Tree (Normal)", "AVL Tree", "Scapegoat Tree");
         cboTreeType.setValue("Red Black Tree");
         // Khi chọn xong thì reset hệ thống
         cboTreeType.setOnAction(e -> initializeSystem(cboTreeType.getValue()));
@@ -292,6 +296,16 @@ public class Main3 extends Application {
             "7. Nếu BF < -1 & val < Right.val: Quay Phải-Trái (RL)"
         ));
     }
+
+    private void updatePseudoCodeForScapegoatTree() {
+        pseudoCode.setCode("SCAPEGOAT TREE INSERT:", Arrays.asList(
+            "1. Insert node as normal BST",
+            "2. If depth > log_{1/α}(q):",
+            "3.   Find deepest node 'u' that is not α-weight-balanced",
+            "4.   Rebuild the entire subtree at 'u' into a perfect BST"
+        ));
+    }
+
 
     public static void main(String[] args) {
         launch(args);

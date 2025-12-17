@@ -9,10 +9,15 @@ public abstract class Node {
         this.value = value;
         this.parent=null;
     }
+
     public int getValue() {
         return value;
     }
 
+    public void setValue(int value) {
+        this.value = value; 
+    }
+    
     public Node getParent() {
         return parent;
     }
@@ -34,4 +39,5 @@ public abstract class Node {
     }
 
     public abstract Node copy();
+    
 }
