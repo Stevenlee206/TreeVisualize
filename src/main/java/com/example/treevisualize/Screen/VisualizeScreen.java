@@ -4,6 +4,7 @@ import com.example.treevisualize.Controller.AnimationController;
 import com.example.treevisualize.Description.TreeType;
 import com.example.treevisualize.Main5;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
+import com.example.treevisualize.TraversalType;
 import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
 import com.example.treevisualize.Visualizer.TreeVisualizer;
@@ -28,6 +29,8 @@ public class VisualizeScreen {
     private TextField tfInput;
     private ComboBox<TreeType> cboTreeType; // Dùng Enum cho ComboBox
     private Slider sliderSpeed;
+    private ComboBox<TraversalType> cboTraversal; // Dùng Enum TraversalType
+    private Button btnTraverse;
 
     public VisualizeScreen(Main5 mainApp) {
         this.mainApp = mainApp;
@@ -38,7 +41,7 @@ public class VisualizeScreen {
         root.getStyleClass().add("visualizer-pane");
 
         // Top Bar
-        Button btnHome = new Button("🏠 Home");
+        Button btnHome = new Button("Home");
         btnHome.getStyleClass().add("button");
         btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
         Label lblTitle = new Label("Visualizer Mode");
@@ -83,7 +86,7 @@ public class VisualizeScreen {
         box.setStyle("-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;");
 
         tfInput = new TextField();
-        tfInput.setPromptText("Val...");
+        tfInput.setPromptText("Value...");
         tfInput.setPrefWidth(60);
 
         tfParentInput = new TextField();
@@ -135,9 +138,29 @@ public class VisualizeScreen {
             initializeSystem(newType, cv);
         });
 
-        box.getChildren().addAll(tfParentInput, tfInput, btnInsert, btnDelete, btnSearch, new Separator(),
-                btnRandom, new Separator(), lblSpeed, sliderSpeed, new Separator(),
-                lblType, cboTreeType);
+        Separator sepTraversal = new Separator();
+        sepTraversal.setOrientation(javafx.geometry.Orientation.VERTICAL);
+
+        // 2. ComboBox chọn loại duyệt (BFS, DFS...)
+        cboTraversal = new ComboBox<>();
+        cboTraversal.getItems().addAll(TraversalType.values()); // Nạp toàn bộ Enum
+        cboTraversal.setValue(TraversalType.BFS); // Mặc định chọn BFS
+        cboTraversal.setPrefWidth(120);
+
+        // 3. Nút Traverse
+        btnTraverse = new Button("Traverse");
+        btnTraverse.getStyleClass().add("button"); // Style giống các nút khác
+        btnTraverse.setOnAction(e -> handleTraverse());
+
+        box.getChildren().addAll(
+                tfParentInput, tfInput, btnInsert, btnDelete, btnSearch,
+                new Separator(),
+                btnRandom,
+                sepTraversal, cboTraversal, btnTraverse, // <-- Thêm 3 cái này vào
+                new Separator(),
+                lblSpeed, sliderSpeed, new Separator(),
+                lblType, cboTreeType
+        );
         return box;
     }
 
@@ -218,6 +241,14 @@ public class VisualizeScreen {
         Random rand = new Random();
         for (int i = 0; i < 10; i++) {
             controller.startInsert(rand.nextInt(99) + 1);
+        }
+    }
+
+    private void handleTraverse() {
+        TraversalType selectedType = cboTraversal.getValue();
+
+        if (selectedType != null) {
+            controller.startTraversal(selectedType);
         }
     }
 }

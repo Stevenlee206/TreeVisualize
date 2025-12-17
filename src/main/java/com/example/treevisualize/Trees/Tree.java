@@ -36,6 +36,13 @@ public abstract class Tree {
         notifyNodeChanged(node);
     }
 
+    public void resetTreeStatus() {
+        if (root != null) {
+            resetRecursive(root);
+            notifyStructureChanged();
+        }
+    }
+
     public void addObserver(TreeObserver observer) {
         if (!observers.contains(observer)) {
             observers.add(observer);
@@ -80,13 +87,6 @@ public abstract class Tree {
     protected void notifyError(String message) {
         for (TreeObserver observer : observers) {
             observer.onError(message);
-        }
-    }
-
-    public void resetTreeStatus() {
-        if (root != null) {
-            resetRecursive(root);
-            notifyStructureChanged();
         }
     }
 

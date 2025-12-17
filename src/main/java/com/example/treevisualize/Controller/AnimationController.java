@@ -42,7 +42,6 @@ public class AnimationController {
         this.speed = 1000.0;
 
         // Khởi tạo Timeline (vòng lặp vô hạn, nhưng ta sẽ control nó)
-        this.speed = 1000.0;
         this.timeLine = new Timeline();
         this.timeLine.setCycleCount(Timeline.INDEFINITE);
     }
@@ -80,8 +79,10 @@ public class AnimationController {
         }
     }
 
-    public void setSpeed(double delayMs) {
-        this.speed = delayMs;
+    public void setSpeed(double speedMultiplier) {
+        // [FIX] Chuyển đổi hệ số (1-5) thành độ trễ (ms)
+        // Ví dụ: Hệ số 1 -> 1000ms, Hệ số 5 -> 200ms
+        this.speed = 1000.0 / speedMultiplier;
         if (isPlaying) {
             pause();
             play();
