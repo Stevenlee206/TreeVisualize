@@ -6,7 +6,7 @@ import java.util.List;
 public class GeneralTreeNode extends Node {
     private GeneralTreeNode leftMostChild;
     private GeneralTreeNode rightSibling;
-    // update from requirements , check later
+
     public void setLeftMostChild(GeneralTreeNode leftMostChild) {
         this.leftMostChild = leftMostChild;
     }
@@ -14,13 +14,13 @@ public class GeneralTreeNode extends Node {
     public void setRightSibling(GeneralTreeNode rightSibling) {
         this.rightSibling = rightSibling;
     }
-    // constructor
+
     public GeneralTreeNode(int value) {
         super(value);
         this.leftMostChild = null;
         this.rightSibling = null;
     }
-    // getter
+
     public GeneralTreeNode getRightSibling() {
         return rightSibling;
     }
@@ -28,7 +28,7 @@ public class GeneralTreeNode extends Node {
     public GeneralTreeNode getLeftMostChild() {
         return leftMostChild;
     }
-    // add a child to a node
+
     public void addChild(GeneralTreeNode child) {
 
 
@@ -45,7 +45,7 @@ public class GeneralTreeNode extends Node {
         }
         current.rightSibling = child;
     }
-    // remove a child
+
     public void removeChild(GeneralTreeNode child) {
 
 

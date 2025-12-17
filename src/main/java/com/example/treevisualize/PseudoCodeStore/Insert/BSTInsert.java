@@ -13,20 +13,21 @@ public class BSTInsert implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-                "1.  if root == ∅ then",
-                "2.      return new Node(val)",
-                "3.  current ← root",
-                "4.  while true do",
-                "5.      if val < current.val then",
-                "6.          if current.left == ∅ then",
-                "7.              current.left ← new Node(val)",
-                "8.              break",
-                "9.          else current ← current.left",
-                "10.     else",
-                "11.         if current.right == ∅ then",
-                "12.             current.right ← new Node(val)",
-                "13.             break",
-                "14.         else current ← current.right"
+                "1.  if (root == ∅)",
+                "2.      root ← new Node(val)",
+                "3.		 return",
+                "4.  current ← root",
+                "5.  while true do",
+                "6.      if (val < current.val)",
+                "7.          if (current.left == ∅)",
+                "8.              current.left ← new Node(val)",
+                "9.              break",
+                "10.         else current ← current.left",
+                "11.     else",
+                "12.         if (current.right == ∅)",
+                "13.             current.right ← new Node(val)",
+                "14.             break",
+                "15.         else current ← current.right"
         );
     }
 }

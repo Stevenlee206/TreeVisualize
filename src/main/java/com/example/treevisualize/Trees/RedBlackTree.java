@@ -46,7 +46,7 @@ public class RedBlackTree extends BinarySearchTree {
         }
 
         if (search(value) != null) {
-            notifyError("Giá trị " + value + " đã tồn tại!");
+            notifyError("The value " + value + " already exist!");
             return;
         }
         RedBlackTreeNode newNode = new RedBlackTreeNode(value);
@@ -54,7 +54,6 @@ public class RedBlackTree extends BinarySearchTree {
 
         insertStandardBST(newNode);
 
-        // Fixup
         fixInsert(newNode);
         notifyStructureChanged();
     }
@@ -83,27 +82,24 @@ public class RedBlackTree extends BinarySearchTree {
 
         while (k != root && isRed(parentOf(k))) {
 
-            // A. Cha là con TRÁI của Ông
             if (parentOf(k) == leftOf(parentOf(parentOf(k)))) {
                 u = rightOf(parentOf(parentOf(k)));
 
-                if (isRed(u)) { // Case 1: Chú ĐỎ
+                if (isRed(u)) {
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(u, NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     k = parentOf(parentOf(k));
                 } else {
-                    if (k == rightOf(parentOf(k))) { // Case 2: Chú ĐEN, k là con Phải
+                    if (k == rightOf(parentOf(k))) { 
                         k = parentOf(k);
                         leftRotate(k);
                     }
-                    // Case 3: Chú ĐEN, k là con Trái
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     rightRotate(parentOf(parentOf(k)));
                 }
             }
-            // B. Cha là con PHẢI của Ông
             else {
                 u = leftOf(parentOf(parentOf(k)));
 
@@ -130,7 +126,7 @@ public class RedBlackTree extends BinarySearchTree {
     public void delete(int value) {
         RedBlackTreeNode z = (RedBlackTreeNode) search(value);
         if (z == null) {
-            notifyError("Không tìm thấy giá trị " + value);
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
 
@@ -166,7 +162,6 @@ public class RedBlackTree extends BinarySearchTree {
             z.changeValue(y.getValue());
         }
 
-        // Fix nếu mất node ĐEN
         if (!isRed(y)) {
             fixDelete(x, yParent);
         }
@@ -179,29 +174,27 @@ public class RedBlackTree extends BinarySearchTree {
 
         while (x != root && !isRed(x)) {
 
-            // A. x là con TRÁI
             if (x == leftOf(xParent)) {
                 w = rightOf(xParent);
 
-                if (isRed(w)) { // Case 1
+                if (isRed(w)) {
                     setColor(w, NodeColor.BLACK);
                     setColor(xParent, NodeColor.RED);
                     leftRotate(xParent);
                     w = rightOf(xParent);
                 }
 
-                if (!isRed(leftOf(w)) && !isRed(rightOf(w))) { // Case 2
+                if (!isRed(leftOf(w)) && !isRed(rightOf(w))) {
                     setColor(w, NodeColor.RED);
                     x = xParent;
                     xParent = parentOf(x);
                 } else {
-                    if (!isRed(rightOf(w))) { // Case 3
+                    if (!isRed(rightOf(w))) {
                         setColor(leftOf(w), NodeColor.BLACK);
                         setColor(w, NodeColor.RED);
                         rightRotate(w);
                         w = rightOf(xParent);
                     }
-                    // Case 4
                     setColor(w, isRed(xParent) ? NodeColor.RED : NodeColor.BLACK);
                     setColor(xParent, NodeColor.BLACK);
                     setColor(rightOf(w), NodeColor.BLACK);
@@ -210,7 +203,6 @@ public class RedBlackTree extends BinarySearchTree {
                     xParent = null;
                 }
             }
-            // B. x là con PHẢI
             else {
                 w = leftOf(xParent);
 
@@ -221,18 +213,17 @@ public class RedBlackTree extends BinarySearchTree {
                     w = leftOf(xParent);
                 }
 
-                if (!isRed(rightOf(w)) && !isRed(leftOf(w))) { // Case 2
+                if (!isRed(rightOf(w)) && !isRed(leftOf(w))) {
                     setColor(w, NodeColor.RED);
                     x = xParent;
                     xParent = parentOf(x);
                 } else {
-                    if (!isRed(leftOf(w))) { // Case 3
+                    if (!isRed(leftOf(w))) {
                         setColor(rightOf(w), NodeColor.BLACK);
                         setColor(w, NodeColor.RED);
                         leftRotate(w);
                         w = leftOf(xParent);
                     }
-                    // Case 4
                     setColor(w, isRed(xParent) ? NodeColor.RED : NodeColor.BLACK);
                     setColor(xParent, NodeColor.BLACK);
                     setColor(leftOf(w), NodeColor.BLACK);
@@ -244,7 +235,7 @@ public class RedBlackTree extends BinarySearchTree {
         }
         if (x != null) setColor(x, NodeColor.BLACK);
     }
-    // Rotation
+    
     private void leftRotate(RedBlackTreeNode x) {
         if (x == null || rightOf(x) == null) return;
 

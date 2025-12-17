@@ -21,40 +21,33 @@ public class InfoScreen {
     }
 
     public void show() {
-        // 1. Lấy loại cây đang chọn từ Main3
         String treeType = mainApp.getSelectedTreeType();
 
         BorderPane root = new BorderPane();
         root.getStyleClass().add("info-pane");
 
-        // 2. Nội dung chính (Giữa màn hình)
         VBox content = new VBox(20);
         content.setAlignment(Pos.CENTER_LEFT);
-        content.setMaxWidth(800); // Giới hạn chiều rộng để đọc cho dễ
+        content.setMaxWidth(800);
 
-        // Tiêu đề
         Label lblHeading = new Label(treeType);
         lblHeading.getStyleClass().add("info-heading");
 
-        // Nội dung mô tả (Lấy từ Factory - Đa hình)
         Description strategy = DescriptionFactory.getStrategy(treeType);
         Text txtDesc = new Text(strategy.getDescription());
         txtDesc.getStyleClass().add("info-desc");
-        txtDesc.setWrappingWidth(700); // Tự xuống dòng nếu quá dài
+        txtDesc.setWrappingWidth(700);
 
-        // 3. Các nút bấm (Cuối màn hình)
         HBox actions = new HBox(20);
 
-        // Nút Back: Quay lại màn hình chọn cây
-        Button btnBack = new Button("⬅ Chọn lại");
+        Button btnBack = new Button("⬅ Back");
         btnBack.getStyleClass().add("button");
         btnBack.setOnAction(e -> mainApp.switchToSelectScreen());
 
-        // Nút Start: Vào màn hình Visualize chính
-        Button btnStart = new Button("VISUALIZE NGAY 🚀");
+        Button btnStart = new Button("START VISUALIZE 🚀");
         btnStart.getStyleClass().add("btn-primary");
         btnStart.setStyle("-fx-font-size: 16px; -fx-padding: 10 25;");
-        // Gọi hàm chuyển sang Visualizer
+
         btnStart.setOnAction(e -> mainApp.switchToVisualizerScreen());
 
         actions.getChildren().addAll(btnBack, btnStart);
@@ -62,7 +55,6 @@ public class InfoScreen {
 
         root.setCenter(content);
 
-        // Gọi Main3 để hiển thị
         mainApp.switchScene(root, 1100, 750);
     }
 }

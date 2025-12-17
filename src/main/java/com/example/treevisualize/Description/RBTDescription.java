@@ -3,7 +3,11 @@ package com.example.treevisualize.Description;
 public class RBTDescription implements Description {
     @Override
     public String getDescription() {
-        return "Red-Black Tree is a self-balancing binary search tree data structure . The nodes in a red-black tree hold an extra \"color\" bit, often drawn as red and black.\n\n" +
+        return "A Red-Black Tree is a type of binary search tree (BST) that includes an "
+        		+ "additional attribute for each node: a color, which can be either red or black. "
+        		+ "This color-coding helps maintain the tree's balance during insertions and "
+        		+ "deletions, ensuring that the height of the tree remains logarithmic relative "
+        		+ "to the number of nodes, specifically O(log n).\n\n" +
                 "COMPLEXITY:\n" +
                 "------------------------------------\n" +
                 "1. Time Complexity :\n" +

@@ -3,7 +3,10 @@ package com.example.treevisualize.Description;
 public class BinaryTreeDescription implements Description {
     @Override
     public String getDescription() {
-        return "Binary Tree is a tree in which each node has at most two children.\n\n" +
+        return "Binary Tree is a non-linear and hierarchical data structure where each node has at "
+        		+ "most two children referred to as the left child and the right child. The topmost node "
+        		+ "in a binary tree is called the root, and the bottom-most nodes(having no children) are "
+        		+ "called leaves.\n\n" +
                 "Complexity :\n" +
                 "=======================================\n" +
                 "1. Time Complexity :\n" +

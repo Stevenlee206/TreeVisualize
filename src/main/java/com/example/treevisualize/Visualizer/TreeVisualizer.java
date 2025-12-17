@@ -22,17 +22,16 @@ public class TreeVisualizer implements TreeObserver {
     public static final double NODE_RADIUS = 15.0;
     public static final double VERTICAL_GAP = 80.0;
 
-    // --- CONSTRUCTOR ---
     public TreeVisualizer(Tree tree, Canvas canvas) {
         this.tree = tree;
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.nodeVis = new HashMap<>();
+
         this.tree.addObserver(this);
+
         render();
     }
-
-    // --- IMPLEMENT TREE OBSERVER ---
 
     @Override
     public void onNodeChanged(Node node) {
@@ -49,10 +48,6 @@ public class TreeVisualizer implements TreeObserver {
     public void onError(String message) {
         System.err.println("TreeVisualizer Error: " + message);
     }
-
-    /**
-     * Hàm chính để vẽ lại toàn bộ cây.
-     */
     public void render() {
         // 1. Lấy chiều cao cây
         if (tree == null || tree.getRoot() == null) {
@@ -61,11 +56,11 @@ public class TreeVisualizer implements TreeObserver {
         }
         int height = tree.getHeight();
 
-        // 2. TÍNH TOÁN KÍCH THƯỚC CẦN THIẾT 
+        // 2. TÍNH TOÁN KÍCH THƯỚC CẦN THIẾT
         // Khoảng cách ngang tối thiểu ở tầng dưới cùng (để 2 node lá không đè lên nhau)
         // Node radius = 20 -> Đường kính 40 -> Cần ít nhất 50-60px khoảng cách
-        double minGapAtBottom = NODE_RADIUS * 2 + 3; 
-        
+        double minGapAtBottom = NODE_RADIUS * 2 + 3;
+
         // Tính khoảng cách offset ban đầu cho Root dựa trên chiều cao cây
         // Công thức: Gap tại root = MinGap * 2^(height - 2)
         // Ví dụ: Cây cao 1 (chỉ root) -> shift 0
@@ -75,7 +70,7 @@ public class TreeVisualizer implements TreeObserver {
         // Tính chiều rộng tổng thể cần thiết:
         // Root ở giữa, cây xòe ra 2 bên -> Width = initialHGap * 4 (ước lượng an toàn)
         // Hoặc tính theo số lượng lá tối đa: 2^(h-1) * minGapAtBottom
-        double requiredWidth = Math.max(1000, initialHGap * 4 + 100); 
+        double requiredWidth = Math.max(1000, initialHGap * 4 + 100);
         double requiredHeight = Math.max(600, height * VERTICAL_GAP + 100);
 
         // 3. CẬP NHẬT KÍCH THƯỚC CANVAS
@@ -101,18 +96,14 @@ public class TreeVisualizer implements TreeObserver {
     private void calculateLayout(Node node, double x, double y, double hGap) {
         if (node == null) return;
 
-        // B1: Đồng bộ hóa NodeVisualizer (đảm bảo node này đã có visual)
         syncNodeVisualizer(node);
         NodeVisualizer vis = nodeVis.get(node);
 
-        // B2: Cập nhật dữ liệu cho visual
         vis.updatePosition(x, y);
         vis.setValue(node.getValue());
 
-        // B3: Cập nhật màu sắc (Tách ra hàm riêng theo UML)
         updateNodeColor(vis, node);
 
-        // B4: Xử lý vẽ Dây nối (Edge) & Đệ quy con
         Node left = null;
         Node right = null;
 
@@ -124,7 +115,6 @@ public class TreeVisualizer implements TreeObserver {
             right = ((GeneralTreeNode) node).getRightSibling();
         }
 
-        // Cài đặt nét vẽ dây
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
 
@@ -139,7 +129,6 @@ public class TreeVisualizer implements TreeObserver {
             calculateLayout(left, leftX, nextY, nextHGap);
         }
 
-        // Đệ quy PHẢI
         if (right != null) {
             double rightX = x + hGap;
             double nextY = y + VERTICAL_GAP;
@@ -147,24 +136,17 @@ public class TreeVisualizer implements TreeObserver {
             calculateLayout(right, rightX, nextY, nextHGap);
         }
 
-        // B5: Cuối cùng mới vẽ Node (để đè lên dây)
         vis.draw(gc);
     }
 
-    /**
-     * Kiểm tra và tạo mới NodeVisualizer nếu chưa tồn tại trong Map.
-     */
     private void syncNodeVisualizer(Node node) {
         if (!nodeVis.containsKey(node)) {
             NodeVisualizer vis = new NodeVisualizer();
-            vis.setRadius(NODE_RADIUS); // Sử dụng hằng số static
+            vis.setRadius(NODE_RADIUS);
             nodeVis.put(node, vis);
         }
     }
 
-    /**
-     * Cập nhật màu sắc cho NodeVisualizer dựa trên NodeStatus và Loại Node
-     */
     private void updateNodeColor(NodeVisualizer vis, Node node) {
         // 1. ƯU TIÊN CAO NHẤT: Kiểm tra NodeStatus (Trạng thái hoạt động)
         if (node.getStatus() != null && node.getStatus() != com.example.treevisualize.Node.NodeStatus.NORMAL) {
@@ -184,7 +166,6 @@ public class TreeVisualizer implements TreeObserver {
             }
         }
 
-        // 2. ƯU TIÊN THẤP HƠN: Màu sắc cấu trúc (Red/Black hoặc Trắng)
         if (node instanceof RedBlackTreeNode) {
             RedBlackTreeNode rbNode = (RedBlackTreeNode) node;
             if (rbNode.getColor() == NodeColor.RED) {
@@ -197,7 +178,7 @@ public class TreeVisualizer implements TreeObserver {
             vis.setFillColor(Color.GREEN);
         }
     }
-    
+
     public Canvas getCanvas() {
         return this.canvas;
     }

@@ -7,8 +7,7 @@ public class DescriptionFactory {
 
     private static final Map<String, Description> registry = new HashMap<>();
 
-    // Default Strategy
-    private static final Description EMPTY = () -> "Chưa có mô tả.";
+    private static final Description EMPTY = () -> "No description.";
 
     static {
         registry.put("Red Black Tree",       new RBTDescription());

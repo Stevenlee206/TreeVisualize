@@ -31,7 +31,7 @@ public class BinarySearchTree extends Tree{
             return;
         }
         if (search(value) != null) {
-            notifyError("Giá trị " + value + " đã tồn tại trong BST!");
+            notifyError("The value " + value + " already exist!");
             return;
         }
         insertRecursive((BinaryTreeNode) root, value);
@@ -59,7 +59,7 @@ public class BinarySearchTree extends Tree{
     public void delete(int value) {
         if (root == null) return;
         if (search(value) == null) {
-            notifyError("Không tìm thấy giá trị " + value + " để xóa.");
+            notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
         root = deleteRecursive((BinaryTreeNode) root, value);
@@ -92,8 +92,6 @@ public class BinarySearchTree extends Tree{
                 return current.getLeftChild();
             }
 
-            // CASE 3: Có đủ 2 con (Phức tạp nhất)
-            // Chiến thuật: Tìm "Người thừa kế" (Successor) - com.example.treevisualize.Node nhỏ nhất bên phải
             int smallestValue = findSmallestValue(current.getRightChild());
             current.changeValue(smallestValue);
             BinaryTreeNode newRight = deleteRecursive(current.getRightChild(), smallestValue);
@@ -102,9 +100,7 @@ public class BinarySearchTree extends Tree{
             return current;
         }
     }
-    /**
-     * Tìm giá trị nhỏ nhất trong một nhánh cây (Đi hết về bên trái).
-     */
+
     private int findSmallestValue(BinaryTreeNode root) {
         int min = root.getValue();
         while (root.getLeftChild() != null) {
