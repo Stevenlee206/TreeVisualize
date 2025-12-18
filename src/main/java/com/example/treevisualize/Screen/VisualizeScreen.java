@@ -40,7 +40,7 @@ public class VisualizeScreen {
         BorderPane root = new BorderPane();
         root.getStyleClass().add("visualizer-pane");
 
-        // Top Bar
+        // 1. TOP BAR
         Button btnHome = new Button("Home");
         btnHome.getStyleClass().add("button");
         btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
@@ -49,45 +49,92 @@ public class VisualizeScreen {
         ToolBar topBar = new ToolBar(btnHome, new Separator(), lblTitle);
         root.setTop(topBar);
 
-        // Center (Canvas)
+        // 2. CENTER (CANVAS + ZOOM LOGIC)
         Canvas canvas = new Canvas(1200, 1000);
+
+        // StackPane để căn giữa và nhận sự kiện zoom
         StackPane canvasWrapper = new StackPane(canvas);
         canvasWrapper.setStyle("-fx-background-color: white;");
-        ScrollPane scrollPane = new ScrollPane(canvasWrapper);
-        scrollPane.setPannable(true);
-        root.setCenter(scrollPane);
 
-        // Right (Pseudo Code)
+        // Group: "Chìa khóa" để ScrollPane nhận diện kích thước thật khi Zoom
+        javafx.scene.Group zoomGroup = new javafx.scene.Group(canvasWrapper);
+
+        ScrollPane scrollPane = new ScrollPane(zoomGroup);
+        scrollPane.setPannable(true); // Cho phép kéo chuột để di chuyển (Pan)
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // --- XỬ LÝ ZOOM ---
+
+        // Cách 1: Zoom bằng Chuột (Giữ Ctrl + Lăn chuột)
+        canvasWrapper.setOnScroll(event -> {
+            if (event.isControlDown()) {
+                event.consume();
+                double zoomFactor = 1.1;
+                double deltaY = event.getDeltaY();
+
+                if (deltaY < 0) {
+                    zoomFactor = 1 / zoomFactor;
+                }
+
+                double newScaleX = canvasWrapper.getScaleX() * zoomFactor;
+                double newScaleY = canvasWrapper.getScaleY() * zoomFactor;
+
+                // Giới hạn zoom từ 0.5x đến 5.0x
+                if (newScaleX >= 0.5 && newScaleX <= 5.0) {
+                    canvasWrapper.setScaleX(newScaleX);
+                    canvasWrapper.setScaleY(newScaleY);
+                }
+            }
+        });
+
+        // Cách 2: Zoom bằng Trackpad (Ngón tay)
+        canvasWrapper.setOnZoom(event -> {
+            event.consume();
+            double zoomFactor = event.getZoomFactor();
+
+            double newScaleX = canvasWrapper.getScaleX() * zoomFactor;
+            double newScaleY = canvasWrapper.getScaleY() * zoomFactor;
+
+            if (newScaleX >= 0.5 && newScaleX <= 5.0) {
+                canvasWrapper.setScaleX(newScaleX);
+                canvasWrapper.setScaleY(newScaleY);
+            }
+        });
+
+        // 3. RIGHT (PSEUDO CODE)
         VBox rightPane = new VBox();
-        rightPane.setPrefWidth(350);
-        //rightPane.setMinWidth(1);
+        rightPane.setMinWidth(0); // Cho phép thu nhỏ hết cỡ
         rightPane.setPadding(new Insets(10));
-        rightPane.setStyle("-fx-background-color: #f4f6f7; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;");
+        rightPane.setStyle("-fx-background-color: #f4f6f7;"); // Không cần border left vì SplitPane có thanh chia
+
         Label lblCode = new Label("Pseudo Code");
         lblCode.setStyle("-fx-font-weight: bold; -fx-underline: true; -fx-font-size: 14px;");
+
         VBox codeContainer = new VBox(5);
         pseudoCode = new PseudoCodeBlock(codeContainer);
         rightPane.getChildren().addAll(lblCode, codeContainer);
-        /*
+
+        // 4. SPLIT PANE (KẾT HỢP CENTER VÀ RIGHT)
         SplitPane splitPane = new SplitPane();
-        splitPane.getItems().addAll(scrollPane, rightPane);
-        splitPane.setDividerPositions(0.75);
-        SplitPane.setResizableWithParent(rightPane, false);
-        root.setRight(splitPane);
+        splitPane.getItems().addAll(scrollPane, rightPane); // Trái: Canvas, Phải: Code
+        splitPane.setDividerPositions(0.75); // Canvas chiếm 75%
+        SplitPane.setResizableWithParent(rightPane, false); // Ưu tiên resize Canvas
 
-         */
-        root.setRight(rightPane);
+        // Đặt SplitPane vào giữa Root
+        root.setCenter(splitPane);
 
-        // Bottom (Controls)
+        // 5. BOTTOM (CONTROLS)
         HBox controls = createControls(canvas);
         root.setBottom(controls);
 
-        // [INIT] Khởi tạo hệ thống dựa trên Enum đang chọn
+        // [INIT] Khởi tạo hệ thống
         initializeSystem(mainApp.getSelectedTreeType(), canvas);
 
         mainApp.switchScene(root, 1280, 800);
     }
-
     private HBox createControls(Canvas cv) {
         HBox box = new HBox(15);
         box.setPadding(new Insets(15));
