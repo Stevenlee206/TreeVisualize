@@ -16,6 +16,7 @@ public class DescriptionFactory {
         registry.put("Binary Tree (Normal)", new BinaryTreeDescription());
         registry.put("General Tree",         new GeneralTreeDescription());
         registry.put("AVL Tree",             new AVLDescription());
+        registry.put("Scapegoat Tree",       new ScapegoatDescription());
     }
     public static Description getStrategy(String treeType) {
         return registry.getOrDefault(treeType, EMPTY);
