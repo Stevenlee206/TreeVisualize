@@ -16,11 +16,11 @@ public class SplayDeleteStrategy implements PseudoCodeStrategy {
                 "1.  target ← Search(val)",
                 "2.  if target == ∅ return error",
                 "3.  parent ← target.parent",
-                "4.  BST-Delete(target) // Xóa như BST thường",
+                "4.  BST-Delete(target) ",
                 "5.  if parent ≠ ∅ then",
-                "6.      Splay(parent) // Đưa cha lên làm Gốc",
+                "6.      Splay(parent) ",
                 "7.  else if root ≠ ∅",
-                "8.      Splay(root) // Cân bằng lại cây"
+                "8.      Splay(root) "
         );
     }
 }

@@ -13,13 +13,25 @@ public class AVLInsert implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-            "1. Thực hiện chèn BST thông thường",
-            "2. Cập nhật chiều cao (height) của node",
-            "3. Tính hệ số cân bằng (BF = HL - HR)",
-            "4. Nếu BF > 1 & val < Left.val: Quay Phải (LL)",
-            "5. Nếu BF < -1 & val > Right.val: Quay Trái (RR)",
-            "6. Nếu BF > 1 & val > Left.val: Quay Trái-Phải (LR)",
-            "7. Nếu BF < -1 & val < Right.val: Quay Phải-Trái (RL)"
+                "1.  if (node == ∅) return new Node(val)",
+                "2.  if (val < node.val) node.left ← Insert(node.left, val)",
+                "3.  else if (val > node.val) node.right ← Insert(node.right, val)",
+                "4.  else return node // No duplicates",
+                "5.  node.height ← 1 + max(H(node.left), H(node.right))",
+                "6.  bf ← H(node.left) - H(node.right)",
+                "7.  // Left-Left Case",
+                "8.  if (bf > 1 && val < node.left.val) return RightRotate(node)",
+                "9.  // Right-Right Case",
+                "10. if (bf < -1 && val > node.right.val) return LeftRotate(node)",
+                "11. // Left-Right Case",
+                "12. if (bf > 1 && val > node.left.val)",
+                "13.     node.left ← LeftRotate(node.left)",
+                "14.     return RightRotate(node)",
+                "15. // Right-Left Case",
+                "16. if (bf < -1 && val < node.right.val)",
+                "17.     node.right ← RightRotate(node.right)",
+                "18.     return LeftRotate(node)",
+                "19. return node"
         );
     }
 }

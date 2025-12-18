@@ -2,21 +2,24 @@ package com.example.treevisualize.Trees;
 
 import com.example.treevisualize.Node.AVLTreeNode;
 import com.example.treevisualize.Node.BinaryTreeNode;
-import com.example.treevisualize.Node.Node;
 
 public class AVLTree extends BinarySearchTree {
 
     private int height(BinaryTreeNode n) {
-        return (n == null) ? 0 : ((AVLTreeNode) n).getHeight();
+        if (n == null) return 0;
+        if (n instanceof AVLTreeNode) {
+            return ((AVLTreeNode) n).getHeight();
+        }
+        return 0;
     }
-
     private int getBalance(BinaryTreeNode n) {
-        return (n == null) ? 0 : height((BinaryTreeNode) n.getLeftChild()) - height((BinaryTreeNode) n.getRightChild());
+        if (n == null) return 0;
+        return height(n.getLeftChild()) - height(n.getRightChild());
     }
 
     @Override
     public void insert(int value) {
-        root = insertRecursive((AVLTreeNode) root, value);
+        root = insertRecursive((AVLTreeNode) this.root, value);
         notifyStructureChanged();
     }
 
@@ -72,6 +75,11 @@ public class AVLTree extends BinarySearchTree {
         y.setHeight(Math.max(height(y.getLeftChild()), height(y.getRightChild())) + 1);
         x.setHeight(Math.max(height(x.getLeftChild()), height(x.getRightChild())) + 1);
 
+        if (T2 != null) T2.setParent(y);
+
+        x.setParent(y.getParent());
+        y.setParent(x);
+
         return x;
     }
 
@@ -85,6 +93,43 @@ public class AVLTree extends BinarySearchTree {
         x.setHeight(Math.max(height(x.getLeftChild()), height(x.getRightChild())) + 1);
         y.setHeight(Math.max(height(y.getLeftChild()), height(y.getRightChild())) + 1);
 
+        if (T2 != null) T2.setParent(x);
+
+        y.setParent(x.getParent());
+        x.setParent(y);
+
         return y;
+    }
+
+    @Override
+    public void delete(int value) {
+        this.root = deleteRecursive((AVLTreeNode) this.root, value);
+        notifyStructureChanged();
+    }
+
+    private AVLTreeNode deleteRecursive(AVLTreeNode node, int value) {
+        if (node == null) return null;
+
+        if (value < node.getValue()) {
+            node.setLeftChild(deleteRecursive((AVLTreeNode) node.getLeftChild(), value));
+        } else if (value > node.getValue()) {
+            node.setRightChild(deleteRecursive((AVLTreeNode) node.getRightChild(), value));
+        } else {
+            if ((node.getLeftChild() == null) || (node.getRightChild() == null)) {
+                AVLTreeNode temp = (AVLTreeNode) ((node.getLeftChild() != null) ? node.getLeftChild() : node.getRightChild());
+                if (temp == null) {
+                    node = null;
+                } else { // Có 1 con
+                    node = temp;
+                }
+            } else {
+                int smallestVal = findSmallestValue((BinaryTreeNode) node.getRightChild());
+                node.changeValue(smallestVal);
+                node.setRightChild(deleteRecursive((AVLTreeNode) node.getRightChild(), smallestVal));
+            }
+        }
+        if (node == null) return null;
+        node.setHeight(Math.max(height(node.getLeftChild()), height(node.getRightChild())) + 1);
+        return rebalance(node);
     }
 }

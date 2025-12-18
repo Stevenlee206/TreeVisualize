@@ -1,12 +1,10 @@
 package com.example.treevisualize.Description;
 
-import com.example.treevisualize.PseudoCodeStore.Delete.BSTDeleteStrategy;
-import com.example.treevisualize.PseudoCodeStore.Delete.GTDeleteStrategy;
-import com.example.treevisualize.PseudoCodeStore.Delete.RBTDeleteStrategy;
-import com.example.treevisualize.PseudoCodeStore.Delete.SplayDeleteStrategy;
+import com.example.treevisualize.PseudoCodeStore.Delete.*;
 import com.example.treevisualize.PseudoCodeStore.Insert.*;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
 import com.example.treevisualize.Trees.*;
+import com.example.treevisualize.Visualizer.AVLTreeRenderer;
 import com.example.treevisualize.Visualizer.BinaryTreeRenderer;
 import com.example.treevisualize.Visualizer.GeneralTreeRenderer;
 import com.example.treevisualize.Visualizer.TreeRenderer;
@@ -49,7 +47,12 @@ public enum TreeType {
     new SplayInsertStrategy(), // <--- Dùng cái này để hiện mã giả chuẩn Splay
     new SplayDeleteStrategy(),   // Tạm chấp nhận, hoặc tạo thêm SplayDeleteStrategy
     new BinaryTreeRenderer(),
-    SplayTree::new);
+    SplayTree::new),
+    AVL("AVL Tree", "/images/AVL_icon.png",false,
+            new AVLDescription(),
+            new AVLInsert(),new AVLDeleteStrategy(),
+            new AVLTreeRenderer(),
+            AVLTree::new);
 
     // --- CÁC TRƯỜNG DỮ LIỆU ---
     private final String displayName;

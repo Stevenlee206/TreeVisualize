@@ -67,29 +67,6 @@ public class PseudoCodeBlock implements TreeObserver {
         setCode("Procedure", lines);
     }
 
-    public void setCode(String title, List<String> lines) {
-        this.container.getChildren().clear();
-        this.lineLabels.clear();
-        this.statusLabel.setVisible(false);
-
-        // 1. Thêm tiêu đề (Title) vào đầu danh sách
-        Label titleLabel = new Label(">>> " + title.toUpperCase());
-        titleLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-size: 15px; -fx-padding: 5;");
-        this.container.getChildren().add(titleLabel);
-
-        // 2. Duyệt qua các dòng code (như hàm cũ của bạn)
-        for (String line : lines) {
-            Label lineLabel = new Label(line);
-            lineLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #333333; " +
-                            "-fx-font-family: 'Consolas', 'Monospaced'; -fx-font-size: 14px; -fx-padding: 2 5 2 5;");
-            lineLabel.setMaxWidth(Double.MAX_VALUE);
-            this.lineLabels.add(lineLabel);
-            this.container.getChildren().add(lineLabel);
-        }
-
-        this.container.getChildren().add(this.statusLabel);
-    }
-
     public void highlightLine(int lineIndex) {
         if (lineIndex < 0 || lineIndex >= lineLabels.size()) return;
         this.statusLabel.setVisible(false);

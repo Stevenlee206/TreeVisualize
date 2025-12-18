@@ -101,7 +101,7 @@ public class BinarySearchTree extends Tree{
         }
     }
 
-    private int findSmallestValue(BinaryTreeNode root) {
+    protected int findSmallestValue(BinaryTreeNode root) {
         int min = root.getValue();
         while (root.getLeftChild() != null) {
             min = root.getLeftChild().getValue();

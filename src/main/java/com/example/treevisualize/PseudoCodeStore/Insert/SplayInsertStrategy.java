@@ -15,7 +15,7 @@ public class SplayInsertStrategy implements PseudoCodeStrategy {
         return Arrays.asList(
                 "1. Normal BST Insert(val)",
                 "2. x = newly inserted node",
-                "3. Splay(x) // Move x to Root",
+                "3. Splay(x) ",
                 "   while x != root:",
                 "     if parent is root: Rotate(parent)",
                 "     else if Zig-Zig:   Rotate(grand), Rotate(parent)",
