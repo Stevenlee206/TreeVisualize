@@ -4,10 +4,7 @@ import com.example.treevisualize.PseudoCodeStore.Delete.*;
 import com.example.treevisualize.PseudoCodeStore.Insert.*;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
 import com.example.treevisualize.Trees.*;
-import com.example.treevisualize.Visualizer.AVLTreeRenderer;
-import com.example.treevisualize.Visualizer.BinaryTreeRenderer;
-import com.example.treevisualize.Visualizer.GeneralTreeRenderer;
-import com.example.treevisualize.Visualizer.TreeRenderer;
+import com.example.treevisualize.Visualizer.*;
 
 import java.util.function.Supplier;
 
@@ -52,7 +49,12 @@ public enum TreeType {
             new AVLDescription(),
             new AVLInsert(),new AVLDeleteStrategy(),
             new AVLTreeRenderer(),
-            AVLTree::new);
+            AVLTree::new),
+    SCAPEGOAT("Scapegoat Tree", "/images/Scapegoat_icon.png",false,
+            new ScapegoatDescription(),
+            new ScapegoatInsert(),new ScapegoatDeleteStrategy(),
+            new ScapegoatTreeRenderer(),
+            ScapegoatTree::new);
 
     // --- CÁC TRƯỜNG DỮ LIỆU ---
     private final String displayName;

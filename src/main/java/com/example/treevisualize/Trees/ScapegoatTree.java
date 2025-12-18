@@ -1,182 +1,191 @@
 package com.example.treevisualize.Trees;
 
 import com.example.treevisualize.Node.BinaryTreeNode;
+import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Node.ScapegoatTreeNode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScapegoatTree extends BinarySearchTree {
-    private int n = 0; // Số lượng node thực tế
-    private int q = 0; // Số lượng node lớn nhất từng đạt tới (dùng cho xóa)
-    private final double alpha = 0.7;
-    private boolean deleted;
+    private int n = 0;
+    private int q = 0;
+    private static final double ALPHA = 0.66;
+
+    public ScapegoatTree() {
+        super();
+        this.n = 0;
+        this.q = 0;
+    }
 
     @Override
     public void insert(int value) {
-        // 1. Thực hiện chèn và lấy độ sâu của node mới
-        int depth = insertWithDepth(value);
-        
-        // 2. Kiểm tra điều kiện cân bằng alpha-height
-        if (depth > Math.log(q) / Math.log(1.0 / alpha)) {
-            // Tìm node vật tế thần (Scapegoat)
-            BinaryTreeNode u = findNode(value);
-            BinaryTreeNode w = findScapegoat(u);
-            if (w != null) {
-                rebuild(w);
+        ScapegoatTreeNode insertedNode = insertAndGetNode(value);
+        if (insertedNode == null) return; // Trùng giá trị
+
+        updateAncestorsSize(insertedNode);
+
+        if (getDepth(insertedNode) > Math.log(q) / Math.log(1.0 / ALPHA)) {
+            ScapegoatTreeNode scapegoat = findScapegoat(insertedNode);
+
+            if (scapegoat != null) {
+                rebuild(scapegoat);
             }
         }
+        notifyStructureChanged();
     }
 
-
-    private int insertWithDepth(int value) {
+    private ScapegoatTreeNode insertAndGetNode(int value) {
         if (root == null) {
             root = new ScapegoatTreeNode(value);
             n++; q++;
-            notifyStructureChanged();
-            return 0;
+            return (ScapegoatTreeNode) root;
         }
 
-        BinaryTreeNode curr = (BinaryTreeNode) root;
-        int d = 0;
+        ScapegoatTreeNode curr = (ScapegoatTreeNode) root;
         while (true) {
-            d++;
             if (value < curr.getValue()) {
                 if (curr.getLeftChild() == null) {
-                    curr.setLeftChild(new ScapegoatTreeNode(value));
-                    break;
+                    ScapegoatTreeNode newNode = new ScapegoatTreeNode(value);
+                    curr.setLeftChild(newNode);
+                    n++; q++;
+                    return newNode;
                 }
-                curr = (BinaryTreeNode) curr.getLeftChild();
+                curr = (ScapegoatTreeNode) curr.getLeftChild();
             } else if (value > curr.getValue()) {
                 if (curr.getRightChild() == null) {
-                    curr.setRightChild(new ScapegoatTreeNode(value));
-                    break;
+                    ScapegoatTreeNode newNode = new ScapegoatTreeNode(value);
+                    curr.setRightChild(newNode);
+                    n++; q++;
+                    return newNode;
                 }
-                curr = (BinaryTreeNode) curr.getRightChild();
-            } else return d; // Đã tồn tại
+                curr = (ScapegoatTreeNode) curr.getRightChild();
+            } else {
+                return null; // Duplicate
+            }
         }
-        n++; q++;
-        notifyStructureChanged();
-        return d;
     }
 
-    private BinaryTreeNode findScapegoat(BinaryTreeNode u) {
-        BinaryTreeNode w = u;
-        BinaryTreeNode parent = findParent(w);
-        while (parent != null) {
-            int sizeW = getSize(w);
-            int sizeP = getSize(parent);
-            // Điều kiện Scapegoat: size(child) > alpha * size(parent)
-            if ((double) sizeW > alpha * sizeP) {
+    private void updateAncestorsSize(ScapegoatTreeNode node) {
+        while (node.getParent() != null) {
+            node = (ScapegoatTreeNode) node.getParent();
+            node.updateSize(); // Node tự tính lại size của nó
+        }
+    }
+
+    private int getDepth(ScapegoatTreeNode node) {
+        int depth = 0;
+        while (node.getParent() != null) {
+            node = (ScapegoatTreeNode) node.getParent();
+            depth++;
+        }
+        return depth;
+    }
+
+    private ScapegoatTreeNode findScapegoat(ScapegoatTreeNode u) {
+        ScapegoatTreeNode current = u;
+        while (current.getParent() != null) {
+            ScapegoatTreeNode parent = (ScapegoatTreeNode) current.getParent();
+            double sizeCurr = current.getSize();
+            double sizeParent = parent.getSize();
+
+            if (sizeCurr > ALPHA * sizeParent) {
                 return parent;
             }
-            w = parent;
-            parent = findParent(w);
+            current = parent;
         }
         return null;
     }
 
-    private void rebuild(BinaryTreeNode u) {
-        List<BinaryTreeNode> nodes = new ArrayList<>();
-        flatten(u, nodes); // Thu thập node theo In-order (đã sắp xếp)
-        
-        BinaryTreeNode p = findParent(u);
-        BinaryTreeNode newNode = buildBalanced(nodes, 0, nodes.size() - 1);
-        
-        if (p == null) {
-            root = newNode;
-        } else if (p.getLeftChild() == u) {
-            p.setLeftChild(newNode);
+    private void rebuild(ScapegoatTreeNode u) {
+        List<ScapegoatTreeNode> nodes = new ArrayList<>();
+        flatten(u, nodes);
+
+        BinaryTreeNode parent = (BinaryTreeNode) u.getParent();
+        ScapegoatTreeNode newSubtreeRoot = buildBalanced(nodes, 0, nodes.size() - 1);
+
+        if (parent == null) {
+            root = newSubtreeRoot;
+            if (newSubtreeRoot != null) newSubtreeRoot.setParent(null);
         } else {
-            p.setRightChild(newNode);
+            if (parent.getLeftChild() == u) {
+                parent.setLeftChild(newSubtreeRoot);
+            } else {
+                parent.setRightChild(newSubtreeRoot);
+            }
         }
-        notifyStructureChanged(); // Chụp ảnh animation sau khi rebuild
     }
 
-    private void flatten(BinaryTreeNode u, List<BinaryTreeNode> nodes) {
+    private void flatten(ScapegoatTreeNode u, List<ScapegoatTreeNode> nodes) {
         if (u == null) return;
-        flatten((BinaryTreeNode) u.getLeftChild(), nodes);
+        flatten((ScapegoatTreeNode) u.getLeftChild(), nodes);
         nodes.add(u);
-        flatten((BinaryTreeNode) u.getRightChild(), nodes);
+        flatten((ScapegoatTreeNode) u.getRightChild(), nodes);
     }
 
-    private BinaryTreeNode buildBalanced(List<BinaryTreeNode> nodes, int start, int end) {
+    private ScapegoatTreeNode buildBalanced(List<ScapegoatTreeNode> nodes, int start, int end) {
         if (start > end) return null;
+
         int mid = (start + end) / 2;
-        BinaryTreeNode node = nodes.get(mid);
-        
+        ScapegoatTreeNode node = nodes.get(mid);
+
+        node.setLeftChild(null);
+        node.setRightChild(null);
+
         node.setLeftChild(buildBalanced(nodes, start, mid - 1));
         node.setRightChild(buildBalanced(nodes, mid + 1, end));
+        node.updateSize();
+
         return node;
-    }
-
-    private int getSize(BinaryTreeNode u) {
-        if (u == null) return 0;
-        return 1 + getSize((BinaryTreeNode) u.getLeftChild()) + getSize((BinaryTreeNode) u.getRightChild());
-    }
-
-    // Hàm hỗ trợ tìm kiếm node theo giá trị
-    private BinaryTreeNode findNode(int val) {
-        BinaryTreeNode curr = (BinaryTreeNode) root;
-        while (curr != null) {
-            if (val == curr.getValue()) return curr;
-            curr = (val < curr.getValue()) ? (BinaryTreeNode) curr.getLeftChild() : (BinaryTreeNode) curr.getRightChild();
-        }
-        return null;
-    }
-
-    // Hàm tìm cha của một node
-    private BinaryTreeNode findParent(BinaryTreeNode child) {
-        if (root == null || root == child) return null;
-        BinaryTreeNode curr = (BinaryTreeNode) root;
-        while (curr != null) {
-            if (curr.getLeftChild() == child || curr.getRightChild() == child) return curr;
-            curr = (child.getValue() < curr.getValue()) ? (BinaryTreeNode) curr.getLeftChild() : (BinaryTreeNode) curr.getRightChild();
-        }
-        return null;
     }
 
     @Override
     public void delete(int value) {
-        deleted = false;
-        root = deleteRecursive((BinaryTreeNode) root, value);
-        if (deleted) {
-            n--;   
-            if (n < alpha * q) {
-                rebuild((BinaryTreeNode) root); 
+        if (search(value) == null) return;
+        root = deleteRecursive((ScapegoatTreeNode) root, value);
+        if (n < ALPHA * q) {
+            if (root != null) {
+                rebuild((ScapegoatTreeNode) root);
                 q = n;
             }
         }
-        notifyStructureChanged(); 
+        notifyStructureChanged();
     }
 
-    private BinaryTreeNode deleteRecursive(BinaryTreeNode current, int value) {
-        if (current == null) return null;
+    private ScapegoatTreeNode deleteRecursive(ScapegoatTreeNode node, int value) {
+        if (node == null) return null;
 
-        if (value < current.getValue()) {
-            current.setLeftChild(deleteRecursive((BinaryTreeNode) current.getLeftChild(), value));
-        } 
-        else if (value > current.getValue()) {
-            current.setRightChild(deleteRecursive((BinaryTreeNode) current.getRightChild(), value));
-        } 
-        else {
-            // Tìm thấy node cần xóa
-            deleted = true;
-            // Trường hợp 0 hoặc 1 con
-            if (current.getLeftChild() == null) return (BinaryTreeNode) current.getRightChild();
-            if (current.getRightChild() == null) return (BinaryTreeNode) current.getLeftChild();
+        if (value < node.getValue()) {
+            node.setLeftChild(deleteRecursive((ScapegoatTreeNode) node.getLeftChild(), value));
+        } else if (value > node.getValue()) {
+            node.setRightChild(deleteRecursive((ScapegoatTreeNode) node.getRightChild(), value));
+        } else {
+            // Tìm thấy node
+            if (node.getLeftChild() == null) {
+                n--; // Giảm số lượng thực tế
+                return (ScapegoatTreeNode) node.getRightChild();
+            }
+            if (node.getRightChild() == null) {
+                n--;
+                return (ScapegoatTreeNode) node.getLeftChild();
+            }
 
-            // Trường hợp 2 con
-            BinaryTreeNode successor = minNode((BinaryTreeNode) current.getRightChild());
-            current.setValue(successor.getValue());
-            current.setRightChild(deleteRecursive((BinaryTreeNode) current.getRightChild(), successor.getValue()));
+            // Case 2 con
+            // findSmallestValue lấy từ BinarySearchTree (đã được đổi thành protected)
+            int smallestVal = findSmallestValue((BinaryTreeNode) node.getRightChild());
+            node.changeValue(smallestVal);
+
+            // Mẹo: tăng n lên 1 đơn vị giả trước khi gọi đệ quy
+            // Vì đệ quy bên dưới sẽ giảm n xuống, ta cần giữ n ổn định cho đến khi xóa thật
+            n++;
+            node.setRightChild(deleteRecursive((ScapegoatTreeNode) node.getRightChild(), smallestVal));
         }
-        return current;
-    }
 
-    private BinaryTreeNode minNode(BinaryTreeNode node) {
-        while (node.getLeftChild() != null) {
-            node = (BinaryTreeNode) node.getLeftChild();
+        // [QUAN TRỌNG] Cập nhật size trên đường quay lui
+        if (node != null) {
+            node.updateSize();
         }
+
         return node;
     }
 }

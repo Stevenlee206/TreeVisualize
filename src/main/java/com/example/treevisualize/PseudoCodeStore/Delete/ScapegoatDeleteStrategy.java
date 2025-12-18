@@ -13,12 +13,10 @@ public class ScapegoatDeleteStrategy implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-            "1. Thực hiện BST Delete thông thường",
-            "2. Giảm kích thước cây (n--)",
-            "3. Nếu n < α * q:",
-            "4.   Rebuild lại toàn bộ cây từ gốc (root)",
-            "5.   Cập nhật q = n",
-            "6. Thông báo thay đổi cấu trúc cây"
+                "1. BST-Delete(val)",
+                "2. n--",
+                "3. If n < α * maxSize:",
+                "4.    Rebuild(Root) "
         );
     }
 }

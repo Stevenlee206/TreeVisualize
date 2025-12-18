@@ -13,12 +13,11 @@ public class ScapegoatInsert implements PseudoCodeStrategy {
     @Override
     public List<String> getLines() {
         return Arrays.asList(
-            "1. Thực hiện BST Insert thông thường",
-            "2. Tăng kích thước cây (n++) và q = max(n, q)",
-            "3. Nếu depth > log_{1/α}(q):",
-            "4.   Tìm node 'u' sâu nhất không thỏa mãn: size(child) <= α * size(u)",
-            "5.   Rebuild toàn bộ cây con tại 'u' thành cây cân bằng hoàn hảo",
-            "6. Cập nhật lại cấu trúc cây trên màn hình"
+                "1. BST-Insert(val)",
+                "2. Update subtree sizes up to root",
+                "3. If depth(val) > log_1/α(TreeSize):",
+                "4.    Find 'Scapegoat' node (ancestor not α-balanced)",
+                "5.    Rebuild(Scapegoat) "
         );
     }
 }
