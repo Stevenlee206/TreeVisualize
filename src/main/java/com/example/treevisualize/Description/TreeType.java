@@ -3,10 +3,8 @@ package com.example.treevisualize.Description;
 import com.example.treevisualize.PseudoCodeStore.Delete.BSTDeleteStrategy;
 import com.example.treevisualize.PseudoCodeStore.Delete.GTDeleteStrategy;
 import com.example.treevisualize.PseudoCodeStore.Delete.RBTDeleteStrategy;
-import com.example.treevisualize.PseudoCodeStore.Insert.BSTInsert;
-import com.example.treevisualize.PseudoCodeStore.Insert.BTInsert;
-import com.example.treevisualize.PseudoCodeStore.Insert.GeneralTreeInsert;
-import com.example.treevisualize.PseudoCodeStore.Insert.RedBlackTreeInsert;
+import com.example.treevisualize.PseudoCodeStore.Delete.SplayDeleteStrategy;
+import com.example.treevisualize.PseudoCodeStore.Insert.*;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
 import com.example.treevisualize.Trees.*;
 import com.example.treevisualize.Visualizer.BinaryTreeRenderer;
@@ -44,7 +42,14 @@ public enum TreeType {
             new GeneralTreeInsert(), new GTDeleteStrategy(),
             new GeneralTreeRenderer(),
             GeneralTree::new
-    );
+    ),
+    SPLAY(
+    "Splay Tree","/images/Splay_icon.png",false,
+            new SplayTreeDescription(),
+    new SplayInsertStrategy(), // <--- Dùng cái này để hiện mã giả chuẩn Splay
+    new SplayDeleteStrategy(),   // Tạm chấp nhận, hoặc tạo thêm SplayDeleteStrategy
+    new BinaryTreeRenderer(),
+    SplayTree::new);
 
     // --- CÁC TRƯỜNG DỮ LIỆU ---
     private final String displayName;
