@@ -97,7 +97,7 @@ public abstract class Tree {
             resetRecursive(child);
         }
     }
-    
+
     //statistic: number of nodes, height
 
     public int getNodeCount() {

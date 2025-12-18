@@ -19,6 +19,8 @@ import java.util.Random;
 public class VisualizeScreen {
 
     private final Main5 mainApp;
+
+    // Các thành phần cốt lõi
     private Tree tree;
     private TreeVisualizer visualizer;
     private AnimationController controller;

@@ -9,7 +9,7 @@ public class GTDeleteStrategy implements PseudoCodeStrategy {
 	public String getTitle() {
 		return "GeneralTree-Delete(value)";
 	}
-	
+
 	@Override
 	public List<String> getLines() {
 		return Arrays.asList(

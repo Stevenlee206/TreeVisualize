@@ -22,7 +22,6 @@ public class NodeVisualizer {
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
 
         // Border
-        /*setStroke() trong JavaFX dùng để thiết lập màu sắc cho đường viền (outline) của các đối tượng đồ họa */
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.5);
         gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);

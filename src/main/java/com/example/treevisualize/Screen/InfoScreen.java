@@ -44,7 +44,7 @@ public class InfoScreen {
         btnBack.getStyleClass().add("button");
         btnBack.setOnAction(e -> mainApp.switchToSelectScreen());
 
-        Button btnStart = new Button("START VISUALIZE 🚀");
+        Button btnStart = new Button("START VISUALIZE");
         btnStart.getStyleClass().add("btn-primary");
         btnStart.setStyle("-fx-font-size: 16px; -fx-padding: 10 25;");
         btnStart.setOnAction(e -> mainApp.switchToVisualizerScreen());

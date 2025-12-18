@@ -9,7 +9,7 @@ public class GeneralTreeInsert implements PseudoCodeStrategy{
 	public String getTitle() {
         return "GeneralTree-Insert(parentVal, childVal)";
     }
-	
+
 	@Override
 	public List<String> getLines() {
         return Arrays.asList(

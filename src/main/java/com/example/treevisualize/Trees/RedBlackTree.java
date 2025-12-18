@@ -91,7 +91,7 @@ public class RedBlackTree extends BinarySearchTree {
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     k = parentOf(parentOf(k));
                 } else {
-                    if (k == rightOf(parentOf(k))) { 
+                    if (k == rightOf(parentOf(k))) {
                         k = parentOf(k);
                         leftRotate(k);
                     }
@@ -235,7 +235,7 @@ public class RedBlackTree extends BinarySearchTree {
         }
         if (x != null) setColor(x, NodeColor.BLACK);
     }
-    
+
     private void leftRotate(RedBlackTreeNode x) {
         if (x == null || rightOf(x) == null) return;
 

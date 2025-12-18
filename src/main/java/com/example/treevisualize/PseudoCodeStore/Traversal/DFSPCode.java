@@ -9,7 +9,7 @@ public class DFSPCode implements PseudoCodeStrategy {
 	public String getTitle() {
 		return "DFS(root)";
 	}
-	
+
 	@Override
 	public List<String> getLines() {
 		return Arrays.asList(
