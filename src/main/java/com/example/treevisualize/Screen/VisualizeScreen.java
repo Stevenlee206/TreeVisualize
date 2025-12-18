@@ -60,6 +60,7 @@ public class VisualizeScreen {
         // Right (Pseudo Code)
         VBox rightPane = new VBox();
         rightPane.setPrefWidth(350);
+        //rightPane.setMinWidth(1);
         rightPane.setPadding(new Insets(10));
         rightPane.setStyle("-fx-background-color: #f4f6f7; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;");
         Label lblCode = new Label("Pseudo Code");
@@ -67,6 +68,14 @@ public class VisualizeScreen {
         VBox codeContainer = new VBox(5);
         pseudoCode = new PseudoCodeBlock(codeContainer);
         rightPane.getChildren().addAll(lblCode, codeContainer);
+        /*
+        SplitPane splitPane = new SplitPane();
+        splitPane.getItems().addAll(scrollPane, rightPane);
+        splitPane.setDividerPositions(0.75);
+        SplitPane.setResizableWithParent(rightPane, false);
+        root.setRight(splitPane);
+
+         */
         root.setRight(rightPane);
 
         // Bottom (Controls)

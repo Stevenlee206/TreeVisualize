@@ -39,7 +39,7 @@ public class AnimationController {
         this.animationFrames = new ArrayList<>();
         this.currentFrameIndex = 0;
         this.isPlaying = false;
-        this.speed = 1000.0;
+        this.speed = 700.0;
 
         // Khởi tạo Timeline (vòng lặp vô hạn, nhưng ta sẽ control nó)
         this.timeLine = new Timeline();
