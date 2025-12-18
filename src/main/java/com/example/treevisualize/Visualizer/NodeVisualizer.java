@@ -23,7 +23,7 @@ public class NodeVisualizer {
 
         // Border
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1.5);
+        gc.setLineWidth(0.8);
         gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);
         if (ColorUtils.isDark(this.fillColor)) {
             gc.setFill(Color.WHITE);

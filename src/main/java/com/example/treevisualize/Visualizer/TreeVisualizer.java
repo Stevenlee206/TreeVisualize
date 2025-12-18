@@ -18,8 +18,8 @@ public class TreeVisualizer implements TreeObserver {
     private TreeRenderer renderer;
 
     private Map<Node, NodeVisualizer> nodeVis;
-    public static final double NODE_RADIUS = 15.0;
-    public static final double VERTICAL_GAP = 80.0;
+    public static final double NODE_RADIUS = 10.0;
+    public static final double VERTICAL_GAP = 40.0;
 
     public TreeVisualizer(Tree tree, TreeType type, Canvas canvas) {
         this.tree = tree;
@@ -65,7 +65,6 @@ public class TreeVisualizer implements TreeObserver {
         // Ví dụ: Cây cao 1 (chỉ root) -> shift 0
         // Cây cao 2 (root + con) -> shift = minGap
         double initialHGap = minGapAtBottom * Math.pow(2, Math.max(0, height - 2));
-
         // Tính chiều rộng tổng thể cần thiết:
         // Root ở giữa, cây xòe ra 2 bên -> Width = initialHGap * 4 (ước lượng an toàn)
         // Hoặc tính theo số lượng lá tối đa: 2^(h-1) * minGapAtBottom
