@@ -9,51 +9,34 @@ import javafx.scene.text.FontWeight;
 
 public class AVLTreeRenderer extends BinaryTreeRenderer {
 
-    /**
-     * Override hàm drawNode để hiển thị thêm thông tin Height và Balance Factor
-     */
     @Override
-    public void renderChildren(GraphicsContext gc, Node node, double x, double y, double hGap,TreeVisualizer visualizer) {
-        // 1. Gọi renderer cha để vẽ hình tròn, số, màu sắc cơ bản
-        super.renderChildren(gc, node, x, y, hGap,visualizer);
+    public void drawNode(GraphicsContext gc, Node node, double x, double y, double radius) {
+        // 1. Gọi cha để vẽ hình tròn và số
+        super.drawNode(gc, node, x, y, radius);
 
-        // 2. Vẽ thêm thông tin bổ sung nếu là AVLTreeNode
+        // 2. Vẽ thêm thông tin AVL
         if (node instanceof AVLTreeNode) {
             AVLTreeNode avlNode = (AVLTreeNode) node;
 
-            // --- Cấu hình Font chữ nhỏ ---
             gc.setFont(Font.font("Arial", FontWeight.BOLD, 11));
 
+            // Vẽ Height
             gc.setFill(Color.BLUE);
-            gc.fillText("H: " + avlNode.getHeight(), x + 22, y - 5);
-            // --- 2. Hiển thị Balance Factor (BF) ---
-            // BF không lưu trong node nên ta tính nhanh tại chỗ: Left - Right
-            int bf = calculateBalanceFactor(avlNode);
-            // Đổi màu cảnh báo nếu BF sắp mất cân bằng (-1 hoặc 1)
-            if (bf == 0) {
-                gc.setFill(Color.DARKGREEN); // Cân bằng tuyệt đối
-            } else if (Math.abs(bf) == 1) {
-                gc.setFill(Color.CHOCOLATE); // Hơi lệch
-            } else {
-                gc.setFill(Color.RED); // Mất cân bằng (Thường ít khi thấy vì cây tự xoay ngay)
-            }
+            gc.fillText("H: " + avlNode.getHeight(), x + radius + 2, y - 5);
 
-            // Vẽ ở góc dưới bên phải của node
-            gc.fillText("BF: " + bf, x + 22, y + 8);        }
+            // Vẽ Balance Factor
+            int bf = calculateBalanceFactor(avlNode);
+            if (bf == 0) gc.setFill(Color.DARKGREEN);
+            else if (Math.abs(bf) == 1) gc.setFill(Color.CHOCOLATE);
+            else gc.setFill(Color.RED);
+
+            gc.fillText("BF: " + bf, x + radius + 2, y + 10);
+        }
     }
 
-    // Hàm phụ trợ tính BF để hiển thị
     private int calculateBalanceFactor(AVLTreeNode node) {
-        int leftH = 0;
-        int rightH = 0;
-
-        if (node.getLeftChild() instanceof AVLTreeNode) {
-            leftH = ((AVLTreeNode) node.getLeftChild()).getHeight();
-        }
-        if (node.getRightChild() instanceof AVLTreeNode) {
-            rightH = ((AVLTreeNode) node.getRightChild()).getHeight();
-        }
-
+        int leftH = (node.getLeftChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getLeftChild()).getHeight() : 0;
+        int rightH = (node.getRightChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getRightChild()).getHeight() : 0;
         return leftH - rightH;
     }
 }

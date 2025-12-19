@@ -120,6 +120,9 @@ public class AnimationController {
     private void restoreSnapshot(TreeSnapShot snapshot) {
         tree.setRoot(snapshot.getRootCopy());
         pseudoCode.highlightLine(snapshot.getPseudoLineIndex());
+        if (visualizer != null) {
+            visualizer.render();
+        }
     }
 
     private TreeObserver recorder;

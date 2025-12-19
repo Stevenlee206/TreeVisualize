@@ -1,167 +1,103 @@
 package com.example.treevisualize.Visualizer;
+
 import com.example.treevisualize.Description.TreeType;
-import com.example.treevisualize.Node.*;
+import com.example.treevisualize.Layout.CompactTreeLayout;
+import com.example.treevisualize.Layout.TreeLayout;
+import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Trees.Tree;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
-import java.util.HashMap;
+import javafx.scene.transform.Affine;
 import java.util.Map;
 
-public class TreeVisualizer implements TreeObserver {
+public class TreeVisualizer {
+    private final Tree tree;
+    private final Canvas canvas;
+    private final TreeType type;
+    private final TreeLayout layoutStrategy; // Layout Engine
 
-    private Canvas canvas;
-    private GraphicsContext gc;
-    private Tree tree;
-
-    private TreeRenderer renderer;
-
-    private Map<Node, NodeVisualizer> nodeVis;
-    public static final double NODE_RADIUS = 10.0;
-    public static final double VERTICAL_GAP = 40.0;
+    // Camera State
+    private double scale = 1.0;
+    private double translateX = 400;
+    private double translateY = 50;
 
     public TreeVisualizer(Tree tree, TreeType type, Canvas canvas) {
         this.tree = tree;
+        this.type = type;
         this.canvas = canvas;
-        this.gc = canvas.getGraphicsContext2D();
-        this.nodeVis = new HashMap<>();
-        this.renderer = type.getRenderer();
-        this.tree.addObserver(this);
+        this.layoutStrategy = new CompactTreeLayout(); // Sử dụng thuật toán chống tràn
+    }
 
+    public void setScale(double scale) {
+        this.scale = scale;
         render();
     }
 
-    @Override
-    public void onNodeChanged(Node node) {
+    public void pan(double deltaX, double deltaY) {
+        this.translateX += deltaX;
+        this.translateY += deltaY;
         render();
     }
 
-    @Override
-    public void onStructureChanged() {
-        nodeVis.clear();
-        render();
-    }
-
-    @Override
-    public void onError(String message) {
-        System.err.println("TreeVisualizer Error: " + message);
-    }
     public void render() {
-        // 1. Lấy chiều cao cây
-        if (tree == null || tree.getRoot() == null) {
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            return;
-        }
-        int height = tree.getHeight();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // 2. TÍNH TOÁN KÍCH THƯỚC CẦN THIẾT
-        // Khoảng cách ngang tối thiểu ở tầng dưới cùng (để 2 node lá không đè lên nhau)
-        // Node radius = 20 -> Đường kính 40 -> Cần ít nhất 50-60px khoảng cách
-        double minGapAtBottom = NODE_RADIUS * 2 + 3;
-
-        // Tính khoảng cách offset ban đầu cho Root dựa trên chiều cao cây
-        // Công thức: Gap tại root = MinGap * 2^(height - 2)
-        // Ví dụ: Cây cao 1 (chỉ root) -> shift 0
-        // Cây cao 2 (root + con) -> shift = minGap
-        double initialHGap = minGapAtBottom * Math.pow(2, Math.max(0, height - 2));
-        // Tính chiều rộng tổng thể cần thiết:
-        // Root ở giữa, cây xòe ra 2 bên -> Width = initialHGap * 4 (ước lượng an toàn)
-        // Hoặc tính theo số lượng lá tối đa: 2^(h-1) * minGapAtBottom
-        double requiredWidth = Math.max(1000, initialHGap * 4 + 100);
-        double requiredHeight = Math.max(600, height * VERTICAL_GAP + 100);
-
-        // 3. CẬP NHẬT KÍCH THƯỚC CANVAS
-        // Bước này cực kỳ quan trọng để ScrollPane hoạt động
-        canvas.setWidth(requiredWidth);
-        canvas.setHeight(requiredHeight);
-
-        // 4. Xóa sạch màn hình (Sau khi resize)
+        // 1. Reset & Clear
+        gc.setTransform(new Affine());
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // 5. Tính toán toạ độ bắt đầu
-        // Luôn bắt đầu từ chính giữa Canvas hiện tại
-        double startX = canvas.getWidth() / 2;
-        double startY = NODE_RADIUS * 2;
+        if (tree.getRoot() == null) return;
 
-        calculateLayout(tree.getRoot(), startX, startY, initialHGap);
+        // 2. Tính toán vị trí (Layout)
+        Map<Node, Point2D> positions = layoutStrategy.calculateLayout(tree.getRoot());
+
+        // 3. Áp dụng Camera
+        gc.translate(translateX, translateY);
+        gc.scale(scale, scale);
+
+        // 4. Vẽ Dây (Edges) - Visualizer phụ trách
+        renderEdges(gc, tree.getRoot(), positions);
+
+        // 5. Vẽ Node - Renderer phụ trách
+        renderNodes(gc, tree.getRoot(), positions);
     }
 
+    private void renderEdges(GraphicsContext gc, Node node, Map<Node, Point2D> positions) {
+        if (node == null || !positions.containsKey(node)) return;
+        Point2D parentPos = positions.get(node);
 
-    /**
-     * Hàm đệ quy tính toán vị trí và vẽ các thành phần.
-     */
-    public void calculateLayout(Node node, double x, double y, double hGap) {
-        if (node == null) return;
-
-        syncNodeVisualizer(node);
-        NodeVisualizer vis = nodeVis.get(node);
-
-        vis.updatePosition(x, y);
-        vis.setValue(node.getValue());
-
-        Color baseColor = renderer.getNodeColor(node);
-        Node left = null;
-        Node right = null;
-
-        if (node.getStatus() != null && node.getStatus() != NodeStatus.NORMAL) {
-            switch (node.getStatus()) {
-                case ACTIVE: vis.setFillColor(Color.ORANGE); break;
-                case VISITED: vis.setFillColor(Color.LIGHTBLUE); break;
-                case FOUND: vis.setFillColor(Color.LIMEGREEN); break;
-                case DELETED: vis.setFillColor(Color.GRAY); break;
-            }
-        } else {
-            vis.setFillColor(baseColor);
-        }
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1.5);
-        renderer.renderChildren(gc, node, x, y, hGap, this);
-        vis.draw(gc);
-
-    }
-
-    private void syncNodeVisualizer(Node node) {
-        if (!nodeVis.containsKey(node)) {
-            NodeVisualizer vis = new NodeVisualizer();
-            vis.setRadius(NODE_RADIUS);
-            nodeVis.put(node, vis);
-        }
-    }
-
-    private void updateNodeColor(NodeVisualizer vis, Node node) {
-        // 1. ƯU TIÊN CAO NHẤT: Kiểm tra NodeStatus (Trạng thái hoạt động)
-        if (node.getStatus() != null && node.getStatus() != com.example.treevisualize.Node.NodeStatus.NORMAL) {
-            switch (node.getStatus()) {
-                case ACTIVE:
-                    vis.setFillColor(Color.ORANGE);
-                    return;
-                case VISITED:
-                    vis.setFillColor(Color.LIGHTBLUE);
-                    return;
-                case FOUND:
-                    vis.setFillColor(Color.LIMEGREEN);
-                    return;
-                case DELETED:
-                    vis.setFillColor(Color.GRAY);
-                    return;
+        for (Node child : node.getChildren()) {
+            if (positions.containsKey(child)) {
+                Point2D childPos = positions.get(child);
+                gc.setStroke(javafx.scene.paint.Color.BLACK);
+                gc.setLineWidth(1.5);
+                gc.strokeLine(parentPos.getX(), parentPos.getY(), childPos.getX(), childPos.getY());
+                renderEdges(gc, child, positions);
             }
         }
-
-        if (node instanceof RedBlackTreeNode) {
-            RedBlackTreeNode rbNode = (RedBlackTreeNode) node;
-            if (rbNode.getColor() == NodeColor.RED) {
-                vis.setFillColor(Color.RED);
-            } else {
-                vis.setFillColor(Color.BLACK);
-            }
-        } else {
-            // Với BinaryTree hoặc BST thường -> Màu xanh
-            vis.setFillColor(Color.GREEN);
-        }
     }
 
-    public Canvas getCanvas() {
-        return this.canvas;
+    private void renderNodes(GraphicsContext gc, Node node, Map<Node, Point2D> positions) {
+        if (node == null || !positions.containsKey(node)) return;
+        Point2D pos = positions.get(node);
+
+        // [QUAN TRỌNG] Gọi drawNode thay vì renderChildren
+        double radius = 20; // Bán kính chuẩn
+        type.getRenderer().drawNode(gc, node, pos.getX(), pos.getY(), radius);
+
+        for (Node child : node.getChildren()) {
+            renderNodes(gc, child, positions);
+        }
+    }
+    // Thêm vào TreeVisualizer.java
+
+    // Hàm Zoom tích lũy (dùng cho lăn chuột)
+    public void zoom(double factor) {
+        this.scale *= factor;
+        // Giới hạn zoom để không quá to hoặc quá nhỏ
+        if (this.scale < 0.1) this.scale = 0.1;
+        if (this.scale > 10.0) this.scale = 10.0;
+        render();
     }
 }

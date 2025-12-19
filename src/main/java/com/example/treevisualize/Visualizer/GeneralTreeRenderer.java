@@ -4,29 +4,45 @@ import com.example.treevisualize.Node.GeneralTreeNode;
 import com.example.treevisualize.Node.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 public class GeneralTreeRenderer implements TreeRenderer {
 
+    /**
+     * Thay đổi từ renderChildren -> drawNode.
+     * Hàm này chỉ chịu trách nhiệm vẽ hình tròn và giá trị của node tại toạ độ (x, y).
+     * Không còn đệ quy, không còn vẽ đường nối (strokeLine).
+     */
     @Override
-    public void renderChildren(GraphicsContext gc, Node node, double x, double y, double hGap, TreeVisualizer visualizer) {
+    public void drawNode(GraphicsContext gc, Node node, double x, double y, double radius) {
         if (!(node instanceof GeneralTreeNode)) return;
-        GeneralTreeNode gNode = (GeneralTreeNode) node;
 
-        double nextHGap = hGap * 0.5;
-        double nextY = y + TreeVisualizer.VERTICAL_GAP;
-        Node child = gNode.getLeftMostChild();
-        double childX = x - hGap;
+        // 1. Lấy màu (mặc định là BLUE theo code cũ của bạn)
+        Color bgColor = getNodeColor(node);
 
-        while (child != null) {
-            gc.strokeLine(x, y, childX, nextY);
-            visualizer.calculateLayout(child, childX, nextY, nextHGap);
-            child = ((GeneralTreeNode) child).getRightSibling();
-            childX += hGap;
-        }
+        // 2. Vẽ hình tròn nền
+        gc.setFill(bgColor);
+        gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
+
+        // 3. Vẽ viền đen
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1.5);
+        gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);
+
+        // 4. Vẽ giá trị (Value)
+        // Kiểm tra màu nền để chọn màu chữ (Trắng/Đen) cho dễ đọc
+        gc.setFill(ColorUtils.isDark(bgColor) ? Color.WHITE : Color.BLACK);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+
+        // +5 để căn giữa theo chiều dọc
+        gc.fillText(String.valueOf(node.getValue()), x, y + 5);
     }
 
     @Override
     public Color getNodeColor(Node node) {
-        return Color.BLUE;
+        return Color.BLUE; // Giữ nguyên màu xanh đặc trưng của General Tree
     }
 }

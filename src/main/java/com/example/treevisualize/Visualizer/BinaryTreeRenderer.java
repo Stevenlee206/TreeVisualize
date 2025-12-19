@@ -1,32 +1,35 @@
 package com.example.treevisualize.Visualizer;
 
-import com.example.treevisualize.Node.BinaryTreeNode;
 import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Node.NodeColor;
 import com.example.treevisualize.Node.RedBlackTreeNode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 public class BinaryTreeRenderer implements TreeRenderer {
 
     @Override
-    public void renderChildren(GraphicsContext gc, Node node, double x, double y, double hGap, TreeVisualizer visualizer) {
-        if (!(node instanceof BinaryTreeNode)) return;
-        BinaryTreeNode bNode = (BinaryTreeNode) node;
+    public void drawNode(GraphicsContext gc, Node node, double x, double y, double radius) {
+        // 1. Lấy màu nền
+        Color bgColor = getNodeColor(node);
 
-        double nextHGap = hGap * 0.5;
-        double nextY = y + TreeVisualizer.VERTICAL_GAP;
-        if (bNode.getLeftChild() != null) {
-            double leftX = x - hGap;
-            gc.strokeLine(x, y, leftX, nextY);
-            visualizer.calculateLayout(bNode.getLeftChild(), leftX, nextY, nextHGap);
-        }
+        // 2. Vẽ hình tròn nền
+        gc.setFill(bgColor);
+        gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
 
-        if (bNode.getRightChild() != null) {
-            double rightX = x + hGap;
-            gc.strokeLine(x, y, rightX, nextY);
-            visualizer.calculateLayout(bNode.getRightChild(), rightX, nextY, nextHGap);
-        }
+        // 3. Vẽ viền (Stroke)
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1.5);
+        gc.strokeOval(x - radius, y - radius, radius * 2, radius * 2);
+
+        // 4. Vẽ giá trị (Value) ở giữa
+        gc.setFill(ColorUtils.isDark(bgColor) ? Color.WHITE : Color.BLACK);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        gc.fillText(String.valueOf(node.getValue()), x, y + 5); // +5 để căn giữa dọc
     }
 
     @Override
@@ -35,6 +38,6 @@ public class BinaryTreeRenderer implements TreeRenderer {
             RedBlackTreeNode rbNode = (RedBlackTreeNode) node;
             return (rbNode.getColor() == NodeColor.RED) ? Color.RED : Color.BLACK;
         }
-        return Color.GREEN;
+        return Color.LIGHTGREEN;
     }
 }
