@@ -164,7 +164,7 @@ public class VisualizeScreen {
         Button btnSearch = new Button("Search");
         btnSearch.setOnAction(e -> handleSearch());
 
-        Button btnRandom = new Button("Rand(10)");
+        Button btnRandom = new Button("Random");
         btnRandom.setOnAction(e -> handleRandom());
 
         // Slider Speed
@@ -296,11 +296,10 @@ public class VisualizeScreen {
     }
 
     private void handleRandom() {
-        Random rand = new Random();
-        for (int i = 0; i < 10; i++) {
-            controller.startInsert(rand.nextInt(99) + 1);
-        }
+        int value = new Random().nextInt(99) + 1;
+        controller.startRandomInsert(value);
     }
+
 
     private void handleTraverse() {
         TraversalType selectedType = cboTraversal.getValue();

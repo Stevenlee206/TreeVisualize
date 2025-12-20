@@ -131,7 +131,7 @@ public class TreeVisualizer implements TreeObserver {
 
     private void updateNodeColor(NodeVisualizer vis, Node node) {
         // 1. ƯU TIÊN CAO NHẤT: Kiểm tra NodeStatus (Trạng thái hoạt động)
-        if (node.getStatus() != null && node.getStatus() != com.example.treevisualize.Node.NodeStatus.NORMAL) {
+        if (node.getStatus() != null && node.getStatus() != NodeStatus.NORMAL) {
             switch (node.getStatus()) {
                 case ACTIVE:
                     vis.setFillColor(Color.ORANGE);

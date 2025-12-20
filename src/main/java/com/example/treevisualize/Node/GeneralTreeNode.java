@@ -102,4 +102,16 @@ public class GeneralTreeNode extends Node {
         }
 
         return children;
-    }}
+    }
+    
+    
+    public int getSubtreeSize() {
+        int size = 1; 
+        GeneralTreeNode child = (GeneralTreeNode) leftMostChild;
+        while (child != null) {
+            size += child.getSubtreeSize();
+            child = (GeneralTreeNode) child.getRightSibling();
+        }
+        return size;
+    }
+ }
