@@ -103,4 +103,8 @@ public class PseudoCodeBlock implements TreeObserver {
         this.statusLabel.setText("⚠ " + message);
         this.statusLabel.setVisible(true);
     }
+    @Override
+    public void onPseudoStep(int lineIndex) {
+        highlightLine(lineIndex);
+    }
 }

@@ -21,7 +21,7 @@ public class TreeSnapShot {
         return statusMessage;
     }
 
-    public TreeSnapShot(Node realRoot,int lineIdx,String message){
+    public TreeSnapShot(Node realRoot,String message,int lineIdx){
         if (realRoot != null) {
             this.rootCopy = realRoot.copy();
         } else {

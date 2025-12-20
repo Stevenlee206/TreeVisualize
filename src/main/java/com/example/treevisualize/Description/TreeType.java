@@ -1,96 +1,60 @@
 package com.example.treevisualize.Description;
 
-import com.example.treevisualize.PseudoCodeStore.Delete.*;
-import com.example.treevisualize.PseudoCodeStore.Insert.*;
+import com.example.treevisualize.Controller.Operators.Delete.Deleter;
+import com.example.treevisualize.Controller.Operators.Insert.Inserter;
+import com.example.treevisualize.Controller.Operators.Search.Searcher;
+import com.example.treevisualize.Description.Profiles.TreeProfile;
+import com.example.treevisualize.Description.Profiles.Concrete.*; // Import các Profile
+import com.example.treevisualize.Layout.Strategy.NodeAlignmentStrategy;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
-import com.example.treevisualize.Trees.*;
-import com.example.treevisualize.Visualizer.*;
-
-import java.util.function.Supplier;
+import com.example.treevisualize.Trees.Tree;
+import com.example.treevisualize.Visualizer.TreeRenderer;
 
 public enum TreeType {
-    // 1. Thêm tham số Insert/Delete Strategy vào từng dòng Enum
-    RED_BLACK(
-            "Red Black Tree", "/images/RBT_icon.png", false,
-            new RBTDescription(),
-            new RedBlackTreeInsert(), new RBTDeleteStrategy(),
-            new BinaryTreeRenderer(),
-            RedBlackTree::new
-    ),
-    BST(
-            "Binary Search Tree", "/images/BST_icon.png", false,
-            new BSTDescription(),
-            new BSTInsert(), new BSTDeleteStrategy(),
-            new BinaryTreeRenderer(),
-            BinarySearchTree::new
-    ),
-    BINARY(
-            "Binary Tree (Normal)", "/images/BT_icon.png", true,
-            new BinaryTreeDescription(),
-            new BTInsert(), new BSTDeleteStrategy(),
-            new BinaryTreeRenderer(),
-            BinaryTree::new
-    ),
-    GENERAL(
-            "General Tree", "/images/GT_icon.png", true,
-            new GeneralTreeDescription(),
-            new GeneralTreeInsert(), new GTDeleteStrategy(),
-            new GeneralTreeRenderer(),
-            GeneralTree::new
-    ),
-    SPLAY(
-    "Splay Tree","/images/Splay_icon.png",false,
-            new SplayTreeDescription(),
-    new SplayInsertStrategy(), // <--- Dùng cái này để hiện mã giả chuẩn Splay
-    new SplayDeleteStrategy(),   // Tạm chấp nhận, hoặc tạo thêm SplayDeleteStrategy
-    new BinaryTreeRenderer(),
-    SplayTree::new),
-    AVL("AVL Tree", "/images/AVL_icon.png",false,
-            new AVLDescription(),
-            new AVLInsert(),new AVLDeleteStrategy(),
-            new AVLTreeRenderer(),
-            AVLTree::new),
-    SCAPEGOAT("Scapegoat Tree", "/images/Scapegoat_icon.png",false,
-            new ScapegoatDescription(),
-            new ScapegoatInsert(),new ScapegoatDeleteStrategy(),
-            new ScapegoatTreeRenderer(),
-            ScapegoatTree::new);
 
-    // --- CÁC TRƯỜNG DỮ LIỆU ---
-    private final String displayName;
-    private final String iconPath;
-    private final boolean requiresParentInput;
-    private final Description descriptionStrategy;
-    private final TreeRenderer renderer;
-    private final PseudoCodeStrategy insertStrategy;
-    private final PseudoCodeStrategy deleteStrategy;
-    private final Supplier<Tree> treeFactory;
+    // Khai báo cực ngắn gọn
+    RED_BLACK(new RedBlackTreeProfile()),
+    BST(new BSTProfile()),
+    BINARY(new NormalBinaryTreeProfile()),
+    GENERAL(new GeneralTreeProfile()),
+    SPLAY(new SplayTreeProfile()),
+    AVL(new AVLTreeProfile()),
+    SCAPEGOAT(new ScapegoatTreeProfile());
 
-    // --- CONSTRUCTOR ---
-    TreeType(String name, String icon, boolean reqParent,
-             Description desc,
-             PseudoCodeStrategy insert, PseudoCodeStrategy delete,TreeRenderer renderer,Supplier<Tree> factory) { // Thêm tham số
-        this.displayName = name;
-        this.iconPath = icon;
-        this.requiresParentInput = reqParent;
-        this.descriptionStrategy = desc;
-        this.insertStrategy = insert;
-        this.deleteStrategy = delete;
-        this.renderer = renderer;
-        this.treeFactory = factory;
+    ;
+
+    // Chỉ giữ đúng 1 trường duy nhất!
+    private final TreeProfile profile;
+
+    // Constructor đơn giản
+    TreeType(TreeProfile profile) {
+        this.profile = profile;
     }
 
-    // --- GETTERS ---
-    public String getDisplayName() { return displayName; }
-    public String getIconPath() { return iconPath; }
-    public boolean isRequiresParentInput() { return requiresParentInput; }
-    public String getDescriptionText() { return descriptionStrategy.getDescription(); }
+    // --- DELEGATE METHODS (Ủy quyền) ---
+    // Các class bên ngoài (Visualizer, Controller) vẫn gọi hàm get như cũ,
+    // nhưng Enum sẽ chuyển lời gọi đó sang các Module con.
 
-    // [MỚI] Getter cho Strategy
-    public PseudoCodeStrategy getInsertStrategy() { return insertStrategy; }
-    public PseudoCodeStrategy getDeleteStrategy() { return deleteStrategy; }
-    public TreeRenderer getRenderer() { return renderer; }
-    public Tree createTreeInstance() {
-        return treeFactory.get(); // Tạo ra một object Tree mới (new BinaryTree()...)
+    // 1. Nhóm Metadata
+    public String getDisplayName() { return profile.getMetadata().getDisplayName(); }
+    public String getIconPath() { return profile.getMetadata().getIconPath(); }
+    public boolean isRequiresParentInput() { return profile.getMetadata().isRequiresParentInput(); }
+
+    // 2. Nhóm Operations
+    public Tree createTreeInstance() { return profile.getOperations().createTree(); }
+    public Inserter getInserter() { return profile.getOperations().getInserter(); }
+    public Deleter getDeleter() { return profile.getOperations().getDeleter(); }
+    public Searcher getSearcher() { return profile.getOperations().getSearcher(); }
+
+    // 3. Nhóm Presentation
+    public TreeRenderer getRenderer() { return profile.getPresentation().getRenderer(); }
+    public NodeAlignmentStrategy getAlignmentStrategy() { return profile.getPresentation().getLayoutStrategy(); }
+    public String getDescriptionText() { return profile.getPresentation().getDescriptionText(); }
+    public PseudoCodeStrategy getInsertStrategy() { return profile.getPresentation().getInsertCode(); }
+    public PseudoCodeStrategy getDeleteStrategy() { return profile.getPresentation().getDeleteCode(); }
+    public PseudoCodeStrategy getSearchStrategy() {
+        // Lưu ý: Bạn cần chắc chắn class TreePresentation (trong Profile)
+        // đã có hàm getSearchCode() trả về (ví dụ) BSTSearch strategy.
+        return profile.getPresentation().getSearchCode();
     }
 }

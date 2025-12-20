@@ -1,9 +1,9 @@
 package com.example.treevisualize.Trees;
 
-import com.example.treevisualize.Node.BinaryTreeNode;
-import com.example.treevisualize.Node.GeneralTreeNode;
 import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Node.NodeStatus;
+import com.example.treevisualize.Visualizer.AlgorithmEvent;
+import com.example.treevisualize.Visualizer.ExecutionMonitor;
 import com.example.treevisualize.Visualizer.TreeObserver;
 
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import java.util.List;
 public abstract class Tree {
     protected Node root;
     private List<TreeObserver> observers;
+    protected ExecutionMonitor monitor;
     public Tree() {
         this.root = null;
         this.observers = new ArrayList<>();
@@ -21,7 +22,7 @@ public abstract class Tree {
         if (this.root == null) {
             return new ArrayList<>();
         }
-        List<Node> path = strategy.traverse(this.root);
+        List<Node> path = strategy.traverse(this,this.root);
         for (Node node : path) {
             visit(node);
         }
@@ -128,5 +129,23 @@ public abstract class Tree {
         }
 
         return 1 + maxChildHeight;
+    }
+    public void setMonitor(ExecutionMonitor monitor) {
+        this.monitor = monitor;
+    }
+
+    // [MỚI] Hàm báo cáo ngữ nghĩa (Semantic Notification)
+    // Các class con (BST, AVL...) sẽ gọi hàm này thay vì updatePseudoStep(int)
+    protected void notifyEvent(AlgorithmEvent event, Node node) {
+        if (monitor != null) {
+            monitor.onEvent(event, node);
+        }
+    }
+
+    // Hàm cập nhật dòng code (được gọi ngược lại từ Executor sau khi mapping)
+    public void updatePseudoStep(int lineIndex) {
+        for (TreeObserver obs : observers) {
+            obs.onPseudoStep(lineIndex); // Báo cho Recorder chụp ảnh
+        }
     }
 }

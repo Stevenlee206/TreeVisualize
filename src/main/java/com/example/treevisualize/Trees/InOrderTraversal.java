@@ -3,45 +3,38 @@ package com.example.treevisualize.Trees;
 import com.example.treevisualize.Node.BinaryTreeNode;
 import com.example.treevisualize.Node.GeneralTreeNode;
 import com.example.treevisualize.Node.Node;
+import com.example.treevisualize.Visualizer.Events.TraversalEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InOrderTraversal implements TraversalStrategy {
 
     @Override
-    public List<Node> traverse(Node root) {
+    public List<Node> traverse(Tree tree, Node root) {
         List<Node> result = new ArrayList<>();
-        inOrderRecursive(root, result);
+        tree.notifyEvent(TraversalEvent.START, root);
+        inOrderRecursive(tree, root, result);
+        tree.notifyEvent(TraversalEvent.FINISHED, null);
         return result;
     }
 
-    private void inOrderRecursive(Node node, List<Node> result) {
-        if (node == null) {
-            return;
-        }
+    private void inOrderRecursive(Tree tree, Node node, List<Node> result) {
+        if (node == null) return;
+
         if (node instanceof BinaryTreeNode) {
-            BinaryTreeNode binaryNode = (BinaryTreeNode) node;
-            inOrderRecursive(binaryNode.getLeftChild(), result);
-            result.add(binaryNode);
-            inOrderRecursive(binaryNode.getRightChild(), result);
+            BinaryTreeNode bNode = (BinaryTreeNode) node;
+            inOrderRecursive(tree, bNode.getLeftChild(), result);
+
+            // Highlight: Visit (Nằm giữa)
+            result.add(bNode);
+            tree.notifyEvent(TraversalEvent.VISIT, bNode);
+
+            inOrderRecursive(tree, bNode.getRightChild(), result);
         }
-        else if (node instanceof GeneralTreeNode) {
-            GeneralTreeNode gNode = (GeneralTreeNode) node;
-            GeneralTreeNode firstChild = gNode.getLeftMostChild();
-            if (firstChild != null) {
-                inOrderRecursive(firstChild, result);
-            }
-            result.add(gNode);
-            if (firstChild != null) {
-                GeneralTreeNode currentSibling = firstChild.getRightSibling();
-                while (currentSibling != null) {
-                    inOrderRecursive(currentSibling, result);
-                    currentSibling = currentSibling.getRightSibling();
-                }
-            }
-        }
+        // Logic General Tree rút gọn...
         else {
             result.add(node);
+            tree.notifyEvent(TraversalEvent.VISIT, node);
         }
     }
 }

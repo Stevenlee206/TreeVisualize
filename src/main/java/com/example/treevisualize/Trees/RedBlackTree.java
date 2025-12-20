@@ -4,22 +4,28 @@ import com.example.treevisualize.Node.Node;
 import com.example.treevisualize.Node.NodeColor;
 import com.example.treevisualize.Node.RedBlackTreeNode;
 import com.example.treevisualize.Node.BinaryTreeNode;
+
+import com.example.treevisualize.Visualizer.Events.StandardEvent;
+import com.example.treevisualize.Visualizer.Events.RBTEvent;
+
 public class RedBlackTree extends BinarySearchTree {
+
     public RedBlackTree() {
         super();
     }
 
+    // --- HELPER METHODS ---
     private boolean isRed(RedBlackTreeNode node) {
-        if (node == null) {
-            return false;
-        }
-        return node.getColor() == NodeColor.RED;
+        return node != null && node.getColor() == NodeColor.RED;
     }
 
     private void setColor(Node node, NodeColor color) {
         if (node != null && node instanceof RedBlackTreeNode) {
             ((RedBlackTreeNode) node).changeColor(color);
             notifyNodeChanged(node);
+
+            if (color == NodeColor.RED) notifyEvent(RBTEvent.PAINT_RED, node);
+            else notifyEvent(RBTEvent.PAINT_BLACK, node);
         }
     }
 
@@ -35,28 +41,38 @@ public class RedBlackTree extends BinarySearchTree {
         return node == null ? null : (RedBlackTreeNode) ((BinaryTreeNode) node).getRightChild();
     }
 
+    // --- INSERT LOGIC ---
     @Override
     public void insert(int value) {
+        notifyEvent(StandardEvent.START, root);
+
         if (root == null) {
             RedBlackTreeNode newRoot = new RedBlackTreeNode(value);
             newRoot.changeColor(NodeColor.BLACK);
             this.root = newRoot;
+            notifyEvent(StandardEvent.INSERT_SUCCESS, newRoot);
+            notifyEvent(RBTEvent.PAINT_BLACK, newRoot);
             notifyStructureChanged();
             return;
         }
 
         if (search(value) != null) {
-            notifyError("The value " + value + " already exist!");
+            notifyError("The value " + value + " already exists!");
             return;
         }
+
         RedBlackTreeNode newNode = new RedBlackTreeNode(value);
         newNode.changeColor(NodeColor.RED);
+        notifyEvent(RBTEvent.PAINT_RED, newNode);
 
         insertStandardBST(newNode);
 
+        notifyEvent(RBTEvent.FIXUP_START, newNode);
         fixInsert(newNode);
+
         notifyStructureChanged();
     }
+
     private void insertStandardBST(RedBlackTreeNode newNode) {
         RedBlackTreeNode current = (RedBlackTreeNode) root;
         RedBlackTreeNode parent = null;
@@ -64,8 +80,12 @@ public class RedBlackTree extends BinarySearchTree {
         while (current != null) {
             parent = current;
             if (newNode.getValue() < current.getValue()) {
+                notifyEvent(StandardEvent.COMPARE_LESS, current);
+                notifyEvent(StandardEvent.GO_LEFT, current);
                 current = leftOf(current);
             } else {
+                notifyEvent(StandardEvent.COMPARE_GREATER, current);
+                notifyEvent(StandardEvent.GO_RIGHT, current);
                 current = rightOf(current);
             }
         }
@@ -75,44 +95,51 @@ public class RedBlackTree extends BinarySearchTree {
         } else {
             parent.setRightChild(newNode);
         }
+        notifyEvent(StandardEvent.INSERT_SUCCESS, newNode);
     }
 
     private void fixInsert(RedBlackTreeNode k) {
         RedBlackTreeNode u;
 
         while (k != root && isRed(parentOf(k))) {
-
             if (parentOf(k) == leftOf(parentOf(parentOf(k)))) {
                 u = rightOf(parentOf(parentOf(k)));
 
-                if (isRed(u)) {
+                if (isRed(u)) { // Case 1: Recolor
+                    notifyEvent(RBTEvent.CASE_1, k);
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(u, NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     k = parentOf(parentOf(k));
                 } else {
-                    if (k == rightOf(parentOf(k))) {
+                    if (k == rightOf(parentOf(k))) { // Case 2: Rotate Left
+                        notifyEvent(RBTEvent.CASE_2, k);
                         k = parentOf(k);
                         leftRotate(k);
                     }
+                    // Case 3: Rotate Right
+                    notifyEvent(RBTEvent.CASE_3, k);
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     rightRotate(parentOf(parentOf(k)));
                 }
-            }
-            else {
+            } else {
                 u = leftOf(parentOf(parentOf(k)));
 
-                if (isRed(u)) {
+                if (isRed(u)) { // Case 1
+                    notifyEvent(RBTEvent.CASE_1, k);
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(u, NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     k = parentOf(parentOf(k));
                 } else {
-                    if (k == leftOf(parentOf(k))) {
+                    if (k == leftOf(parentOf(k))) { // Case 2
+                        notifyEvent(RBTEvent.CASE_2, k);
                         k = parentOf(k);
                         rightRotate(k);
                     }
+                    // Case 3
+                    notifyEvent(RBTEvent.CASE_3, k);
                     setColor(parentOf(k), NodeColor.BLACK);
                     setColor(parentOf(parentOf(k)), NodeColor.RED);
                     leftRotate(parentOf(parentOf(k)));
@@ -122,13 +149,18 @@ public class RedBlackTree extends BinarySearchTree {
         setColor(root, NodeColor.BLACK);
     }
 
+    // --- DELETE LOGIC ---
     @Override
     public void delete(int value) {
+        notifyEvent(StandardEvent.DELETE_START, root);
+
         RedBlackTreeNode z = (RedBlackTreeNode) search(value);
         if (z == null) {
             notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
+
+        notifyEvent(StandardEvent.DELETE_SUCCESS, z);
 
         RedBlackTreeNode x, y;
 
@@ -163,6 +195,7 @@ public class RedBlackTree extends BinarySearchTree {
         }
 
         if (!isRed(y)) {
+            notifyEvent(RBTEvent.FIXUP_START, x);
             fixDelete(x, yParent);
         }
 
@@ -178,6 +211,7 @@ public class RedBlackTree extends BinarySearchTree {
                 w = rightOf(xParent);
 
                 if (isRed(w)) {
+                    notifyEvent(RBTEvent.CASE_2, w); // Case: Brother Red -> Rotate
                     setColor(w, NodeColor.BLACK);
                     setColor(xParent, NodeColor.RED);
                     leftRotate(xParent);
@@ -185,16 +219,19 @@ public class RedBlackTree extends BinarySearchTree {
                 }
 
                 if (!isRed(leftOf(w)) && !isRed(rightOf(w))) {
+                    notifyEvent(RBTEvent.CASE_1, w); // Case: Black brother, black nephews
                     setColor(w, NodeColor.RED);
                     x = xParent;
                     xParent = parentOf(x);
                 } else {
                     if (!isRed(rightOf(w))) {
+                        notifyEvent(RBTEvent.CASE_2, w);
                         setColor(leftOf(w), NodeColor.BLACK);
                         setColor(w, NodeColor.RED);
                         rightRotate(w);
                         w = rightOf(xParent);
                     }
+                    notifyEvent(RBTEvent.CASE_3, w);
                     setColor(w, isRed(xParent) ? NodeColor.RED : NodeColor.BLACK);
                     setColor(xParent, NodeColor.BLACK);
                     setColor(rightOf(w), NodeColor.BLACK);
@@ -202,11 +239,11 @@ public class RedBlackTree extends BinarySearchTree {
                     x = (RedBlackTreeNode) root;
                     xParent = null;
                 }
-            }
-            else {
+            } else {
                 w = leftOf(xParent);
 
-                if (isRed(w)) { // Case 1
+                if (isRed(w)) {
+                    notifyEvent(RBTEvent.CASE_2, w);
                     setColor(w, NodeColor.BLACK);
                     setColor(xParent, NodeColor.RED);
                     rightRotate(xParent);
@@ -214,16 +251,19 @@ public class RedBlackTree extends BinarySearchTree {
                 }
 
                 if (!isRed(rightOf(w)) && !isRed(leftOf(w))) {
+                    notifyEvent(RBTEvent.CASE_1, w);
                     setColor(w, NodeColor.RED);
                     x = xParent;
                     xParent = parentOf(x);
                 } else {
                     if (!isRed(leftOf(w))) {
+                        notifyEvent(RBTEvent.CASE_2, w);
                         setColor(rightOf(w), NodeColor.BLACK);
                         setColor(w, NodeColor.RED);
                         leftRotate(w);
                         w = leftOf(xParent);
                     }
+                    notifyEvent(RBTEvent.CASE_3, w);
                     setColor(w, isRed(xParent) ? NodeColor.RED : NodeColor.BLACK);
                     setColor(xParent, NodeColor.BLACK);
                     setColor(leftOf(w), NodeColor.BLACK);
@@ -237,8 +277,9 @@ public class RedBlackTree extends BinarySearchTree {
     }
 
     private void leftRotate(RedBlackTreeNode x) {
-        if (x == null || rightOf(x) == null) return;
+        notifyEvent(RBTEvent.ROTATE_LEFT, x);
 
+        if (x == null || rightOf(x) == null) return;
         RedBlackTreeNode y = rightOf(x);
         x.setRightChild(y.getLeftChild());
 
@@ -261,8 +302,9 @@ public class RedBlackTree extends BinarySearchTree {
     }
 
     private void rightRotate(RedBlackTreeNode y) {
-        if (y == null || leftOf(y) == null) return;
+        notifyEvent(RBTEvent.ROTATE_RIGHT, y);
 
+        if (y == null || leftOf(y) == null) return;
         RedBlackTreeNode x = leftOf(y);
         y.setLeftChild(x.getRightChild());
 

@@ -83,6 +83,11 @@ public class GeneralTreeNode extends Node {
             GeneralTreeNode childCopy = (GeneralTreeNode) this.getLeftMostChild().copy();
             newNode.setLeftMostChild(childCopy);
             childCopy.setParent(newNode);
+            GeneralTreeNode currentChild = childCopy;
+            while (currentChild != null) {
+                currentChild.setParent(newNode); // Gán cha cho từng node trong hàng
+                currentChild = currentChild.getRightSibling();
+            }
         }
         if (this.getRightSibling() != null) {
             GeneralTreeNode siblingCopy = (GeneralTreeNode) this.getRightSibling().copy();

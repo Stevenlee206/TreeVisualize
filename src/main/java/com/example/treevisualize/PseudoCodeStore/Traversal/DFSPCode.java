@@ -3,24 +3,33 @@ package com.example.treevisualize.PseudoCodeStore.Traversal;
 import java.util.List;
 import java.util.Arrays;
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
+import com.example.treevisualize.Visualizer.AlgorithmEvent;
+import com.example.treevisualize.Visualizer.Events.TraversalEvent;
 
 public class DFSPCode implements PseudoCodeStrategy {
 	@Override
-	public String getTitle() {
-		return "DFS(root)";
-	}
+	public String getTitle() { return "DFS(root)"; }
 
 	@Override
 	public List<String> getLines() {
 		return Arrays.asList(
-				"1.  result ← ArrayList()",
-				"2.  dfsRecursive(root, result)",
-				"3.  return result",
-				"4.  function dfsRecursive(node, result)",
-				"5.  	if (node == ∅) return",
-				"6.  	result.add(node)",
-				"7.  	dfsRecursive(node.left, result)",
-				"8.  	defRecursive(node.right, result)"
+				"1.  dfsRecursive(root, result)",
+				"2.  function dfsRecursive(node):",
+				"3.  \tif (node == ∅) return",
+				"4.  \tresult.add(node)",             // Index 3: VISIT
+				"5.  \tdfsRecursive(children)"
 		);
+	}
+
+	@Override
+	public int getLineIndex(AlgorithmEvent event) {
+		if (event instanceof TraversalEvent te) {
+			return switch (te) {
+				case START -> 0;
+				case VISIT -> 3; // Chỉ highlight dòng này
+				default -> -1;
+			};
+		}
+		return -1;
 	}
 }

@@ -1,14 +1,15 @@
 package com.example.treevisualize.PseudoCodeStore.Delete;
 
 import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
+import com.example.treevisualize.Visualizer.AlgorithmEvent;
+import com.example.treevisualize.Visualizer.Events.RBTEvent;
+import com.example.treevisualize.Visualizer.Events.StandardEvent;
 import java.util.Arrays;
 import java.util.List;
 
 public class RBTDeleteStrategy implements PseudoCodeStrategy {
     @Override
-    public String getTitle() {
-        return "RB-Delete(T, z)";
-    }
+    public String getTitle() { return "RB-Delete(T, z)"; }
 
     @Override
     public List<String> getLines() {
@@ -29,7 +30,25 @@ public class RBTDeleteStrategy implements PseudoCodeStrategy {
                 "14.     y.parent.right ← x",
                 "15. if (y ≠ z) z.value ← y.value",
                 "16. if (y.color = BLACK)",
-                "17. 	 deleteFixUp(x, y.parent)"
+                "17.     deleteFixUp(x, y.parent)"
         );
+    }
+
+    @Override
+    public int getLineIndex(AlgorithmEvent event) {
+        if (event instanceof StandardEvent se) {
+            return switch (se) {
+                case DELETE_START -> 0;
+                case DELETE_SUCCESS -> 14;
+                default -> -1;
+            };
+        }
+        if (event instanceof RBTEvent re) {
+            if (re == RBTEvent.FIXUP_START || re == RBTEvent.CASE_1 ||
+                    re == RBTEvent.ROTATE_LEFT || re == RBTEvent.ROTATE_RIGHT) {
+                return 16;
+            }
+        }
+        return -1;
     }
 }

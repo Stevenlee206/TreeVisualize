@@ -7,6 +7,7 @@ import com.example.treevisualize.Trees.*;
 public enum TraversalType {
     BFS("BFS (Level Order)", new BFSPCode(), new BFSTraversal()),
     DFS("DFS (Pre-Order)",   new DFSPCode(), new DFSTraversal()),
+    PRE_ORDER("Pre-Order",new PreOrderPCode(),new PreOrderTraversal()),
     IN_ORDER("In-Order",     new InOrderPCode(), new InOrderTraversal()),
     POST_ORDER("Post-Order", new PostOrderPCode(), new PostOrderTraversal());
 

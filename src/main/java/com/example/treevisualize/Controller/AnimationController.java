@@ -1,205 +1,218 @@
 package com.example.treevisualize.Controller;
 
-import com.example.treevisualize.Node.Node;
+// Import các bộ phận chuyên trách (Sub-systems)
+import com.example.treevisualize.Controller.SubSystems.Executor.AlgorithmExecutor;
+import com.example.treevisualize.Controller.SubSystems.History.HistoryStorage;
+import com.example.treevisualize.Controller.SubSystems.History.InMemoryHistory;
+import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackController;
+import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackDirector;
+import com.example.treevisualize.Controller.SubSystems.Recorder.RecorderStrategy;
+import com.example.treevisualize.Controller.SubSystems.Recorder.StandardRecorder;
+
+// Import các thành phần bổ trợ
+import com.example.treevisualize.Description.TreeType;
 import com.example.treevisualize.TraversalType;
-import com.example.treevisualize.Trees.*;
+import com.example.treevisualize.Trees.Tree;
 import com.example.treevisualize.Visualizer.PseudoCodeBlock;
-import com.example.treevisualize.Visualizer.TreeObserver;
 import com.example.treevisualize.Visualizer.TreeVisualizer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import com.example.treevisualize.Visualizer.TreeSnapShot;
+
+import java.util.List;
+
+/**
+ * AnimationController (Role: CEO / Facade)
+ * Nhiệm vụ: Điều phối hoạt động giữa Giao diện (UI) và các bộ phận xử lý bên dưới.
+ * Tuân thủ SOLID: Không chứa logic nghiệp vụ, chỉ chứa logic điều khiển.
+ */
 public class AnimationController {
 
-    private Tree tree;
+    // --- CÁC TRƯỞNG PHÒNG BAN (DEPENDENCIES) ---
+    private final AlgorithmExecutor executor;   // Phòng Sản Xuất (Chạy thuật toán)
+    private final RecorderStrategy recorder;    // Phòng Ghi Hình (Tạo Snapshot)
+    private final HistoryStorage history;       // Phòng Lưu Trữ (Quản lý Undo/Redo)
+    private final PlaybackController player;    // Phòng Trình Chiếu (Animation & Render)
 
-    private TreeVisualizer visualizer;
+    /**
+     * Constructor: Tuyển dụng và khởi tạo các bộ phận
+     */
+    public AnimationController(Tree tree, TreeVisualizer vis, PseudoCodeBlock pseudoCode, TreeType type) {
+        // 1. Khởi tạo Executor (Logic xử lý cây đa hình)
+        this.executor = new AlgorithmExecutor(tree, type, pseudoCode);
 
-    private PseudoCodeBlock pseudoCode;
+        // 2. Khởi tạo Recorder (Logic ghi hình)
+        this.recorder = new StandardRecorder(tree);
 
-    private Timeline timeLine;
+        // 3. Khởi tạo History (Logic lưu trữ)
+        this.history = new InMemoryHistory();
 
-    private boolean isPlaying;
+        // 4. Khởi tạo Player (Logic hiển thị & hiệu ứng)
+        this.player = new PlaybackDirector(tree, vis, pseudoCode);
 
-    private double speed;
-
-    // Danh sách các khung hình (Snapshot) của hoạt cảnh hiện tại
-    private List<TreeSnapShot> animationFrames;
-
-    private int currentFrameIndex;
-
-    public AnimationController(Tree tree, TreeVisualizer vis, PseudoCodeBlock pseudoCode) {
-        this.tree = tree;
-        this.visualizer = vis;
-        this.pseudoCode = pseudoCode;
-
-        this.animationFrames = new ArrayList<>();
-        this.currentFrameIndex = 0;
-        this.isPlaying = false;
-        this.speed = 700.0;
-
-        // Khởi tạo Timeline (vòng lặp vô hạn, nhưng ta sẽ control nó)
-        this.timeLine = new Timeline();
-        this.timeLine.setCycleCount(Timeline.INDEFINITE);
+        // 5. Thiết lập đường dây nóng (Wiring)
+        // Khi Player chạy hết một frame, nó sẽ "gõ cửa" xin frame tiếp theo -> Gọi hàm autoNextStep
+        this.player.setOnTickRequest(this::autoNextStep);
     }
 
-    public void play() {
-        if (animationFrames.isEmpty() || currentFrameIndex >= animationFrames.size() - 1) {
-            return;
-        }
-
-        this.isPlaying = true;
-        createAnimationSequence();
-
-        this.timeLine.play();
-    }
-
-    public void pause() {
-        this.isPlaying = false;
-        this.timeLine.pause();
-    }
-
-    public void stepForward() {
-        if (currentFrameIndex < animationFrames.size() - 1) {
-            currentFrameIndex++;
-            restoreSnapshot(animationFrames.get(currentFrameIndex));
-        } else {
-            pause();
-        }
-    }
-
-    public void reset() {
-        pause();
-        if (!animationFrames.isEmpty()) {
-            currentFrameIndex = 0;
-            restoreSnapshot(animationFrames.get(0));
-        }
-    }
-
-    public void setSpeed(double speedMultiplier) {
-        // [FIX] Chuyển đổi hệ số (1-5) thành độ trễ (ms)
-        // Ví dụ: Hệ số 1 -> 1000ms, Hệ số 5 -> 200ms
-        this.speed = 1000.0 / speedMultiplier;
-        if (isPlaying) {
-            pause();
-            play();
-        }
-    }
+    // =================================================================================
+    // 1. KHU VỰC TIẾP NHẬN YÊU CẦU TỪ UI (COMMAND INTERFACE)
+    // =================================================================================
 
     public void startInsert(int val) {
-        prepareRecording();
-        tree.insert(val);
-        finishRecording();
+        runTransaction(() -> executor.executeInsert(val));
+    }
+
+    public void startInsert(int parentVal, int childVal) {
+        runTransaction(() -> executor.executeInsert(parentVal, childVal));
     }
 
     public void startDelete(int val) {
-        prepareRecording();
-        tree.delete(val);
-        finishRecording();
+        runTransaction(() -> executor.executeDelete(val));
     }
 
     public void startSearch(int val) {
-        prepareRecording();
-        tree.search(val);
-        finishRecording();
-    }
-
-    private void createAnimationSequence() {
-        timeLine.stop();
-        timeLine.getKeyFrames().clear();
-        KeyFrame frame = new KeyFrame(Duration.millis(speed), event -> {
-            stepForward();
-        });
-
-        timeLine.getKeyFrames().add(frame);
-    }
-
-    private void restoreSnapshot(TreeSnapShot snapshot) {
-        tree.setRoot(snapshot.getRootCopy());
-        pseudoCode.highlightLine(snapshot.getPseudoLineIndex());
-        if (visualizer != null) {
-            visualizer.render();
-        }
-    }
-
-    private TreeObserver recorder;
-
-    private void prepareRecording() {
-        this.animationFrames.clear();
-        this.currentFrameIndex = 0;
-
-        captureFrame(-1, "Start");
-        recorder = new TreeObserver() {
-            @Override
-            public void onNodeChanged(Node node) {
-                captureFrame(getCurrentCodeLine(), "com.example.treevisualize.Node Changed");
-            }
-
-            @Override
-            public void onStructureChanged() {
-                captureFrame(getCurrentCodeLine(), "Structure Changed");
-            }
-
-            @Override
-            public void onError(String message) {
-                captureFrame(-1, "Error: " + message);
-            }
-        };
-        tree.addObserver(recorder);
-    }
-
-    private void finishRecording() {
-        tree.removeObserver(recorder);
-        if (!animationFrames.isEmpty()) {
-            restoreSnapshot(animationFrames.get(0));
-        }
-        play();
-    }
-
-    private void captureFrame(int lineIndex, String msg) {
-        TreeSnapShot snapshot = new TreeSnapShot(tree.getRoot(), lineIndex, msg);
-        animationFrames.add(snapshot);
-    }
-    private int getCurrentCodeLine() {
-        return 0;
+        runTransaction(() -> executor.executeSearch(val));
     }
 
     public void startTraversal(TraversalType type) {
-        tree.resetTreeStatus();
-
-        // 1. Tự động cập nhật mã giả lên màn hình từ Enum
-        // (Trước đây bạn quên bước này trong AnimationController cũ)
-        pseudoCode.setCode(type.getPseudoCode().getTitle(), type.getPseudoCode().getLines());
-
-        prepareRecording();
-
-        // 2. Lấy thuật toán trực tiếp từ Enum và chạy
-        // Không còn switch-case dài dòng nữa!
-        TraversalStrategy strategy = type.getAlgorithm();
-
-        if (strategy != null) {
-            tree.traverse(strategy);
-        } else {
-            System.err.println("Algorithm not found for: " + type);
-        }
-
-        finishRecording();
+        runTransaction(() -> executor.executeTraversal(type));
     }
 
-    public void startInsert(int parentValue, int childValue) {
-        // Có thể kiểm tra linh hoạt hơn thay vì chỉ check GeneralTree
-        // Ví dụ: BinaryTree của bạn cũng có hàm insert(parent, child)
-        if (tree instanceof GeneralTree) {
-            ((GeneralTree) tree).insert(parentValue, childValue);
-            visualizer.render();
-        } else if (tree instanceof BinaryTree) {
-            ((BinaryTree) tree).insert(parentValue, childValue);
-            visualizer.render();
+    // =================================================================================
+    // 2. QUY TRÌNH VẬN HÀNH CHUẨN (ORCHESTRATION LOGIC)
+    // =================================================================================
+
+    /**
+     * Template Method: Quy trình chuẩn để thực hiện một hành động.
+     * B1: Dừng phim cũ -> B2: Ghi hình -> B3: Lưu kho -> B4: Phát sóng
+     */
+    private void runTransaction(Runnable algorithmTask) {
+        // B1: Dừng mọi hoạt động đang chạy
+        player.pause();
+
+        // B2: Bắt đầu ghi hình và chạy thuật toán
+        recorder.startRecording();
+        algorithmTask.run(); // Chạy thuật toán cây (Insert/Delete/...)
+        List<TreeSnapShot> rawFilm = recorder.stopRecording(); // Lấy cuộn phim về
+
+        // B3: Nhập kho dữ liệu
+        history.save(rawFilm);
+
+        // B4: Quyết định hiển thị
+        // [FIX CRASH] Kiểm tra xem phim có hợp lệ không (tránh lỗi 1 frame)
+        if (!history.isValid()) {
+            // Nếu phim chỉ có 1 frame (do lỗi hoặc không có gì thay đổi), chỉ hiện ảnh tĩnh
+            player.renderInstant(history.getCurrent());
         } else {
-            System.err.println("This tree type does not support parent-based insertion.");
+            // Nếu phim tốt, reset về đầu và bắt đầu chiếu
+            player.renderInstant(history.getCurrent());
+            player.play();
         }
+    }
+
+    // =================================================================================
+    // 3. KHU VỰC ĐIỀU KHIỂN MEDIA (MEDIA CONTROLS)
+    // =================================================================================
+
+    public void play() {
+        // [Safety Guard] Nếu không có phim hoặc phim lỗi, từ chối chạy
+        if (!history.isValid()) return;
+
+        // Nếu đang ở cuối phim, tự động tua lại từ đầu
+        if (!history.hasNext()) {
+            replay();
+        } else {
+            player.play();
+        }
+    }
+
+    public void pause() {
+        player.pause();
+    }
+
+    public void replay() {
+        player.pause();
+        // Chỉ replay nếu kho không rỗng
+        if (history.getCurrent() != null) {
+            history.reset(); // Tua lịch sử về 0
+            player.renderInstant(history.getCurrent()); // Vẽ frame đầu
+
+            // Chỉ chạy nếu phim có nội dung (>1 frame)
+            if (history.isValid()) {
+                player.play();
+            }
+        }
+    }
+
+    public void stepBackward() { // Undo / Previous
+        player.pause();
+        if (history.hasPrev()) {
+            // Lùi lại 1 bước và vẽ ngay lập tức (không hiệu ứng)
+            player.renderInstant(history.prev());
+        }
+    }
+
+    public void stepForward() { // Redo / Next
+        player.pause();
+        // Tiến 1 bước thủ công (có hiệu ứng chuyển cảnh)
+        manualNextStep();
+    }
+
+    public void setSpeed(double speedMultiplier) {
+        // Ủy quyền việc chỉnh tốc độ cho Player
+        player.setSpeed(speedMultiplier);
+    }
+
+    // =================================================================================
+    // 4. SỰ KIỆN NỘI BỘ (INTERNAL EVENTS)
+    // =================================================================================
+
+    /**
+     * Được gọi tự động bởi Player (thông qua Ticker) khi đến nhịp tiếp theo.
+     */
+    private void autoNextStep() {
+        if (history.hasNext()) {
+            TreeSnapShot start = history.getCurrent();
+            TreeSnapShot end = history.next(); // Tự động tăng index
+            // Yêu cầu Player vẽ hiệu ứng chuyển từ Start -> End
+            player.renderTransition(start, end);
+        } else {
+            // Hết phim -> Dừng máy chạy
+            player.pause();
+        }
+    }
+
+    /**
+     * Được gọi khi người dùng bấm nút Next.
+     * (Logic tương tự autoNextStep nhưng tách ra để dễ mở rộng xử lý UI nếu cần)
+     */
+    private void manualNextStep() {
+        if (history.hasNext()) {
+            TreeSnapShot start = history.getCurrent();
+            TreeSnapShot end = history.next();
+            player.renderTransition(start, end);
+        }
+    }
+
+    public void startRandomBatch(int count) {
+        // Gọi runTransaction đúng 1 lần duy nhất
+        runTransaction(() -> {
+            java.util.Random rand = new java.util.Random();
+
+            // Logic kiểm tra loại cây để insert cho đúng
+            // (Bạn có thể tinh chỉnh logic này tùy theo yêu cầu General Tree của bạn)
+            boolean needsParent = (executor.getTree() instanceof com.example.treevisualize.Trees.GeneralTree);
+
+            for (int i = 0; i < count; i++) {
+                int val = rand.nextInt(99) + 1;
+
+                if (needsParent) {
+                    // Nếu là General Tree, mặc định insert vào root (-1) hoặc logic riêng
+                    executor.executeInsert(-1, val);
+                } else {
+                    // Nếu là cây nhị phân (BST, AVL, Splay, RBT...)
+                    executor.executeInsert(val);
+                }
+            }
+        });
     }
 }

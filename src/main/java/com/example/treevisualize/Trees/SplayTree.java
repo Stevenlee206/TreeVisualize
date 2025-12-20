@@ -2,6 +2,8 @@ package com.example.treevisualize.Trees;
 
 import com.example.treevisualize.Node.BinaryTreeNode;
 import com.example.treevisualize.Node.Node;
+import com.example.treevisualize.Visualizer.Events.SplayEvent;
+import com.example.treevisualize.Visualizer.Events.StandardEvent;
 
 public class SplayTree extends BinarySearchTree {
 
@@ -14,8 +16,10 @@ public class SplayTree extends BinarySearchTree {
      */
     @Override
     public Node search(int value) {
+        // notifyEvent(StandardEvent.START, root); // Search BST đã có notify bên trong
         Node found = super.search(value);
         if (found != null) {
+            notifyEvent(SplayEvent.SPLAY_START, found);
             splay((BinaryTreeNode) found);
         }
         return found;
@@ -26,9 +30,14 @@ public class SplayTree extends BinarySearchTree {
      */
     @Override
     public void insert(int value) {
-        super.insert(value); // Tận dụng logic chèn của BST cũ
-        Node newNode = super.search(value); // Lấy lại node vừa chèn
+        super.insert(value); // Tận dụng logic chèn & notify của BST cũ
+
+        // Sau khi insert xong, tìm lại node đó để splay
+        // Lưu ý: super.insert đã notifyStructureChanged, nên visualizer đã vẽ xong bước insert.
+        // Giờ ta splay tiếp.
+        Node newNode = super.search(value);
         if (newNode != null) {
+            notifyEvent(SplayEvent.SPLAY_START, newNode);
             splay((BinaryTreeNode) newNode);
         }
     }
@@ -39,15 +48,22 @@ public class SplayTree extends BinarySearchTree {
     @Override
     public void delete(int value) {
         BinaryTreeNode nodeToDelete = (BinaryTreeNode) super.search(value);
-        if (nodeToDelete == null) return;
+        if (nodeToDelete == null) {
+            // Logic báo lỗi đã có trong super.delete
+            super.delete(value);
+            return;
+        }
 
         BinaryTreeNode parent = (BinaryTreeNode) nodeToDelete.getParent();
         super.delete(value);
 
         if (parent != null) {
-            // Splay cha của node vừa bị xóa (hoặc node thay thế vị trí đó)
-            // Để đơn giản, ta splay root hiện tại để cân bằng lại
-            if (root != null) splay((BinaryTreeNode) root);
+            notifyEvent(SplayEvent.SPLAY_START, parent);
+            splay(parent);
+        } else if (root != null) {
+            // Nếu xóa root cũ, root mới có thể cần splay (tùy biến thể, ở đây splay root mới cho chắc)
+            notifyEvent(SplayEvent.SPLAY_START, root);
+            splay((BinaryTreeNode) root);
         }
     }
 
@@ -59,6 +75,7 @@ public class SplayTree extends BinarySearchTree {
 
             if (grandParent == null) {
                 // Trường hợp 1: Cha là Root -> Xoay đơn (Zig hoặc Zag)
+                notifyEvent(SplayEvent.CASE_ZIG, node);
                 if (node == parent.getLeftChild()) {
                     rotateRight(parent);
                 } else {
@@ -68,27 +85,33 @@ public class SplayTree extends BinarySearchTree {
                 // Trường hợp 2: Có Ông nội
                 if (node == parent.getLeftChild() && parent == grandParent.getLeftChild()) {
                     // Zig-Zig (Cùng bên trái) -> Xoay Ông trước, Cha sau
+                    notifyEvent(SplayEvent.CASE_ZIG_ZIG, node);
                     rotateRight(grandParent);
                     rotateRight(parent);
                 } else if (node == parent.getRightChild() && parent == grandParent.getRightChild()) {
                     // Zag-Zag (Cùng bên phải)
+                    notifyEvent(SplayEvent.CASE_ZIG_ZIG, node);
                     rotateLeft(grandParent);
                     rotateLeft(parent);
                 } else if (node == parent.getRightChild() && parent == grandParent.getLeftChild()) {
                     // Zig-Zag (Gấp khúc)
+                    notifyEvent(SplayEvent.CASE_ZIG_ZAG, node);
                     rotateLeft(parent);
                     rotateRight(grandParent);
                 } else {
                     // Zag-Zig (Gấp khúc)
+                    notifyEvent(SplayEvent.CASE_ZIG_ZAG, node);
                     rotateRight(parent);
                     rotateLeft(grandParent);
                 }
             }
         }
-        notifyStructureChanged(); // Báo hiệu vẽ lại cây sau khi xoay
+        notifyStructureChanged(); // Báo hiệu vẽ lại cây sau khi xoay xong toàn bộ
     }
 
     private void rotateRight(BinaryTreeNode p) {
+        notifyEvent(SplayEvent.ROTATE_RIGHT, p); // Highlight xoay phải
+
         BinaryTreeNode x = p.getLeftChild();
         if (x == null) return;
 
@@ -101,9 +124,16 @@ public class SplayTree extends BinarySearchTree {
 
         // 2. Cập nhật cha cho x
         updateParent(grandParent, p, x);
+
+        // Cập nhật parent cho các node con bị chuyển chỗ
+        if (T2 != null) T2.setParent(p);
+        p.setParent(x);
+        x.setParent(grandParent);
     }
 
     private void rotateLeft(BinaryTreeNode p) {
+        notifyEvent(SplayEvent.ROTATE_LEFT, p); // Highlight xoay trái
+
         BinaryTreeNode x = p.getRightChild();
         if (x == null) return;
 
@@ -116,6 +146,11 @@ public class SplayTree extends BinarySearchTree {
 
         // 2. Cập nhật cha cho x
         updateParent(grandParent, p, x);
+
+        // Cập nhật parent cho các node con bị chuyển chỗ
+        if (T2 != null) T2.setParent(p);
+        p.setParent(x);
+        x.setParent(grandParent);
     }
 
     private void updateParent(BinaryTreeNode grandParent, BinaryTreeNode oldChild, BinaryTreeNode newChild) {
