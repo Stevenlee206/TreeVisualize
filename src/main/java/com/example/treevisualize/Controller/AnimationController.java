@@ -88,6 +88,12 @@ public class AnimationController {
             play();
         }
     }
+    
+    public void startRandomInsert(int val) {
+    	prepareRecording();
+    	tree.insertRandom(val);
+    	finishRecording();
+    }
 
     public void startInsert(int val) {
         prepareRecording();
@@ -100,7 +106,7 @@ public class AnimationController {
         tree.delete(val);
         finishRecording();
     }
-
+    
     public void startSearch(int val) {
         prepareRecording();
         tree.search(val);
