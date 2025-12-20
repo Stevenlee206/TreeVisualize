@@ -8,6 +8,7 @@ import com.example.treevisualize.Visualizer.TreeObserver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public abstract class Tree {
@@ -129,4 +130,31 @@ public abstract class Tree {
 
         return 1 + maxChildHeight;
     }
+    
+    public void insertRandom(int value) {
+        insert(value);
+    }
+
+
+    public int getRandomNodeValue() {
+        if (root == null) {
+            throw new IllegalStateException("Tree is empty");
+        }
+
+        List<Node> nodes = new ArrayList<>();
+        collectNodes(root, nodes);
+
+        return nodes.get(new Random().nextInt(nodes.size())).getValue();
+    }
+
+    protected void collectNodes(Node node, List<Node> list) {
+        if (node == null) return;
+        list.add(node);
+        for (Node child : node.getChildren()) {
+            collectNodes(child, list);
+        }
+    }
+
+
+    
 }
