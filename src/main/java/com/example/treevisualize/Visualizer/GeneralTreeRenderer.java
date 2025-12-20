@@ -8,20 +8,47 @@ import javafx.scene.paint.Color;
 public class GeneralTreeRenderer implements TreeRenderer {
 
     @Override
-    public void renderChildren(GraphicsContext gc, Node node, double x, double y, double hGap, TreeVisualizer visualizer) {
+    public void renderChildren(GraphicsContext gc,
+                               Node node,
+                               double x,
+                               double y,
+                               double hGap,
+                               TreeVisualizer visualizer) {
+
         if (!(node instanceof GeneralTreeNode)) return;
-        GeneralTreeNode gNode = (GeneralTreeNode) node;
+        GeneralTreeNode parent = (GeneralTreeNode) node;
 
-        double nextHGap = hGap * 0.5;
         double nextY = y + TreeVisualizer.VERTICAL_GAP;
-        Node child = gNode.getLeftMostChild();
-        double childX = x - hGap;
+        double nextHGap = hGap * 0.6;
 
+        GeneralTreeNode child =
+                (GeneralTreeNode) parent.getLeftMostChild();
+
+        double totalWidth = 0;
+        GeneralTreeNode temp = child;
+        while (temp != null) {
+            totalWidth += temp.getSubtreeSize() * hGap;
+            temp = (GeneralTreeNode) temp.getRightSibling();
+        }
+        double childX = x - totalWidth / 2;
         while (child != null) {
-            gc.strokeLine(x, y, childX, nextY);
-            visualizer.calculateLayout(child, childX, nextY, nextHGap);
-            child = ((GeneralTreeNode) child).getRightSibling();
-            childX += hGap;
+
+            double subtreeWidth = child.getSubtreeSize() * hGap;
+            double centerX = childX + subtreeWidth / 2;
+
+            // draw edge
+            gc.strokeLine(x, y, centerX, nextY);
+
+            // recursive layout
+            visualizer.calculateLayout(
+                    child,
+                    centerX,
+                    nextY,
+                    nextHGap
+            );
+
+            childX += subtreeWidth;
+            child = (GeneralTreeNode) child.getRightSibling();
         }
     }
 
