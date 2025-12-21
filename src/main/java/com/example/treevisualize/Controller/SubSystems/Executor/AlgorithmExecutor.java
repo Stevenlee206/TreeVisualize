@@ -3,12 +3,12 @@ package com.example.treevisualize.Controller.SubSystems.Executor;
 import com.example.treevisualize.Controller.Operators.Delete.Deleter;
 import com.example.treevisualize.Controller.Operators.Insert.Inserter;
 import com.example.treevisualize.Controller.Operators.Search.Searcher;
-import com.example.treevisualize.Description.TreeType;
-import com.example.treevisualize.PseudoCodeStore.PseudoCodeStrategy;
-import com.example.treevisualize.TraversalType;
-import com.example.treevisualize.Trees.Tree;
-import com.example.treevisualize.Visualizer.ExecutionMonitor;
-import com.example.treevisualize.Visualizer.PseudoCodeBlock;
+import com.example.treevisualize.Model.Description.TreeType;
+import com.example.treevisualize.Model.PseudoCodeStore.PseudoCodeStrategy;
+import com.example.treevisualize.Shared.TraversalType;
+import com.example.treevisualize.Model.Tree.Tree;
+import com.example.treevisualize.View.Visualizer.ExecutionMonitor;
+import com.example.treevisualize.View.Visualizer.PseudoCodeBlock;
 
 public class AlgorithmExecutor {
     private final Tree tree;

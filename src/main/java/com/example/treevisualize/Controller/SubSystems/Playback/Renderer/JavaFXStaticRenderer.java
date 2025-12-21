@@ -1,9 +1,9 @@
 package com.example.treevisualize.Controller.SubSystems.Playback.Renderer;
 
-import com.example.treevisualize.Trees.Tree;
-import com.example.treevisualize.Visualizer.PseudoCodeBlock;
-import com.example.treevisualize.Visualizer.TreeSnapShot;
-import com.example.treevisualize.Visualizer.TreeVisualizer;
+import com.example.treevisualize.Model.Tree.Tree;
+import com.example.treevisualize.View.Visualizer.PseudoCodeBlock;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
+import com.example.treevisualize.View.Visualizer.TreeVisualizer;
 
 public class JavaFXStaticRenderer implements StaticRenderer {
     private final Tree tree;

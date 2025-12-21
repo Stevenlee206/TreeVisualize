@@ -1,6 +1,6 @@
 package com.example.treevisualize.Controller.SubSystems.Playback;
 
-import com.example.treevisualize.Visualizer.TreeSnapShot;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 
 public interface PlaybackController {
     // Các lệnh điều khiển Media

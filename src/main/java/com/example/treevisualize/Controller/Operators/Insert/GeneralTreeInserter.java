@@ -1,7 +1,7 @@
 package com.example.treevisualize.Controller.Operators.Insert;
 
-import com.example.treevisualize.Trees.GeneralTree;
-import com.example.treevisualize.Trees.Tree;
+import com.example.treevisualize.Model.Tree.GeneralTree;
+import com.example.treevisualize.Model.Tree.Tree;
 
 public class GeneralTreeInserter implements Inserter {
     @Override

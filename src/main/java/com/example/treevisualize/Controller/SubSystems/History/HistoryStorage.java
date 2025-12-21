@@ -1,6 +1,6 @@
 package com.example.treevisualize.Controller.SubSystems.History;
 
-import com.example.treevisualize.Visualizer.TreeSnapShot;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 import java.util.List;
 
 public interface HistoryStorage {

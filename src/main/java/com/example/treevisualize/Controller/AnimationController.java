@@ -10,12 +10,13 @@ import com.example.treevisualize.Controller.SubSystems.Recorder.RecorderStrategy
 import com.example.treevisualize.Controller.SubSystems.Recorder.StandardRecorder;
 
 // Import các thành phần bổ trợ
-import com.example.treevisualize.Description.TreeType;
-import com.example.treevisualize.TraversalType;
-import com.example.treevisualize.Trees.Tree;
-import com.example.treevisualize.Visualizer.PseudoCodeBlock;
-import com.example.treevisualize.Visualizer.TreeVisualizer;
-import com.example.treevisualize.Visualizer.TreeSnapShot;
+import com.example.treevisualize.Model.Description.TreeType;
+import com.example.treevisualize.Model.Tree.GeneralTree;
+import com.example.treevisualize.Shared.TraversalType;
+import com.example.treevisualize.Model.Tree.Tree;
+import com.example.treevisualize.View.Visualizer.PseudoCodeBlock;
+import com.example.treevisualize.View.Visualizer.TreeVisualizer;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 
 import java.util.List;
 
@@ -200,7 +201,7 @@ public class AnimationController {
 
             // Logic kiểm tra loại cây để insert cho đúng
             // (Bạn có thể tinh chỉnh logic này tùy theo yêu cầu General Tree của bạn)
-            boolean needsParent = (executor.getTree() instanceof com.example.treevisualize.Trees.GeneralTree);
+            boolean needsParent = (executor.getTree() instanceof GeneralTree);
 
             for (int i = 0; i < count; i++) {
                 int val = rand.nextInt(99) + 1;

@@ -1,6 +1,6 @@
 package com.example.treevisualize.Controller.SubSystems.Playback.Renderer;
 
-import com.example.treevisualize.Visualizer.TreeSnapShot;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 import javafx.util.Duration;
 
 public interface MotionRenderer {

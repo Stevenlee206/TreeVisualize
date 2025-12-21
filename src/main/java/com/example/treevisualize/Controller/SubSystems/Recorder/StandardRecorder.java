@@ -1,9 +1,9 @@
 package com.example.treevisualize.Controller.SubSystems.Recorder;
 
-import com.example.treevisualize.Node.Node;
-import com.example.treevisualize.Trees.Tree;
-import com.example.treevisualize.Visualizer.TreeObserver;
-import com.example.treevisualize.Visualizer.TreeSnapShot;
+import com.example.treevisualize.Model.Node.Node;
+import com.example.treevisualize.Model.Tree.Tree;
+import com.example.treevisualize.View.Visualizer.TreeObserver;
+import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 
 import java.util.ArrayList;
 import java.util.List;

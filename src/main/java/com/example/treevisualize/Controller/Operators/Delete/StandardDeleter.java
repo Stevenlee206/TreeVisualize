@@ -1,6 +1,6 @@
 package com.example.treevisualize.Controller.Operators.Delete;
 
-import com.example.treevisualize.Trees.Tree;
+import com.example.treevisualize.Model.Tree.Tree;
 
 public class StandardDeleter implements Deleter {
     @Override
