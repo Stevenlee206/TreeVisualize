@@ -2,6 +2,7 @@ package com.example.treevisualize.View.Visualizer;
 
 import com.example.treevisualize.Model.Node.Node;
 import com.example.treevisualize.Model.Node.NodeColor;
+import com.example.treevisualize.Model.Node.NodeStatus;
 import com.example.treevisualize.Model.Node.RedBlackTreeNode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -34,6 +35,9 @@ public class BinaryTreeRenderer implements TreeRenderer {
 
     @Override
     public Color getNodeColor(Node node) {
+        if (node.getStatus() == NodeStatus.ACTIVE) {
+            return Color.ORANGE; // Hoặc Color.GOLD, Color.YELLOW tùy ý thích
+        }
         if (node instanceof RedBlackTreeNode) {
             RedBlackTreeNode rbNode = (RedBlackTreeNode) node;
             return (rbNode.getColor() == NodeColor.RED) ? Color.RED : Color.BLACK;
