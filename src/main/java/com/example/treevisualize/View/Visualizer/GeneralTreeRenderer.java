@@ -2,6 +2,7 @@ package com.example.treevisualize.View.Visualizer;
 
 import com.example.treevisualize.Model.Node.GeneralTreeNode;
 import com.example.treevisualize.Model.Node.Node;
+import com.example.treevisualize.Model.Node.NodeStatus;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -43,6 +44,9 @@ public class GeneralTreeRenderer implements TreeRenderer {
 
     @Override
     public Color getNodeColor(Node node) {
+        if (node.getStatus() == NodeStatus.ACTIVE) {
+            return Color.ORANGE; // Hoặc Color.GOLD, Color.YELLOW tùy ý thích
+        }
         return Color.BLUE; // Giữ nguyên màu xanh đặc trưng của General Tree
     }
 }

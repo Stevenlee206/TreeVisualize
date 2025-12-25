@@ -26,4 +26,17 @@ public class AVLTreeNode extends BinaryTreeNode {
 
         return newNode;
     }
+/*
+    public int calculateBalanceFactor(AVLTreeNode node) {
+        int leftH = (node.getLeftChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getLeftChild()).getHeight() : 0;
+        int rightH = (node.getRightChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getRightChild()).getHeight() : 0;
+        return leftH - rightH;
+    }
+
+ */
+public int calculateBalanceFactor() {
+    int leftH = (this.getLeftChild() instanceof AVLTreeNode) ? ((AVLTreeNode) this.getLeftChild()).getHeight() : 0;
+    int rightH = (this.getRightChild() instanceof AVLTreeNode) ? ((AVLTreeNode) this.getRightChild()).getHeight() : 0;
+    return leftH - rightH;
+}
 }

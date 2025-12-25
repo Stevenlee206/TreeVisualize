@@ -22,21 +22,15 @@ public class AVLTreeRenderer extends BinaryTreeRenderer {
 
             // Vẽ Height
             gc.setFill(Color.BLUE);
-            gc.fillText("H: " + avlNode.getHeight(), x + radius + 2, y - 5);
+            gc.fillText("H: " + avlNode.getHeight(), x + radius + 12, y - 5);
 
             // Vẽ Balance Factor
-            int bf = calculateBalanceFactor(avlNode);
+            int bf = avlNode.calculateBalanceFactor();
             if (bf == 0) gc.setFill(Color.DARKGREEN);
             else if (Math.abs(bf) == 1) gc.setFill(Color.CHOCOLATE);
             else gc.setFill(Color.RED);
 
-            gc.fillText("BF: " + bf, x + radius + 2, y + 10);
+            gc.fillText("BF: " + bf, x + radius + 16, y + 10);
         }
-    }
-
-    private int calculateBalanceFactor(AVLTreeNode node) {
-        int leftH = (node.getLeftChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getLeftChild()).getHeight() : 0;
-        int rightH = (node.getRightChild() instanceof AVLTreeNode) ? ((AVLTreeNode) node.getRightChild()).getHeight() : 0;
-        return leftH - rightH;
     }
 }

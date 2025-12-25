@@ -35,7 +35,8 @@ public class PseudoCodeBlock implements TreeObserver {
         botSep.setStyle("-fx-background-color: black;");
 
         this.statusLabel = new Label();
-        this.statusLabel.getStyleClass().add("pseudo-status-error");        this.statusLabel.setMaxWidth(Double.MAX_VALUE);
+        this.statusLabel.getStyleClass().add("pseudo-status-error");
+        this.statusLabel.setMaxWidth(Double.MAX_VALUE);
         this.statusLabel.setVisible(false);
 
         this.container.getChildren().addAll(titleLabel, topSep, codeContentBox, botSep, statusLabel);
@@ -51,7 +52,7 @@ public class PseudoCodeBlock implements TreeObserver {
             Label label = new Label(lineContent);
             label.getStyleClass().add("pseudo-line-normal");
             label.setMaxWidth(Double.MAX_VALUE);
-            label.setWrapText(false);
+            label.setWrapText(false);// không xuống dòng tự động
 
             this.lineLabels.add(label);
             this.codeContentBox.getChildren().add(label);

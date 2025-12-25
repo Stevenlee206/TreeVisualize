@@ -37,7 +37,7 @@ public class ScapegoatTreeRenderer extends BinaryTreeRenderer {
             // y + 4: Căn giữa theo chiều dọc tương đối so với tâm node
             String infoText = "Sz: " + sgNode.getSize();
 
-            gc.fillText(infoText, x + radius + 5, y + 4);
+            gc.fillText(infoText, x + radius + 14, y + 4);
         }
     }
 }
