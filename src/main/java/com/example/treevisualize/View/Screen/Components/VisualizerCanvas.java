@@ -9,6 +9,13 @@ public class VisualizerCanvas extends Pane {
     private TreeVisualizer currentVisualizer;
     private final double[] lastMouse = new double[2]; // Lưu vị trí chuột để Pan
 
+    // Listener for canvas clicks (added)
+    public interface CanvasClickListener {
+        void onCanvasClick(double x, double y);
+    }
+
+    private CanvasClickListener canvasClickListener;
+
     public VisualizerCanvas(double width, double height) {
         this.canvas = new Canvas(width, height);
         this.getChildren().add(canvas);
@@ -22,6 +29,11 @@ public class VisualizerCanvas extends Pane {
     // Cập nhật Visualizer mới mỗi khi reset hệ thống
     public void bindVisualizer(TreeVisualizer visualizer) {
         this.currentVisualizer = visualizer;
+    }
+
+    // Setter for click listener
+    public void setCanvasClickListener(CanvasClickListener listener) {
+        this.canvasClickListener = listener;
     }
 
     private void setupCameraControls() {
@@ -49,6 +61,18 @@ public class VisualizerCanvas extends Pane {
                  currentVisualizer.zoom(zoomFactor);
             }
             event.consume();
+        });
+
+        // 3. Xử lý Click (mới): thông báo lên listener để có thể thêm node từ UI canvas
+        canvas.setOnMouseClicked(event -> {
+            // Use only primary button clicks and still since press to avoid conflicting with drag
+            try {
+                if (event.isStillSincePress() && event.isPrimaryButtonDown()) {
+                    if (canvasClickListener != null) {
+                        canvasClickListener.onCanvasClick(event.getX(), event.getY());
+                    }
+                }
+            } catch (Exception ignored) { }
         });
     }
 }

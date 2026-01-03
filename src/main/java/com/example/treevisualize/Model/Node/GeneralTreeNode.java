@@ -77,7 +77,6 @@ public class GeneralTreeNode extends Node {
         GeneralTreeNode newNode = new GeneralTreeNode(this.getValue());
 
         newNode.changeStatus(this.getStatus());
-        // -----------------------------------
 
         if (this.getLeftMostChild() != null) {
             GeneralTreeNode childCopy = (GeneralTreeNode) this.getLeftMostChild().copy();

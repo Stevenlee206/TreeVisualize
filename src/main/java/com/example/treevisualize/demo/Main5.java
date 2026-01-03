@@ -51,7 +51,7 @@ public class Main5 extends Application {
         Scene scene = new Scene(root, width, height);
 
         try {
-            String css = Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm();
+            String css = Objects.requireNonNull(getClass().getResource("style.css")).toExternalForm();
             scene.getStylesheets().add(css);
         } catch (Exception e) {
             System.err.println("Error: file style.css not found!");
@@ -81,6 +81,6 @@ public class Main5 extends Application {
 
     public void setSelectedTreeType(TreeType selectedTreeType) {
         this.selectedTreeType = selectedTreeType;
-        System.out.println("Main3 Log: User selected tree -> " + selectedTreeType);
+        System.out.println("Main Log: User selected tree -> " + selectedTreeType);
     }
 }

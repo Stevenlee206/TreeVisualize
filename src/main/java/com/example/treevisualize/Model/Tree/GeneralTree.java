@@ -1,7 +1,7 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.GeneralTreeNode;
-import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import
+import com.example.treevisualize.View.Visualizer.Events.StandardEvent; 
 
 public class GeneralTree extends Tree {
 
@@ -9,7 +9,7 @@ public class GeneralTree extends Tree {
         super();
     }
 
-    // Insert kiểu cũ (chỉ nhận value) -> Báo lỗi hoặc hỗ trợ root
+    // --- Insert ---
     @Override
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root);
@@ -26,6 +26,11 @@ public class GeneralTree extends Tree {
 
     // Insert kiểu mới (parent, child)
     public void insert(int parentVal, int childVal) {
+    	
+    	if (parentVal == -1 && root == null) {
+            insert(childVal); // Redirect to the root creation logic
+            return;
+        }
         notifyEvent(StandardEvent.START, root);
 
         // Tìm cha
