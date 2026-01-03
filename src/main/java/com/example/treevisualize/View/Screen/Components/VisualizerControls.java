@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
 
 public class VisualizerControls extends HBox {
 
@@ -18,7 +17,6 @@ public class VisualizerControls extends HBox {
         void onSearch(int value);
         void onRandom(int count);
         void onTraverse(TraversalType type);
-        void onTreeTypeChanged(TreeType newType);
         void onSpeedChanged(double newSpeed);
         void onUndo();
         void onRedo();
@@ -27,7 +25,6 @@ public class VisualizerControls extends HBox {
 
     private final TextField tfParentInput;
     private final TextField tfInput;
-    private final ComboBox<TreeType> cboTreeType;
     private final Slider sliderSpeed;
     private final ComboBox<TraversalType> cboTraversal;
     private ControlListener listener;
@@ -74,18 +71,6 @@ public class VisualizerControls extends HBox {
             if (listener != null) listener.onSpeedChanged(val.doubleValue());
         });
 
-        // Tree Type Combo
-        cboTreeType = new ComboBox<>();
-        cboTreeType.getItems().addAll(TreeType.values());
-        cboTreeType.setValue(initialType);
-        cboTreeType.setConverter(new StringConverter<>() {
-            @Override public String toString(TreeType object) { return object.getDisplayName(); }
-            @Override public TreeType fromString(String string) { return null; }
-        });
-        cboTreeType.setOnAction(e -> {
-            if (listener != null) listener.onTreeTypeChanged(cboTreeType.getValue());
-        });
-
         // Traversal
         cboTraversal = new ComboBox<>();
         cboTraversal.getItems().addAll(TraversalType.values());
@@ -104,8 +89,8 @@ public class VisualizerControls extends HBox {
                 new Separator(javafx.geometry.Orientation.VERTICAL),
                 cboTraversal, btnTraverse,
                 new Separator(javafx.geometry.Orientation.VERTICAL),
-                new Label("Speed:"), sliderSpeed,
-                new Label("Type:"), cboTreeType
+                new Label("Speed:"), sliderSpeed
+
         );
 
         updateUIForType(initialType);
@@ -120,8 +105,6 @@ public class VisualizerControls extends HBox {
         boolean showParent = type.isRequiresParentInput();
         tfParentInput.setVisible(showParent);
         tfParentInput.setManaged(showParent);
-        // Sync combo box nếu bị đổi từ bên ngoài
-        if (cboTreeType.getValue() != type) cboTreeType.setValue(type);
     }
 
     public double getCurrentSpeed() { return sliderSpeed.getValue(); }
