@@ -14,7 +14,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-
+import javafx.util.StringConverter;
 public class VisualizeScreen implements VisualizerControls.ControlListener {
 
     private final Main5 mainApp;
@@ -37,8 +37,36 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
         BorderPane root = new BorderPane();
 
         // 1. Top Bar
-        ToolBar topBar = new ToolBar(new Button("Home")); // ... (giữ nguyên logic Home)
-        ((Button)topBar.getItems().get(0)).setOnAction(e -> mainApp.switchToIntroScreen());
+        Button btnHome = new Button("Home");
+        btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
+
+        ComboBox<TreeType> cboTreeType = new ComboBox<>();
+        cboTreeType.getItems().addAll(TreeType.values());
+        cboTreeType.setValue(mainApp.getSelectedTreeType());
+        cboTreeType.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(TreeType type) {
+                return type.getDisplayName();
+            }
+            @Override
+            public TreeType fromString(String string) {
+                return null;
+            }
+        });
+
+        cboTreeType.setOnAction(e -> {
+            TreeType newType = cboTreeType.getValue();
+            mainApp.setSelectedTreeType(newType);
+            initializeSystem(newType);
+        });
+
+        ToolBar topBar = new ToolBar(
+                btnHome,
+                new Separator(),
+                new Label("Tree Type:"),
+                cboTreeType
+        );
+
         root.setTop(topBar);
 
         // 2. Center: Canvas Module
@@ -136,11 +164,6 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
         if (controller != null) controller.replay();
     }
 
-    @Override
-    public void onTreeTypeChanged(TreeType newType) {
-        mainApp.setSelectedTreeType(newType);
-        initializeSystem(newType);
-    }
 
     @Override
     public void onSpeedChanged(double newSpeed) {
