@@ -145,8 +145,6 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
 
     @Override
     public void onRandom(int count) {
-        // [FIX] Không dùng vòng lặp for ở đây nữa!
-        // Giao toàn bộ việc loop cho Controller xử lý trong 1 transaction an toàn.
         controller.startRandomBatch(count);
     }
     @Override

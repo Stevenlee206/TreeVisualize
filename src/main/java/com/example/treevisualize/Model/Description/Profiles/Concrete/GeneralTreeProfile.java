@@ -2,7 +2,7 @@ package com.example.treevisualize.Model.Description.Profiles.Concrete;
 
 
 import com.example.treevisualize.Controller.Operators.Delete.StandardDeleter;
-import com.example.treevisualize.Controller.Operators.Insert.GeneralTreeInserter;
+import com.example.treevisualize.Controller.Operators.Insert.TreeInserter;
 import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
 import com.example.treevisualize.Model.Description.GeneralTreeDescription;
 import com.example.treevisualize.Model.Description.Profiles.*;
@@ -22,7 +22,7 @@ public class GeneralTreeProfile implements TreeProfile {
     public TreeOperations getOperations() {
         return new TreeOperations(
                 GeneralTree::new,
-                new GeneralTreeInserter(),
+                new TreeInserter(),
                 new StandardDeleter(),
                 new StandardSearcher()
         );

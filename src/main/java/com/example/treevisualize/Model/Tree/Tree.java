@@ -9,7 +9,6 @@ import com.example.treevisualize.View.Visualizer.TreeObserver;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public abstract class Tree {
 
     protected Node root;
@@ -21,23 +20,18 @@ public abstract class Tree {
         this.observers = new ArrayList<>();
     }
 
-    // ===== INSERT / DELETE / SEARCH =====
-
-    // Default insert (root / algorithmic insert)
-    public abstract void insert(int value);
-
-    // Manual parent-child insert (optional)
-    public void insert(int parentValue, int childValue) {
-        throw new UnsupportedOperationException(
-            getClass().getSimpleName() +
-            " does not support parent-child insertion"
-        );
-    }
+    public abstract void insert(int value);//create root if tree is empty
+    public abstract void insert(int parentValue, int childValue);//expand tree by adding child to parent
 
     public abstract void delete(int value);
     public abstract Node search(int value);
+    
+    public void setRoot(Node newRoot) {
+        this.root = newRoot;
+        notifyStructureChanged();
+    }
 
-    // ===== TRAVERSAL =====
+    // ===== COMMON TRAVERSAL & VISITOR =====
     public List<Node> traverse(TraversalStrategy strategy) {
         if (this.root == null) return new ArrayList<>();
         List<Node> path = strategy.traverse(this, this.root);
@@ -53,60 +47,33 @@ public abstract class Tree {
         notifyNodeChanged(node);
     }
 
-    // ===== OBSERVER / MONITOR =====
-    public void setMonitor(ExecutionMonitor monitor) {
-        this.monitor = monitor;
-    }
+    // ===== OBSERVER / MONITOR HELPERS =====
+    public void setMonitor(ExecutionMonitor monitor) { this.monitor = monitor; }
 
     protected void notifyEvent(AlgorithmEvent event, Node node) {
         if (monitor != null) monitor.onEvent(event, node);
     }
+    
+    protected void notifyStructureChanged() { observers.forEach(TreeObserver::onStructureChanged); }
+    protected void notifyNodeChanged(Node node) { observers.forEach(o -> o.onNodeChanged(node)); }
+    protected void notifyError(String message) { observers.forEach(o -> o.onError(message)); }
 
-    public void updatePseudoStep(int lineIndex) {
-        for (TreeObserver obs : observers) {
-            obs.onPseudoStep(lineIndex);
-        }
-    }
-
-    // ===== STRUCTURE =====
+    // ===== GETTERS / SETTERS =====
     public Node getRoot() { return root; }
-
-    public void setRoot(Node newRoot) {
-        this.root = newRoot;
-        notifyStructureChanged();
-    }
-
+    
     public void clear() {
         this.root = null;
         notifyStructureChanged();
     }
+    
+    public void addObserver(TreeObserver observer) { if (!observers.contains(observer)) observers.add(observer); }
+    public void removeObserver(TreeObserver observer) { observers.remove(observer); }
 
-    // ===== OBSERVERS =====
-    public void addObserver(TreeObserver observer) {
-        if (!observers.contains(observer)) observers.add(observer);
-    }
-
-    public void removeObserver(TreeObserver observer) {
-        observers.remove(observer);
-    }
-
-    protected void notifyStructureChanged() {
-        observers.forEach(TreeObserver::onStructureChanged);
-    }
-
-    protected void notifyNodeChanged(Node node) {
-        observers.forEach(o -> o.onNodeChanged(node));
-    }
-
-    protected void notifyError(String message) {
-        observers.forEach(o -> o.onError(message));
-    }
 
     // ===== STATISTICS =====
     public int getNodeCount() {
         return countNodesRecursive(root);
     }
-
     private int countNodesRecursive(Node node) {
         if (node == null) return 0;
         int count = 1;
@@ -115,11 +82,9 @@ public abstract class Tree {
         }
         return count;
     }
-
     public int getHeight() {
         return calculateHeightRecursive(root);
     }
-
     private int calculateHeightRecursive(Node node) {
         if (node == null) return 0;
         int max = 0;
@@ -128,18 +93,24 @@ public abstract class Tree {
         }
         return 1 + max;
     }
-
     public void resetTreeStatus() {
         if (root != null) {
             resetRecursive(root);
             notifyStructureChanged();
         }
     }
-
     private void resetRecursive(Node node) {
         if (node == null) return;
         node.changeStatus(NodeStatus.NORMAL);
         for (Node child : node.getChildren()) resetRecursive(child);
+
     }
     
+
+    // Hàm cập nhật dòng code (được gọi ngược lại từ Executor sau khi mapping)
+    public void updatePseudoStep(int lineIndex) {
+        for (TreeObserver obs : observers) {
+            obs.onPseudoStep(lineIndex); // Báo cho Recorder chụp ảnh
+        }
+    }
 }

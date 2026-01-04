@@ -142,7 +142,6 @@ public class VisualizerControls extends HBox {
     }
 
     private void handleRandom() {
-        // Updated: Defaults to 1 node per click as requested
         if (listener != null) listener.onRandom(1);
     }
 
