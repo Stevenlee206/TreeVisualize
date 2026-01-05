@@ -124,7 +124,7 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
     }
 
     @Override
-    public void onInsertGeneral(int parent, int child) {
+    public void onInsert(int parent, int child) {
         controller.startInsert(parent, child);
     }
 

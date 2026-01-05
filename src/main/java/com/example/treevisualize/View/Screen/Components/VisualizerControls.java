@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 public class VisualizerControls extends HBox {
     public interface ControlListener {
         void onInsert(int value);
-        void onInsertGeneral(int parent, int child);
+        void onInsert(int parent, int child);
         void onDelete(int value);
         void onSearch(int value);
         void onRandom(int count);
@@ -120,8 +120,8 @@ public class VisualizerControls extends HBox {
 
             if (tfParentInput.isVisible()) {
                 String pTxt = tfParentInput.getText().trim();
-                if (pTxt.isEmpty()) listener.onInsertGeneral(-1, val); // Insert Root
-                else listener.onInsertGeneral(Integer.parseInt(pTxt), val);
+                if (pTxt.isEmpty()) listener.onInsert(val); // Insert Root
+                else listener.onInsert(Integer.parseInt(pTxt), val);
             } else {
                 listener.onInsert(val);
             }
