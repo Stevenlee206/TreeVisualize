@@ -38,9 +38,11 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
 
         // 1. Top Bar
         Button btnHome = new Button("Home");
+        btnHome.getStyleClass().add("button");
         btnHome.setOnAction(e -> mainApp.switchToIntroScreen());
 
         ComboBox<TreeType> cboTreeType = new ComboBox<>();
+        cboTreeType.getStyleClass().add("combo-box");
         cboTreeType.getItems().addAll(TreeType.values());
         cboTreeType.setValue(mainApp.getSelectedTreeType());
         cboTreeType.setConverter(new StringConverter<>() {
@@ -90,7 +92,7 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
         // 5. Init Logic
         initializeSystem(mainApp.getSelectedTreeType());
 
-        mainApp.switchScene(root, 1280, 800);
+        mainApp.switchScene(root);
     }
 
     // --- LOGIC KHỞI TẠO ---

@@ -26,7 +26,7 @@ public class InfoScreen {
         BorderPane root = new BorderPane();
         root.getStyleClass().add("info-pane");
 
-        VBox content = new VBox(20);
+        VBox content = new VBox(25);
         content.setAlignment(Pos.CENTER_LEFT);
         content.setMaxWidth(800);
 
@@ -36,7 +36,7 @@ public class InfoScreen {
         // [OOP] Gọi hàm của Enum để lấy mô tả
         Text txtDesc = new Text(type.getDescriptionText());
         txtDesc.getStyleClass().add("info-desc");
-        txtDesc.setWrappingWidth(700);
+        txtDesc.setWrappingWidth(750);
 
         HBox actions = new HBox(20);
 
@@ -45,7 +45,7 @@ public class InfoScreen {
         btnBack.setOnAction(e -> mainApp.switchToSelectScreen());
 
         Button btnStart = new Button("START VISUALIZE");
-        btnStart.getStyleClass().add("btn-primary");
+        btnStart.getStyleClass().addAll("button", "btn-primary");
         btnStart.setStyle("-fx-font-size: 16px; -fx-padding: 10 25;");
         btnStart.setOnAction(e -> mainApp.switchToVisualizerScreen());
 
@@ -53,6 +53,6 @@ public class InfoScreen {
         content.getChildren().addAll(lblHeading, txtDesc, new Separator(), actions);
 
         root.setCenter(content);
-        mainApp.switchScene(root, 1100, 750);
+        mainApp.switchScene(root);
     }
 }
