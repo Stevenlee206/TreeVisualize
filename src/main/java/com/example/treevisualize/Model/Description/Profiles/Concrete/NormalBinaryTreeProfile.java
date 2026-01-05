@@ -1,0 +1,45 @@
+package com.example.treevisualize.Model.Description.Profiles.Concrete;
+
+
+import com.example.treevisualize.Controller.Operators.Delete.StandardDeleter;
+import com.example.treevisualize.Controller.Operators.Insert.BinaryInserter;
+import com.example.treevisualize.Controller.Operators.Insert.GeneralTreeInserter;
+import com.example.treevisualize.Controller.Operators.Insert.NormalBinaryTreeInserter;
+import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
+import com.example.treevisualize.Model.Description.BinaryTreeDescription;
+import com.example.treevisualize.Model.Description.Profiles.*;
+import com.example.treevisualize.View.Layout.Strategy.BinarySkewAlignmentStrategy;
+import com.example.treevisualize.Model.PseudoCodeStore.Delete.BSTDeleteStrategy;
+import com.example.treevisualize.Model.PseudoCodeStore.Insert.BTInsert;
+import com.example.treevisualize.Model.Tree.BinaryTree;
+import com.example.treevisualize.View.Visualizer.BinaryTreeRenderer;
+
+public class NormalBinaryTreeProfile implements TreeProfile {
+    @Override
+    public TreeMetadata getMetadata() {
+        // requiresParentInput = true
+        return new TreeMetadata("Binary Tree (Normal)", "/images/BT_icon.png", true);
+    }
+
+    @Override
+    public TreeOperations getOperations() {
+        return new TreeOperations(
+                BinaryTree::new,
+                new NormalBinaryTreeInserter(), 
+                new StandardDeleter(),
+                new StandardSearcher()
+        );
+    }
+
+    @Override
+    public TreePresentation getPresentation() {
+        return new TreePresentation(
+                new BinaryTreeRenderer(),
+                new BinarySkewAlignmentStrategy(),
+                new BinaryTreeDescription(),
+                new BTInsert(),
+                new BSTDeleteStrategy() ,// Thường dùng chung chiến lược xóa với BST hoặc BTDelete riêng nếu có,
+                null
+        );
+    }
+}
