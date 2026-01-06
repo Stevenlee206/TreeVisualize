@@ -26,7 +26,7 @@ public class IntroScreen {
         Pane decorationLayer = new Pane();
         decorationLayer.setPickOnBounds(false);
 
-        addDecoration(root, "/images/TreeView.png", 500, 50, -220);
+        addDecoration(root, "/images/TreeView.png", 500, -10, -220);
         addDecoration(root, "/images/TreeLogo.png", 195, 300, 200);
         addDecoration(root, "/images/BFS.png", 230, -210, 220);
         addDecoration(root, "/images/DFS.png", 230, 40, 220);
