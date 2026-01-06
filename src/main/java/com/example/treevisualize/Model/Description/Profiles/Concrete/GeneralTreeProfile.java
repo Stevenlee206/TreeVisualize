@@ -6,6 +6,7 @@ import com.example.treevisualize.Controller.Operators.Insert.TreeInserter;
 import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
 import com.example.treevisualize.Model.Description.GeneralTreeDescription;
 import com.example.treevisualize.Model.Description.Profiles.*;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.GTSearch;
 import com.example.treevisualize.View.Layout.Strategy.DefaultAlignmentStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Delete.GTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.GeneralTreeInsert;
@@ -36,7 +37,7 @@ public class GeneralTreeProfile implements TreeProfile {
                 new GeneralTreeDescription(),
                 new GeneralTreeInsert(),
                 new GTDeleteStrategy(),
-                null
+                new GTSearch()
         );
     }
 }

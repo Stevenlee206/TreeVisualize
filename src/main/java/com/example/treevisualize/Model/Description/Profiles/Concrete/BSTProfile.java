@@ -6,6 +6,7 @@ import com.example.treevisualize.Controller.Operators.Insert.TreeInserter;
 import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
 import com.example.treevisualize.Model.Description.BSTDescription;
 import com.example.treevisualize.Model.Description.Profiles.*;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.BSTSearch;
 import com.example.treevisualize.View.Layout.Strategy.BinarySkewAlignmentStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Delete.BSTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.BSTInsert;
@@ -36,7 +37,7 @@ public class BSTProfile implements TreeProfile {
                 new BSTDescription(),
                 new BSTInsert(),
                 new BSTDeleteStrategy(),
-                null
+                new BSTSearch()
         );
     }
 }
