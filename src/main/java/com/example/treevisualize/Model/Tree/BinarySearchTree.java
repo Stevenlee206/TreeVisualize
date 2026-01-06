@@ -4,7 +4,7 @@ import com.example.treevisualize.Model.Node.BinaryTreeNode;
 import com.example.treevisualize.Model.Node.Node;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import
 
-public class BinarySearchTree extends Tree { // Kế thừa AbstractTree thay vì Tree
+public class BinarySearchTree extends Tree { 
 
     public BinarySearchTree() {
         super();
@@ -32,6 +32,11 @@ public class BinarySearchTree extends Tree { // Kế thừa AbstractTree thay v�
     }
 
     // --- INSERT ---
+    @Override
+    public void insert(int parentVal, int childVal) {
+        notifyError("Binary Search Tree does not support manual parent placement. Use insert(" + childVal + ") instead.");
+    }
+    
     @Override
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root); // Bắt đầu

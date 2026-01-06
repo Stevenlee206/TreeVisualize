@@ -8,6 +8,7 @@ import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackControll
 import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackDirector;
 import com.example.treevisualize.Controller.SubSystems.Recorder.RecorderStrategy;
 import com.example.treevisualize.Controller.SubSystems.Recorder.StandardRecorder;
+import com.example.treevisualize.Model.Node.Node;
 
 // Import các thành phần bổ trợ
 import com.example.treevisualize.Model.Description.TreeType;
@@ -19,6 +20,9 @@ import com.example.treevisualize.View.Visualizer.TreeVisualizer;
 import com.example.treevisualize.View.Visualizer.TreeSnapShot;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
 
 /**
  * AnimationController (Role: CEO / Facade)
@@ -195,25 +199,62 @@ public class AnimationController {
     }
 
     public void startRandomBatch(int count) {
-        // Gọi runTransaction đúng 1 lần duy nhất
+        // Run as a single transaction (batch update)
         runTransaction(() -> {
+            Tree tree = executor.getTree();
             java.util.Random rand = new java.util.Random();
-
-            // Logic kiểm tra loại cây để insert cho đúng
-            // (Bạn có thể tinh chỉnh logic này tùy theo yêu cầu General Tree của bạn)
-            boolean needsParent = (executor.getTree() instanceof GeneralTree);
+            
+            // Temporary list to track nodes if needed, 
+            // but relying on the tree structure is safer.
 
             for (int i = 0; i < count; i++) {
                 int val = rand.nextInt(99) + 1;
 
-                if (needsParent) {
-                    // Nếu là General Tree, mặc định insert vào root (-1) hoặc logic riêng
-                    executor.executeInsert(-1, val);
+                if (tree instanceof GeneralTree) {
+                    // --- LOGIC FOR GENERAL TREE ---
+                    if (tree.getRoot() == null) {
+                        executor.executeInsert(val);
+                    } else {
+                        // Case 2: Tree has data.
+                        // We must pick a random PARENT from the existing nodes.
+                        Node randomParent = getRandomNode(tree.getRoot());
+                        
+                        if (randomParent != null) {
+                            executor.executeInsert(randomParent.getValue(), val);
+                        }
+                    }
                 } else {
-                    // Nếu là cây nhị phân (BST, AVL, Splay, RBT...)
+                    // --- LOGIC FOR BINARY TREES (BST, AVL, Level-Order) ---
                     executor.executeInsert(val);
                 }
             }
         });
+    }
+
+    /**
+     * Helper to pick a random node from the tree to serve as a parent.
+     * Uses a simple BFS (Breadth-First Search) to gather all current nodes.
+     */
+    private Node getRandomNode(Node root) {
+        if (root == null) return null;
+
+        List<Node> allNodes = new ArrayList<>();
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            allNodes.add(current);
+            // Add all children to queue
+            for (Node child : current.getChildren()) {
+                queue.add(child);
+            }
+        }
+
+        if (allNodes.isEmpty()) return null;
+        
+        // Pick a random index
+        java.util.Random rand = new java.util.Random();
+        return allNodes.get(rand.nextInt(allNodes.size()));
     }
 }

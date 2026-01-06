@@ -17,8 +17,9 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
     @Override
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root);
-
         BinaryTreeNode newNode = new BinaryTreeNode(value);
+
+        // Case: Tree is Empty -> Create Root
         if (root == null) {
             notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
             root = newNode;
@@ -27,36 +28,67 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
             return;
         }
 
+        // Case: Tree exists -> Find next empty spot (Level Order)
         Queue<BinaryTreeNode> queue = new LinkedList<>();
         queue.add((BinaryTreeNode) root);
 
         while (!queue.isEmpty()) {
             BinaryTreeNode current = queue.poll();
 
-            // Kiểm tra bên trái
+            // Left
             if (current.getLeftChild() == null) {
-                notifyEvent(StandardEvent.FOUND_INSERT_POS, current); // Tìm thấy chỗ trống trái
+                notifyEvent(StandardEvent.FOUND_INSERT_POS, current);
                 current.setLeftChild(newNode);
                 notifyEvent(StandardEvent.INSERT_SUCCESS, newNode);
                 notifyStructureChanged();
                 return;
             } else {
-                notifyEvent(StandardEvent.GO_LEFT, current); // Duyệt sang trái
+                notifyEvent(StandardEvent.GO_LEFT, current);
                 queue.add((BinaryTreeNode) current.getLeftChild());
             }
 
-            // Kiểm tra bên phải
+            // Right
             if (current.getRightChild() == null) {
-                notifyEvent(StandardEvent.FOUND_INSERT_POS, current); // Tìm thấy chỗ trống phải
+                notifyEvent(StandardEvent.FOUND_INSERT_POS, current);
                 current.setRightChild(newNode);
                 notifyEvent(StandardEvent.INSERT_SUCCESS, newNode);
                 notifyStructureChanged();
                 return;
             } else {
-                notifyEvent(StandardEvent.GO_RIGHT, current); // Duyệt sang phải
+                notifyEvent(StandardEvent.GO_RIGHT, current);
                 queue.add((BinaryTreeNode) current.getRightChild());
             }
         }
+    }
+
+    // --- Mode 2: Explicit Parent ---
+    @Override
+    public void insert(int parentVal, int childVal) {
+        if (root == null) {
+            insert(childVal); // Redirect to root creation
+            return;
+        }
+
+        notifyEvent(StandardEvent.START, root);
+        BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
+
+        if (parent == null) {
+            notifyError("Cannot find parent: " + parentVal);
+            return;
+        }
+
+        notifyEvent(StandardEvent.FOUND_INSERT_POS, parent);
+        if (parent.getLeftChild() == null) {
+            parent.setLeftChild(new BinaryTreeNode(childVal));
+            notifyEvent(StandardEvent.INSERT_SUCCESS, parent.getLeftChild());
+        } else if (parent.getRightChild() == null) {
+            parent.setRightChild(new BinaryTreeNode(childVal));
+            notifyEvent(StandardEvent.INSERT_SUCCESS, parent.getRightChild());
+        } else {
+            notifyError("Node " + parentVal + " already has 2 children!");
+            return;
+        }
+        notifyStructureChanged();
     }
 
     // --- DELETE ---
@@ -124,32 +156,6 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
         return searchRecursive(node.getRightChild(), value);
     }
 
-    // --- INSERT (Specific Parent - Hỗ trợ GeneralInserter nếu cần) ---
-    public void insert(int parentVal, int childVal) {
-        notifyEvent(StandardEvent.START, root);
-        BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
-
-        if (parent == null) {
-            notifyError("Cannot find parent node with value: " + parentVal);
-            return;
-        }
-
-        notifyEvent(StandardEvent.FOUND_INSERT_POS, parent);
-
-        if (parent.getLeftChild() == null) {
-            parent.setLeftChild(new BinaryTreeNode(childVal));
-            notifyEvent(StandardEvent.INSERT_SUCCESS, parent.getLeftChild());
-            notifyStructureChanged();
-        }
-        else if (parent.getRightChild() == null) {
-            parent.setRightChild(new BinaryTreeNode(childVal));
-            notifyEvent(StandardEvent.INSERT_SUCCESS, parent.getRightChild());
-            notifyStructureChanged();
-        }
-        else {
-            notifyError("Node " + parentVal + " already has 2 children. Cannot insert more!");
-        }
-    }
 
     // ĐÃ XÓA: getHeight() và getNodeCount()
     // Class cha Tree sẽ tự động xử lý việc này thông qua getChildren() của BinaryTreeNode.

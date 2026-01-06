@@ -8,4 +8,3 @@ public interface Inserter {
             System.err.println("Operation not supported.");
         }
 }
-

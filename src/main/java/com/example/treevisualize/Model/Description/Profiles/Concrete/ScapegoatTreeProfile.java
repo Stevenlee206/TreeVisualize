@@ -1,7 +1,7 @@
 package com.example.treevisualize.Model.Description.Profiles.Concrete;
 
 import com.example.treevisualize.Controller.Operators.Delete.StandardDeleter;
-import com.example.treevisualize.Controller.Operators.Insert.BinaryInserter;
+import com.example.treevisualize.Controller.Operators.Insert.TreeInserter;
 import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
 import com.example.treevisualize.Model.Description.ScapegoatDescription;
 import com.example.treevisualize.Model.Description.Profiles.*;
@@ -21,7 +21,7 @@ public class ScapegoatTreeProfile implements TreeProfile {
     public TreeOperations getOperations() {
         return new TreeOperations(
                 ScapegoatTree::new,
-                new BinaryInserter(),
+                new TreeInserter(),
                 new StandardDeleter(),
                 new StandardSearcher()
         );

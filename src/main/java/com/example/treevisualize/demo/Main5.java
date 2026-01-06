@@ -47,24 +47,19 @@ public class Main5 extends Application {
 
     public void switchToVisualizerScreen() { new VisualizeScreen(this).show(); }
 
-    public void switchScene(Parent root, double width, double height) {
-        Scene scene = new Scene(root, width, height);
-
-        try {
-            String css = Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm();
-            scene.getStylesheets().add(css);
-        } catch (Exception e) {
-            System.err.println("Error: file style.css not found!");
+    public void switchScene(Parent root) {
+        if (primaryStage.getScene() == null) {
+            Scene scene = new Scene(root,1000,700);
+            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+            primaryStage.setScene(scene);
+        } else {
+        	root.setOpacity(0);
+        	FadeTransition ft = new FadeTransition(Duration.millis(400), root);
+            ft.setFromValue(0.0);
+            ft.setToValue(1.0);
+            ft.play();
+            primaryStage.getScene().setRoot(root);
         }
-
-        root.setOpacity(0);
-        FadeTransition ft = new FadeTransition(Duration.millis(400), root);
-        ft.setFromValue(0.0);
-        ft.setToValue(1.0);
-        ft.play();
-
-        primaryStage.setScene(scene);
-        primaryStage.centerOnScreen();
     }
 
     public void showAlert(String title, String content) {
@@ -81,6 +76,6 @@ public class Main5 extends Application {
 
     public void setSelectedTreeType(TreeType selectedTreeType) {
         this.selectedTreeType = selectedTreeType;
-        System.out.println("Main3 Log: User selected tree -> " + selectedTreeType);
+        System.out.println("Main Log: User selected tree -> " + selectedTreeType);
     }
 }

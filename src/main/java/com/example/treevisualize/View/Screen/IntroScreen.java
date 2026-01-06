@@ -26,14 +26,14 @@ public class IntroScreen {
         Pane decorationLayer = new Pane();
         decorationLayer.setPickOnBounds(false);
 
-        addDecoration(root, "/images/TreeView.png", 195, -300, -181);
-        addDecoration(root, "/images/TreeLogo.png", 195, 300, 140);
-        addDecoration(root, "/images/BFS.png", 230, -340, 190);
-        addDecoration(root, "/images/DFS.png", 230, -100, 190);
+        addDecoration(root, "/images/TreeView.png", 500, 50, -220);
+        addDecoration(root, "/images/TreeLogo.png", 195, 300, 200);
+        addDecoration(root, "/images/BFS.png", 230, -210, 220);
+        addDecoration(root, "/images/DFS.png", 230, 40, 220);
 
         VBox uiLayer = new VBox(20);
         uiLayer.setAlignment(Pos.CENTER);
-        uiLayer.setTranslateY(-105);
+        uiLayer.setTranslateY(-50);
         uiLayer.setPickOnBounds(false);
 
         Label title = new Label("Tree Data Structure\nVisualization");
@@ -42,17 +42,17 @@ public class IntroScreen {
 
         Label subtitle = new Label("Explore how Tree data structure work in an intuitive and vivid way.");
         subtitle.getStyleClass().add("intro-subtitle");
-        subtitle.setTranslateY(30);
+        subtitle.setTranslateY(10);
 
         Button btnNext = new Button("Start  ➜");
-        btnNext.getStyleClass().add("btn-intro-next");
+        btnNext.getStyleClass().addAll("button", "btn-primary");
         btnNext.setOnAction(e -> mainApp.switchToSelectScreen());
-        btnNext.setTranslateY(50);
+        btnNext.setTranslateY(40);
 
         uiLayer.getChildren().addAll(title, subtitle, btnNext);
         root.getChildren().add(uiLayer);
 
-        mainApp.switchScene(root, 1000, 700);
+        mainApp.switchScene(root);
     }
 
     private void addDecoration(StackPane root, String path, double width, double x, double y) {
@@ -61,7 +61,7 @@ public class IntroScreen {
             ImageView view = new ImageView(img);
             view.setFitHeight(width);
             view.setPreserveRatio(true);
-            view.getStyleClass().add("intro-image");
+            view.setOpacity(0.8);
             view.setTranslateX(x);
             view.setTranslateY(y);
 

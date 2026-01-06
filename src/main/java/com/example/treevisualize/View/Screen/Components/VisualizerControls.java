@@ -8,11 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 public class VisualizerControls extends HBox {
-
-    // Interface để báo cáo sự kiện lên cấp trên
     public interface ControlListener {
         void onInsert(int value);
-        void onInsertGeneral(int parent, int child);
+        void onInsert(int parent, int child);
         void onDelete(int value);
         void onSearch(int value);
         void onRandom(int count);
@@ -33,7 +31,9 @@ public class VisualizerControls extends HBox {
         this.setPadding(new Insets(15));
         this.setSpacing(15);
         this.setAlignment(Pos.CENTER);
-        this.setStyle("-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;");
+        
+        // UPDATED: Use the CSS class instead of manual styles
+        this.getStyleClass().add("control-bar");
 
         // --- Init Components ---
         tfParentInput = new TextField();
@@ -44,12 +44,13 @@ public class VisualizerControls extends HBox {
         tfInput.setPromptText("Value...");
         tfInput.setPrefWidth(60);
 
-        Button btnInsert = createButton("Insert", "btn-primary", this::handleInsert);
-        Button btnDelete = createButton("Delete", "button", this::handleDelete);
-        btnDelete.setStyle("-fx-text-fill: red;");
-        Button btnSearch = createButton("Search", "button", this::handleSearch);
-        Button btnRandom = createButton("Random", "button", this::handleRandom);
+        // UPDATED: Applied specific color classes from style.css
+        Button btnInsert = createButton("Insert", "btn-success", this::handleInsert); // Green
+        Button btnDelete = createButton("Delete", "btn-danger", this::handleDelete);  // Red
+        Button btnSearch = createButton("Search", "btn-primary", this::handleSearch); // Blue
+        Button btnRandom = createButton("Random", "button", this::handleRandom);      // Default White
 
+        // Navigation Buttons
         Button btnUndo = createButton("<<", "button", () -> {
             if (listener != null) listener.onUndo();
         });
@@ -59,7 +60,7 @@ public class VisualizerControls extends HBox {
         Button btnRedo = createButton(">>", "button", () -> {
             if (listener != null) listener.onRedo();
         });
-        // Thêm Tooltip để người dùng hiểu nút làm gì
+        
         btnUndo.setTooltip(new Tooltip("Undo / Step Backward"));
         btnReplay.setTooltip(new Tooltip("Replay Animation"));
         btnRedo.setTooltip(new Tooltip("Redo / Step Forward"));
@@ -90,7 +91,6 @@ public class VisualizerControls extends HBox {
                 cboTraversal, btnTraverse,
                 new Separator(javafx.geometry.Orientation.VERTICAL),
                 new Label("Speed:"), sliderSpeed
-
         );
 
         updateUIForType(initialType);
@@ -120,8 +120,8 @@ public class VisualizerControls extends HBox {
 
             if (tfParentInput.isVisible()) {
                 String pTxt = tfParentInput.getText().trim();
-                if (pTxt.isEmpty()) listener.onInsertGeneral(-1, val); // Insert Root
-                else listener.onInsertGeneral(Integer.parseInt(pTxt), val);
+                if (pTxt.isEmpty()) listener.onInsert(val); // Insert Root
+                else listener.onInsert(Integer.parseInt(pTxt), val);
             } else {
                 listener.onInsert(val);
             }
@@ -142,7 +142,6 @@ public class VisualizerControls extends HBox {
     }
 
     private void handleRandom() {
-        // Sửa số 10 thành số 1
         if (listener != null) listener.onRandom(1);
     }
 

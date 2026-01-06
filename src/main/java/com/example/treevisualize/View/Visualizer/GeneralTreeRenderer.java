@@ -10,12 +10,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 public class GeneralTreeRenderer implements TreeRenderer {
-
-    /**
-     * Thay đổi từ renderChildren -> drawNode.
-     * Hàm này chỉ chịu trách nhiệm vẽ hình tròn và giá trị của node tại toạ độ (x, y).
-     * Không còn đệ quy, không còn vẽ đường nối (strokeLine).
-     */
     @Override
     public void drawNode(GraphicsContext gc, Node node, double x, double y, double radius) {
         if (!(node instanceof GeneralTreeNode)) return;
@@ -45,8 +39,8 @@ public class GeneralTreeRenderer implements TreeRenderer {
     @Override
     public Color getNodeColor(Node node) {
         if (node.getStatus() == NodeStatus.ACTIVE) {
-            return Color.ORANGE; // Hoặc Color.GOLD, Color.YELLOW tùy ý thích
+            return Color.ORANGE; 
         }
-        return Color.BLUE; // Giữ nguyên màu xanh đặc trưng của General Tree
+        return Color.BLUE;
     }
 }

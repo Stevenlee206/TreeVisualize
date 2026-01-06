@@ -1,15 +1,13 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.GeneralTreeNode;
-import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import
+import com.example.treevisualize.View.Visualizer.Events.StandardEvent; 
 
 public class GeneralTree extends Tree {
-
     public GeneralTree(){
         super();
     }
-
-    // Insert kiểu cũ (chỉ nhận value) -> Báo lỗi hoặc hỗ trợ root
+    // --- Insert ---
     @Override
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root);
@@ -19,22 +17,24 @@ public class GeneralTree extends Tree {
             notifyEvent(StandardEvent.INSERT_SUCCESS, root);
             notifyStructureChanged();
         } else {
-            // General Tree cần parent, ném lỗi rõ ràng
             throw new UnsupportedOperationException("General Tree insert requires Parent ID. Use insert(parent, child).");
         }
     }
-
-    // Insert kiểu mới (parent, child)
+    @Override
     public void insert(int parentVal, int childVal) {
-        notifyEvent(StandardEvent.START, root);
+        // If tree is empty, redirect to root creation for convenience/safety
+        if (root == null) {
+            insert(childVal);
+            return;
+        }
 
-        // Tìm cha
+        notifyEvent(StandardEvent.START, root);
         GeneralTreeNode parent = (GeneralTreeNode) search(parentVal);
 
         if (parent == null) {
             notifyError("Cannot find parent node with value: " + parentVal);
         } else {
-            notifyEvent(StandardEvent.FOUND_INSERT_POS, parent); // Tìm thấy cha
+            notifyEvent(StandardEvent.FOUND_INSERT_POS, parent);
             parent.addChild(new GeneralTreeNode(childVal));
             notifyEvent(StandardEvent.INSERT_SUCCESS, null);
             notifyStructureChanged();
@@ -51,11 +51,10 @@ public class GeneralTree extends Tree {
     private GeneralTreeNode searchRecursive(GeneralTreeNode node, int value) {
         if (node == null) return null;
         if (node.getValue() == value) return node;
-
-        // Đệ quy con và anh em (Logic đặc thù General Tree)
+      //search children
         GeneralTreeNode foundInChild = searchRecursive(node.getLeftMostChild(), value);
         if (foundInChild != null) return foundInChild;
-
+      //search siblings
         return searchRecursive(node.getRightSibling(), value);
     }
 
@@ -63,7 +62,6 @@ public class GeneralTree extends Tree {
     @Override
     public void delete(int value) {
         notifyEvent(StandardEvent.DELETE_START, root);
-
         if (root == null) return;
         GeneralTreeNode targetNode = (GeneralTreeNode) search(value);
 
