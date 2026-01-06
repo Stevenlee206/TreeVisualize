@@ -178,7 +178,7 @@ public class ScapegoatTree extends BinarySearchTree {
     @Override
     public void delete(int value) {
         notifyEvent(StandardEvent.DELETE_START, root);
-        if (search(value) == null) return;
+        if (search(root, value) == null) return;
 
         root = deleteRecursive((ScapegoatTreeNode) root, value);
 

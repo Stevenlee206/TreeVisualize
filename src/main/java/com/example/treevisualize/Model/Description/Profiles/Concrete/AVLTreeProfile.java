@@ -10,6 +10,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.AVLDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.AVLInsert;
 import com.example.treevisualize.Model.Tree.AVLTree;
 import com.example.treevisualize.View.Visualizer.AVLTreeRenderer;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy;
 
 public class AVLTreeProfile implements TreeProfile {
     @Override
@@ -35,7 +36,7 @@ public class AVLTreeProfile implements TreeProfile {
                 new AVLDescription(),
                 new AVLInsert(),
                 new AVLDeleteStrategy(),
-                null
+                new DFSSearchStrategy()
         );
     }
 }

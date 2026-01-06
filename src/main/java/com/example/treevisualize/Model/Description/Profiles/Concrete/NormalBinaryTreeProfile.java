@@ -11,6 +11,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.BSTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.BTInsert;
 import com.example.treevisualize.Model.Tree.BinaryTree;
 import com.example.treevisualize.View.Visualizer.BinaryTreeRenderer;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy;
 
 public class NormalBinaryTreeProfile implements TreeProfile {
     @Override
@@ -37,7 +38,7 @@ public class NormalBinaryTreeProfile implements TreeProfile {
                 new BinaryTreeDescription(),
                 new BTInsert(),
                 new BSTDeleteStrategy() ,// Thường dùng chung chiến lược xóa với BST hoặc BTDelete riêng nếu có,
-                null
+                new DFSSearchStrategy()
         );
     }
 }

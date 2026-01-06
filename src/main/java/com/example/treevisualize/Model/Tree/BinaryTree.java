@@ -1,7 +1,6 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.BinaryTreeNode;
-import com.example.treevisualize.Model.Node.Node;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import Event
 
 import java.util.LinkedList;
@@ -70,7 +69,7 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
         }
 
         notifyEvent(StandardEvent.START, root);
-        BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
+        BinaryTreeNode parent = (BinaryTreeNode) search(root, parentVal);
 
         if (parent == null) {
             notifyError("Cannot find parent: " + parentVal);
@@ -98,7 +97,7 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
 
         if (root == null) return;
 
-        BinaryTreeNode targetNode = (BinaryTreeNode) search(value);
+        BinaryTreeNode targetNode = (BinaryTreeNode) search(root, value);
 
         if (targetNode == null) {
             notifyError("Cannot delete: value " + value + " not found.");
@@ -130,32 +129,7 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
         }
     }
 
-    // --- SEARCH ---
-    @Override
-    public Node search(int value) {
-        if (root == null) return null;
-        return searchRecursive((BinaryTreeNode) root, value);
-    }
-
-    private BinaryTreeNode searchRecursive(BinaryTreeNode node, int value) {
-        if (node == null) return null;
-
-        if (node.getValue() == value) {
-            notifyEvent(StandardEvent.COMPARE_LESS, node); // Tạm dùng event compare để highlight tìm thấy
-            return node;
-        }
-
-        // Highlight đường đi tìm kiếm
-        notifyEvent(StandardEvent.GO_LEFT, node);
-        BinaryTreeNode leftResult = searchRecursive(node.getLeftChild(), value);
-        if (leftResult != null) {
-            return leftResult;
-        }
-
-        notifyEvent(StandardEvent.GO_RIGHT, node);
-        return searchRecursive(node.getRightChild(), value);
-    }
-
+    
 
     // ĐÃ XÓA: getHeight() và getNodeCount()
     // Class cha Tree sẽ tự động xử lý việc này thông qua getChildren() của BinaryTreeNode.

@@ -29,7 +29,7 @@ public class GeneralTree extends Tree {
         }
 
         notifyEvent(StandardEvent.START, root);
-        GeneralTreeNode parent = (GeneralTreeNode) search(parentVal);
+        GeneralTreeNode parent = (GeneralTreeNode) search(root, parentVal);
 
         if (parent == null) {
             notifyError("Cannot find parent node with value: " + parentVal);
@@ -41,29 +41,14 @@ public class GeneralTree extends Tree {
         }
     }
 
-    // --- Search ---
-    @Override
-    public com.example.treevisualize.Model.Node.Node search(int value){
-        if (root == null) return null;
-        return searchRecursive((GeneralTreeNode) root, value);
-    }
-
-    private GeneralTreeNode searchRecursive(GeneralTreeNode node, int value) {
-        if (node == null) return null;
-        if (node.getValue() == value) return node;
-      //search children
-        GeneralTreeNode foundInChild = searchRecursive(node.getLeftMostChild(), value);
-        if (foundInChild != null) return foundInChild;
-      //search siblings
-        return searchRecursive(node.getRightSibling(), value);
-    }
+  
 
     // --- Delete ---
     @Override
     public void delete(int value) {
         notifyEvent(StandardEvent.DELETE_START, root);
         if (root == null) return;
-        GeneralTreeNode targetNode = (GeneralTreeNode) search(value);
+        GeneralTreeNode targetNode = (GeneralTreeNode) search(root, value);
 
         if (targetNode == null) {
             notifyError("Cannot delete: value " + value + " not found.");

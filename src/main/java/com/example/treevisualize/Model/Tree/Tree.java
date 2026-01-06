@@ -5,6 +5,7 @@ import com.example.treevisualize.Model.Node.NodeStatus;
 import com.example.treevisualize.View.Visualizer.AlgorithmEvent;
 import com.example.treevisualize.View.Visualizer.ExecutionMonitor;
 import com.example.treevisualize.View.Visualizer.TreeObserver;
+import com.example.treevisualize.View.Visualizer.Events.StandardEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,62 @@ public abstract class Tree {
     public abstract void insert(int parentValue, int childValue);//expand tree by adding child to parent
 
     public abstract void delete(int value);
-    public abstract Node search(int value);
+    public Node searchUI(Node node, int value) {
+        // Emit event: check null / empty
+        if (node == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+
+        // Mark node active and notify (so UI highlights it)
+        node.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(node);
+
+        // Before comparing, indicate we're checking this node
+        notifyEvent(StandardEvent.SEARCH_CHECK, node);
+        if (node.getValue() == value) {
+            // Found
+            notifyEvent(StandardEvent.SEARCH_FOUND, node);
+            // restore status
+            node.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(node);
+            return node;
+        }
+        // Recurse into children
+        for (Node child : node.getChildren()) {
+            notifyEvent(StandardEvent.SEARCH_RECURSE, child);
+            Node result = searchUI(child, value);
+            if (result != null) {
+                // restore status before bubbling up
+                node.changeStatus(NodeStatus.NORMAL);
+                notifyNodeChanged(node);
+                return result; 
+            }
+        }
+
+        // restore status
+        node.changeStatus(NodeStatus.NORMAL);
+        notifyNodeChanged(node);
+        return null; 
+    }
+    public Node search(Node node, int value) {
+        if (node == null) {
+            return null;
+        }
+        if (node.getValue() == value) {
+            return node;
+        }
+        // Recurse into children
+        for (Node child : node.getChildren()) {
+            notifyEvent(StandardEvent.SEARCH_RECURSE, child);
+            Node result = search(child, value);
+            if (result != null) {
+                return result; 
+            }
+        }
+        return null; 
+    }
+    
     
     public void setRoot(Node newRoot) {
         this.root = newRoot;
@@ -39,7 +95,7 @@ public abstract class Tree {
         return path;
     }
 
-    protected void visit(Node node) {
+    public void visit(Node node) {
         if (node == null) return;
         node.changeStatus(NodeStatus.ACTIVE);
         notifyNodeChanged(node);
@@ -50,13 +106,13 @@ public abstract class Tree {
     // ===== OBSERVER / MONITOR HELPERS =====
     public void setMonitor(ExecutionMonitor monitor) { this.monitor = monitor; }
 
-    protected void notifyEvent(AlgorithmEvent event, Node node) {
+    public void notifyEvent(AlgorithmEvent event, Node node) {
         if (monitor != null) monitor.onEvent(event, node);
     }
     
-    protected void notifyStructureChanged() { observers.forEach(TreeObserver::onStructureChanged); }
-    protected void notifyNodeChanged(Node node) { observers.forEach(o -> o.onNodeChanged(node)); }
-    protected void notifyError(String message) { observers.forEach(o -> o.onError(message)); }
+    public void notifyStructureChanged() { observers.forEach(TreeObserver::onStructureChanged); }
+    public void notifyNodeChanged(Node node) { observers.forEach(o -> o.onNodeChanged(node)); }
+    public void notifyError(String message) { observers.forEach(o -> o.onError(message)); }
 
     // ===== GETTERS / SETTERS =====
     public Node getRoot() { return root; }

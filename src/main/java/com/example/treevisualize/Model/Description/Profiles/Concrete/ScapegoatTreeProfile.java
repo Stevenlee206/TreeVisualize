@@ -35,7 +35,7 @@ public class ScapegoatTreeProfile implements TreeProfile {
                 new ScapegoatDescription(),
                 new ScapegoatInsert(),
                 new ScapegoatDeleteStrategy(),
-                null
+                new com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy()
         );
     }
 }

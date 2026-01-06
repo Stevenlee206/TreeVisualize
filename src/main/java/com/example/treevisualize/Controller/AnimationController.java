@@ -252,9 +252,8 @@ public class AnimationController {
             val = rand.nextInt(bound) + 1; 
             attempts++;
             // Kiểm tra trùng lặp 
-        } while (tree.search(val) != null && attempts < maxAttempts);
-
-        return (tree.search(val) == null) ? val : null;
+        } while (tree.search(tree.getRoot(), val) != null && attempts < maxAttempts);
+        return (tree.search(tree.getRoot(), val) == null) ? val : null;
     }
 
     //find valid parent for Binary Tree insert

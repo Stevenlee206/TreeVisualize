@@ -37,7 +37,7 @@ public class RedBlackTreeProfile implements TreeProfile {
                 new RBTDescription(),
                 new RedBlackTreeInsert(),
                 new RBTDeleteStrategy(),
-                null
+                new com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy()
         );
     }
 }

@@ -11,6 +11,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.GTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.GeneralTreeInsert;
 import com.example.treevisualize.Model.Tree.GeneralTree;
 import com.example.treevisualize.View.Visualizer.GeneralTreeRenderer;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy;
 
 public class GeneralTreeProfile implements TreeProfile {
     @Override
@@ -36,7 +37,8 @@ public class GeneralTreeProfile implements TreeProfile {
                 new GeneralTreeDescription(),
                 new GeneralTreeInsert(),
                 new GTDeleteStrategy(),
-                null
+                new DFSSearchStrategy()
+                
         );
     }
 }

@@ -56,7 +56,7 @@ public class RedBlackTree extends BinarySearchTree {
             return;
         }
 
-        if (search(value) != null) {
+        if (search(root, value) != null) {
             notifyError("The value " + value + " already exists!");
             return;
         }
@@ -154,7 +154,7 @@ public class RedBlackTree extends BinarySearchTree {
     public void delete(int value) {
         notifyEvent(StandardEvent.DELETE_START, root);
 
-        RedBlackTreeNode z = (RedBlackTreeNode) search(value);
+        RedBlackTreeNode z = (RedBlackTreeNode) search(root, value);
         if (z == null) {
             notifyError("Cannot delete: value " + value + " not found.");
             return;

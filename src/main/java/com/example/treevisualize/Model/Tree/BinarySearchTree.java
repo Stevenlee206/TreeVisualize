@@ -1,35 +1,28 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.BinaryTreeNode;
-import com.example.treevisualize.Model.Node.Node;
-import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import
+import com.example.treevisualize.View.Visualizer.Events.StandardEvent;
 
 public class BinarySearchTree extends Tree { 
 
     public BinarySearchTree() {
         super();
     }
-
-    // --- SEARCH ---
-    @Override
-    public Node search(int value) {
-        return searchRecursive((BinaryTreeNode) root, value);
+    //--- SEARCH ---
+    public BinaryTreeNode search(int value) {
+        return searchBST((BinaryTreeNode) root, value);
     }
 
-    private BinaryTreeNode searchRecursive(BinaryTreeNode current, int value) {
-        if (current == null || current.getValue() == value) {
-            return current;
-        }
-        if (value < current.getValue()) {
-            notifyEvent(StandardEvent.COMPARE_LESS, current); // Highlight so sánh
-            notifyEvent(StandardEvent.GO_LEFT, current);      // Highlight đi trái
-            return searchRecursive(current.getLeftChild(), value);
-        } else {
-            notifyEvent(StandardEvent.COMPARE_GREATER, current);
-            notifyEvent(StandardEvent.GO_RIGHT, current);
-            return searchRecursive(current.getRightChild(), value);
-        }
+    protected BinaryTreeNode searchBST(BinaryTreeNode current, int value) {
+        if (current == null) return null;
+
+        if (value == current.getValue()) return current;
+        if (value < current.getValue())
+            return searchBST(current.getLeftChild(), value);
+        else
+            return searchBST(current.getRightChild(), value);
     }
+   
 
     // --- INSERT ---
     @Override
@@ -86,7 +79,7 @@ public class BinarySearchTree extends Tree {
         notifyEvent(StandardEvent.DELETE_START, root);
         if (root == null) return;
         // Search đã có notify bên trong
-        if (search(value) == null) {
+        if (search(root, value) == null) {
             notifyError("Cannot delete: value " + value + " not found.");
             return;
         }
