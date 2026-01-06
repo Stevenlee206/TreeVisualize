@@ -18,11 +18,15 @@ import com.example.treevisualize.Model.Tree.Tree;
 import com.example.treevisualize.View.Visualizer.PseudoCodeBlock;
 import com.example.treevisualize.View.Visualizer.TreeVisualizer;
 import com.example.treevisualize.View.Visualizer.TreeSnapShot;
+import com.example.treevisualize.Model.Tree.BinaryTree;
+import com.example.treevisualize.Model.Node.*;
 
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Random;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.ArrayList;
+
 
 /**
  * AnimationController (Role: CEO / Facade)
@@ -199,62 +203,106 @@ public class AnimationController {
     }
 
     public void startRandomBatch(int count) {
-        // Run as a single transaction (batch update)
+        // Chạy trong một transaction để đảm bảo tính toàn vẹn UI/Data
         runTransaction(() -> {
             Tree tree = executor.getTree();
-            java.util.Random rand = new java.util.Random();
-            
-            // Temporary list to track nodes if needed, 
-            // but relying on the tree structure is safer.
+            if (tree == null) return;
 
             for (int i = 0; i < count; i++) {
-                int val = rand.nextInt(99) + 1;
+                Integer val = generateUniqueValue(tree, 100); // Max value 100
+                if (val == null) {
+                    System.out.println("Warning: Cannot generate unique value (Tree might be full in range).");
+                    break; 
+                }
 
-                if (tree instanceof GeneralTree) {
-                    // --- LOGIC FOR GENERAL TREE ---
-                    if (tree.getRoot() == null) {
-                        executor.executeInsert(val);
-                    } else {
-                        // Case 2: Tree has data.
-                        // We must pick a random PARENT from the existing nodes.
-                        Node randomParent = getRandomNode(tree.getRoot());
-                        
-                        if (randomParent != null) {
-                            executor.executeInsert(randomParent.getValue(), val);
-                        }
+                // Tạo Root
+                if (tree.getRoot() == null) {
+                    executor.executeInsert(val);
+                    continue;
+                }
+
+                // Insert dựa trên loại Cây
+                if (tree instanceof BinaryTree) {
+                    Node validParent = getRandomParentWithCapacity(tree);
+                    
+                    if (validParent != null) {
+                        executor.executeInsert(validParent.getValue(), val);
+                    } 
+
+                } else if (tree instanceof GeneralTree) {
+                    Node randomParent = getRandomNode(tree.getRoot());                 
+                    if (randomParent != null) {
+                        executor.executeInsert(randomParent.getValue(), val);
                     }
-                } else {
-                    // --- LOGIC FOR BINARY TREES (BST, AVL, Level-Order) ---
+                } else {             
                     executor.executeInsert(val);
                 }
             }
         });
     }
 
-    /**
-     * Helper to pick a random node from the tree to serve as a parent.
-     * Uses a simple BFS (Breadth-First Search) to gather all current nodes.
-     */
-    private Node getRandomNode(Node root) {
-        if (root == null) return null;
+    //generate unique random value for insert
+    private Integer generateUniqueValue(Tree tree, int bound) {
+        Random rand = new Random();
+        int val;
+        int attempts = 0;
+        int maxAttempts = 50; // Tránh vòng lặp vô hạn
 
-        List<Node> allNodes = new ArrayList<>();
-        Queue<Node> queue = new LinkedList<>();
-        queue.add(root);
+        do {
+            val = rand.nextInt(bound) + 1; 
+            attempts++;
+            // Kiểm tra trùng lặp 
+        } while (tree.search(val) != null && attempts < maxAttempts);
 
+        return (tree.search(val) == null) ? val : null;
+    }
+
+    //find valid parent for Binary Tree insert
+    private Node getRandomParentWithCapacity(Tree tree) {
+        if (tree.getRoot() == null) return null;
+
+        List<Node> candidates = new ArrayList<>();
+        Queue<Node> queue = new LinkedList<>();      
+        queue.add(tree.getRoot());
         while (!queue.isEmpty()) {
             Node current = queue.poll();
-            allNodes.add(current);
-            // Add all children to queue
-            for (Node child : current.getChildren()) {
-                queue.add(child);
+            if (current instanceof BinaryTreeNode) {
+                BinaryTreeNode btn = (BinaryTreeNode) current;
+                
+                // only valid parent nodes 
+                if (btn.getLeftChild() == null || btn.getRightChild() == null) {
+                    candidates.add(btn);
+                }
+
+                if (btn.getLeftChild() != null) queue.add(btn.getLeftChild());
+                if (btn.getRightChild() != null) queue.add(btn.getRightChild());
             }
         }
 
+        if (candidates.isEmpty()) return null;
+
+        Random rand = new Random();
+        return candidates.get(rand.nextInt(candidates.size()));
+    }
+
+    private Node getRandomNode(Node root) {
+        if (root == null) return null;
+        List<Node> allNodes = new ArrayList<>();
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            Node curr = queue.poll();
+            allNodes.add(curr);
+            // GeneralTreeNode logic to add children...
+             if (curr instanceof GeneralTreeNode) {GeneralTreeNode gtn = (GeneralTreeNode) curr;
+                 Node child = gtn.getLeftMostChild();
+                 while(child != null){
+                     queue.add(child);
+                     child = ((GeneralTreeNode)child).getRightSibling();
+                 }
+             }
+        }
         if (allNodes.isEmpty()) return null;
-        
-        // Pick a random index
-        java.util.Random rand = new java.util.Random();
-        return allNodes.get(rand.nextInt(allNodes.size()));
+        return allNodes.get(new Random().nextInt(allNodes.size()));
     }
 }
