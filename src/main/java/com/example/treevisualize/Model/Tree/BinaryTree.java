@@ -157,28 +157,22 @@ public class BinaryTree extends Tree {
             return node;
         }
 
-        // 3. Recursive Search (DFS logic because it's a simple Binary Tree, not a BST)
-        // Highlight going left
+        // 3. Recursive Search (DFS)
         notifyEvent(StandardEvent.SEARCH_RECURSE, node); 
         notifyEvent(StandardEvent.GO_LEFT, node);
         
-        BinaryTreeNode leftResult = searchUIRecursive(node.getLeftChild(), value);
-        if (leftResult != null) {
-            // Restore status while bubbling up
-            node.changeStatus(NodeStatus.NORMAL);
-            notifyNodeChanged(node);
-            return leftResult;
+        BinaryTreeNode result = searchUIRecursive(node.getLeftChild(), value);
+        if (result == null) {
+            // If not found in left, try right
+            notifyEvent(StandardEvent.GO_RIGHT, node);
+            result = searchUIRecursive(node.getRightChild(), value);
         }
-
-        // Highlight going right
-        notifyEvent(StandardEvent.GO_RIGHT, node);
-        BinaryTreeNode rightResult = searchUIRecursive(node.getRightChild(), value);
         
-        // Final status restoration for this node
+        // Restore status before bubbling up or returning null
         node.changeStatus(NodeStatus.NORMAL);
         notifyNodeChanged(node);
         
-        return rightResult;
+        return result;
     }
 
 
