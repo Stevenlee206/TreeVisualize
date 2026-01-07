@@ -1,6 +1,7 @@
 package com.example.treevisualize.Model.Description.Profiles.Concrete;
 
 import com.example.treevisualize.Controller.Operators.Delete.StandardDeleter;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.*;
 import com.example.treevisualize.Controller.Operators.Insert.TreeInserter;
 import com.example.treevisualize.Controller.Operators.Search.StandardSearcher;
 import com.example.treevisualize.Model.Description.ScapegoatDescription;
@@ -35,7 +36,7 @@ public class ScapegoatTreeProfile implements TreeProfile {
                 new ScapegoatDescription(),
                 new ScapegoatInsert(),
                 new ScapegoatDeleteStrategy(),
-                null
+                new BSTSearchStrategy()
         );
     }
 }

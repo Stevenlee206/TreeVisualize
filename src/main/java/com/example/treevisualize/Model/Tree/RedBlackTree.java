@@ -46,57 +46,59 @@ public class RedBlackTree extends BinarySearchTree {
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root);
 
-        if (root == null) {
-            RedBlackTreeNode newRoot = new RedBlackTreeNode(value);
-            newRoot.changeColor(NodeColor.BLACK);
-            this.root = newRoot;
-            notifyEvent(StandardEvent.INSERT_SUCCESS, newRoot);
-            notifyEvent(RBTEvent.PAINT_BLACK, newRoot);
-            notifyStructureChanged();
-            return;
-        }
-
+        // 1. VISUAL SEARCH: This animates the traversal down the tree.
+        // It uses the inherited search() which changes NodeStatus to ACTIVE.
         if (search(value) != null) {
             notifyError("The value " + value + " already exists!");
             return;
         }
 
+        // 2. STRUCTURAL INSERT: At this point, search() has finished.
         RedBlackTreeNode newNode = new RedBlackTreeNode(value);
         newNode.changeColor(NodeColor.RED);
         notifyEvent(RBTEvent.PAINT_RED, newNode);
+        insertStructuralSilent(newNode);
 
-        insertStandardBST(newNode);
-
+        // 3. FIXUP: Start the RBT balancing visualization.
         notifyEvent(RBTEvent.FIXUP_START, newNode);
         fixInsert(newNode);
 
         notifyStructureChanged();
     }
 
-    private void insertStandardBST(RedBlackTreeNode newNode) {
+    private void insertStructuralSilent(RedBlackTreeNode newNode) {
+        if (root == null) {
+            root = newNode;
+            setColor(root, NodeColor.BLACK);
+            return;
+        }
+
         RedBlackTreeNode current = (RedBlackTreeNode) root;
         RedBlackTreeNode parent = null;
 
+        // Standard BST logic to find the leaf position
         while (current != null) {
             parent = current;
             if (newNode.getValue() < current.getValue()) {
-                notifyEvent(StandardEvent.COMPARE_LESS, current);
-                notifyEvent(StandardEvent.GO_LEFT, current);
                 current = leftOf(current);
             } else {
-                notifyEvent(StandardEvent.COMPARE_GREATER, current);
-                notifyEvent(StandardEvent.GO_RIGHT, current);
                 current = rightOf(current);
             }
         }
 
+        // Attach the node
+        newNode.setParent(parent);
         if (newNode.getValue() < parent.getValue()) {
             parent.setLeftChild(newNode);
         } else {
             parent.setRightChild(newNode);
         }
+        
+        // Final success event for the structural part
         notifyEvent(StandardEvent.INSERT_SUCCESS, newNode);
     }
+   
+    
 
     private void fixInsert(RedBlackTreeNode k) {
         RedBlackTreeNode u;

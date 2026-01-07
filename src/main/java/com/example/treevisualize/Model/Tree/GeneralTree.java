@@ -2,6 +2,9 @@ package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.GeneralTreeNode;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent; 
+import com.example.treevisualize.Model.Node.Node;
+import com.example.treevisualize.Model.Node.NodeStatus;
+
 
 public class GeneralTree extends Tree {
     public GeneralTree(){
@@ -42,22 +45,52 @@ public class GeneralTree extends Tree {
     }
 
     // --- Search ---
+
     @Override
-    public com.example.treevisualize.Model.Node.Node search(int value){
-        if (root == null) return null;
-        return searchRecursive((GeneralTreeNode) root, value);
+    public Node search(int value) {
+        notifyEvent(StandardEvent.START, root);
+        if (root == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+        return searchUIRecursive(root, value);
     }
 
-    private GeneralTreeNode searchRecursive(GeneralTreeNode node, int value) {
+    private Node searchUIRecursive(Node node, int value) {
         if (node == null) return null;
-        if (node.getValue() == value) return node;
-      //search children
-        GeneralTreeNode foundInChild = searchRecursive(node.getLeftMostChild(), value);
-        if (foundInChild != null) return foundInChild;
-      //search siblings
-        return searchRecursive(node.getRightSibling(), value);
-    }
 
+        // 1. Highlight the current node being inspected
+        node.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(node);
+        notifyEvent(StandardEvent.SEARCH_CHECK, node);
+
+        // 2. Check if this is the target
+        if (node.getValue() == value) {
+            notifyEvent(StandardEvent.SEARCH_FOUND, node);
+            // Restore status before returning the found node
+            node.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(node);
+            return node;
+        }
+
+        // 3. Recurse into children if not found at current node
+        for (Node child : node.getChildren()) {
+            notifyEvent(StandardEvent.SEARCH_RECURSE, child);
+            Node result = searchUIRecursive(child, value);
+            
+            if (result != null) {
+                // If found in a subtree, restore current node status and bubble up
+                node.changeStatus(NodeStatus.NORMAL);
+                notifyNodeChanged(node);
+                return result;
+            }
+        }
+
+        // 4. Backtracking: If not found in this branch, restore status and return null
+        node.changeStatus(NodeStatus.NORMAL);
+        notifyNodeChanged(node);
+        return null;
+    }
     // --- Delete ---
     @Override
     public void delete(int value) {

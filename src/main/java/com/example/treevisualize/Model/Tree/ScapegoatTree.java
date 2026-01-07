@@ -5,6 +5,8 @@ import com.example.treevisualize.Model.Node.ScapegoatTreeNode;
 
 import com.example.treevisualize.View.Visualizer.Events.ScapegoatEvent;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent;
+import com.example.treevisualize.Model.Node.Node;
+import com.example.treevisualize.Model.Node.NodeStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,57 @@ public class ScapegoatTree extends BinarySearchTree {
         super();
         this.n = 0;
         this.q = 0;
+    }
+ // --- SEARCH ---
+    @Override
+    public Node search(int value) {
+        notifyEvent(StandardEvent.START, root);
+        if (root == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+        // Call the recursive visual search
+        return searchRecursive((ScapegoatTreeNode) root, value);
+    }
+
+    private ScapegoatTreeNode searchRecursive(ScapegoatTreeNode current, int value) {
+        if (current == null) return null;
+
+        // 1. Visual Highlight
+        current.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(current);
+        notifyEvent(StandardEvent.SEARCH_CHECK, current);
+
+        // 2. Found
+        if (current.getValue() == value) {
+            notifyEvent(StandardEvent.SEARCH_FOUND, current);
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            return current;
+        }
+
+        ScapegoatTreeNode result;
+        // 3. Binary Search Logic
+        if (value < current.getValue()) {
+            notifyEvent(StandardEvent.COMPARE_LESS, current);
+            notifyEvent(StandardEvent.GO_LEFT, current);
+            
+            // Cleanup current node visual before moving down
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            
+            result = searchRecursive((ScapegoatTreeNode) current.getLeftChild(), value);
+        } else {
+            notifyEvent(StandardEvent.COMPARE_GREATER, current);
+            notifyEvent(StandardEvent.GO_RIGHT, current);
+            
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            
+            result = searchRecursive((ScapegoatTreeNode) current.getRightChild(), value);
+        }
+
+        return result;
     }
 
     @Override
@@ -174,6 +227,7 @@ public class ScapegoatTree extends BinarySearchTree {
 
         return node;
     }
+    // --- DELETE ---
 
     @Override
     public void delete(int value) {

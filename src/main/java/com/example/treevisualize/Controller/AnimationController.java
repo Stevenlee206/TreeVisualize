@@ -253,7 +253,6 @@ public class AnimationController {
             attempts++;
             // Kiểm tra trùng lặp 
         } while (tree.search(val) != null && attempts < maxAttempts);
-
         return (tree.search(val) == null) ? val : null;
     }
 

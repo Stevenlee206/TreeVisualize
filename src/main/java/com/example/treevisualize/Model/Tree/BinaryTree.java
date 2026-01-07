@@ -1,13 +1,14 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.BinaryTreeNode;
+import com.example.treevisualize.Model.Node.NodeStatus;
 import com.example.treevisualize.Model.Node.Node;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import Event
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree tùy cấu trúc của bạn)
+public class BinaryTree extends Tree { 
 
     public BinaryTree() {
         super();
@@ -129,31 +130,49 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
             notifyError("Structural error: Node " + value + " doesn't have parent (is not Root).");
         }
     }
-
-    // --- SEARCH ---
+    // --- SEARCH DFS ---
     @Override
     public Node search(int value) {
-        if (root == null) return null;
-        return searchRecursive((BinaryTreeNode) root, value);
+        notifyEvent(StandardEvent.START, root);
+        if (root == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+        return searchUIRecursive((BinaryTreeNode) root, value);
     }
 
-    private BinaryTreeNode searchRecursive(BinaryTreeNode node, int value) {
+    private BinaryTreeNode searchUIRecursive(BinaryTreeNode node, int value) {
         if (node == null) return null;
 
+        // 1. Highlight current node
+        node.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(node);
+        notifyEvent(StandardEvent.SEARCH_CHECK, node);
+
+        // 2. Base Case: Found
         if (node.getValue() == value) {
-            notifyEvent(StandardEvent.COMPARE_LESS, node); // Tạm dùng event compare để highlight tìm thấy
+            notifyEvent(StandardEvent.SEARCH_FOUND, node);
+            node.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(node);
             return node;
         }
 
-        // Highlight đường đi tìm kiếm
+        // 3. Recursive Search (DFS)
+        notifyEvent(StandardEvent.SEARCH_RECURSE, node); 
         notifyEvent(StandardEvent.GO_LEFT, node);
-        BinaryTreeNode leftResult = searchRecursive(node.getLeftChild(), value);
-        if (leftResult != null) {
-            return leftResult;
+        
+        BinaryTreeNode result = searchUIRecursive(node.getLeftChild(), value);
+        if (result == null) {
+            // If not found in left, try right
+            notifyEvent(StandardEvent.GO_RIGHT, node);
+            result = searchUIRecursive(node.getRightChild(), value);
         }
-
-        notifyEvent(StandardEvent.GO_RIGHT, node);
-        return searchRecursive(node.getRightChild(), value);
+        
+        // Restore status before bubbling up or returning null
+        node.changeStatus(NodeStatus.NORMAL);
+        notifyNodeChanged(node);
+        
+        return result;
     }
 
 

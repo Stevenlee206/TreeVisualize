@@ -11,6 +11,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.RBTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.RedBlackTreeInsert;
 import com.example.treevisualize.Model.Tree.RedBlackTree;
 import com.example.treevisualize.View.Visualizer.BinaryTreeRenderer;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.BSTSearchStrategy;
 
 public class RedBlackTreeProfile implements TreeProfile {
 
@@ -37,7 +38,7 @@ public class RedBlackTreeProfile implements TreeProfile {
                 new RBTDescription(),
                 new RedBlackTreeInsert(),
                 new RBTDeleteStrategy(),
-                null
+                new BSTSearchStrategy()
         );
     }
 }

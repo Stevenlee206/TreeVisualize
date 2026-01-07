@@ -25,6 +25,7 @@ public abstract class Tree {
 
     public abstract void delete(int value);
     public abstract Node search(int value);
+
     
     public void setRoot(Node newRoot) {
         this.root = newRoot;
@@ -50,13 +51,13 @@ public abstract class Tree {
     // ===== OBSERVER / MONITOR HELPERS =====
     public void setMonitor(ExecutionMonitor monitor) { this.monitor = monitor; }
 
-    protected void notifyEvent(AlgorithmEvent event, Node node) {
+    public void notifyEvent(AlgorithmEvent event, Node node) {
         if (monitor != null) monitor.onEvent(event, node);
     }
     
-    protected void notifyStructureChanged() { observers.forEach(TreeObserver::onStructureChanged); }
-    protected void notifyNodeChanged(Node node) { observers.forEach(o -> o.onNodeChanged(node)); }
-    protected void notifyError(String message) { observers.forEach(o -> o.onError(message)); }
+    public void notifyStructureChanged() { observers.forEach(TreeObserver::onStructureChanged); }
+    public void notifyNodeChanged(Node node) { observers.forEach(o -> o.onNodeChanged(node)); }
+    public void notifyError(String message) { observers.forEach(o -> o.onError(message)); }
 
     // ===== GETTERS / SETTERS =====
     public Node getRoot() { return root; }

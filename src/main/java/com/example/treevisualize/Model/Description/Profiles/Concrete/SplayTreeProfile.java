@@ -10,7 +10,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.SplayDeleteStrateg
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.SplayInsertStrategy;
 import com.example.treevisualize.Model.Tree.SplayTree;
 import com.example.treevisualize.View.Visualizer.BinaryTreeRenderer;
-
+import com.example.treevisualize.Model.PseudoCodeStore.Search.SplayTreeSearchStrategy;
 public class SplayTreeProfile implements TreeProfile {
     @Override
     public TreeMetadata getMetadata() {
@@ -35,7 +35,7 @@ public class SplayTreeProfile implements TreeProfile {
                 new SplayTreeDescription(),
                 new SplayInsertStrategy(),
                 new SplayDeleteStrategy(),
-                null
+                new SplayTreeSearchStrategy()
         );
     }
 }

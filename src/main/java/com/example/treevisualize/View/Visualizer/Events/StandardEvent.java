@@ -12,5 +12,10 @@ public enum StandardEvent implements AlgorithmEvent {
     FOUND_INSERT_POS,
     INSERT_SUCCESS,
     DELETE_START,
-    DELETE_SUCCESS
+    DELETE_SUCCESS,
+    SEARCH_CHECK,      
+    SEARCH_RECURSE,    
+    SEARCH_FOUND,
+    SEARCH_START,
+    SEARCH_END;
 }
