@@ -36,6 +36,7 @@ public class AnimationController {
     private final RecorderStrategy recorder;    // Phòng Ghi Hình (Tạo Snapshot)
     private final HistoryStorage history;       // Phòng Lưu Trữ (Quản lý Undo/Redo)
     private final PlaybackController player;    // Phòng Trình Chiếu (Animation & Render)
+    private Runnable onFinished;
 
     /**
      * Constructor: Tuyển dụng và khởi tạo các bộ phận
@@ -56,6 +57,15 @@ public class AnimationController {
         // 5. Thiết lập đường dây nóng (Wiring)
         // Khi Player chạy hết một frame, nó sẽ "gõ cửa" xin frame tiếp theo -> Gọi hàm autoNextStep
         this.player.setOnTickRequest(this::autoNextStep);
+    }
+    
+    public void setOnFinished(Runnable r) {
+    	this.onFinished = r;
+    }
+    private void finish() {
+    	if (onFinished != null) {
+    		onFinished.run();
+    	}
     }
 
     // =================================================================================
@@ -183,6 +193,7 @@ public class AnimationController {
         } else {
             // Hết phim -> Dừng máy chạy
             player.pause();
+            finish();
         }
     }
 

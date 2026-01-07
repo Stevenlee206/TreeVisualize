@@ -30,7 +30,7 @@ public class BSTDeleteStrategy implements PseudoCodeStrategy {
                 "15.     if (node.right == ∅) return node.left",           // 14
                 "16.     successorValue ← findMin(node.right)",            // 15
                 "17.     node.value ← successorValue",                     // 16
-                "18.     node.right ← deleteRecursive(node.right, succ)"   // 17
+                "18.     node.right ← deleteRecursive(node.right, successorValue)"   // 17
         );
     }
 

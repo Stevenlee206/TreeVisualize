@@ -70,8 +70,6 @@ public class GeneralTree extends Tree {
             return;
         }
 
-        notifyEvent(StandardEvent.DELETE_SUCCESS, targetNode);
-
         if (targetNode == root) {
             clear();
             notifyStructureChanged();
@@ -81,6 +79,7 @@ public class GeneralTree extends Tree {
         GeneralTreeNode parent = (GeneralTreeNode) targetNode.getParent();
         if (parent != null) {
             parent.removeChild(new GeneralTreeNode(value));
+            notifyEvent(StandardEvent.DELETE_SUCCESS, targetNode);
             notifyStructureChanged();
         } else {
             notifyError("Structural error: Node " + value + " lost connection to parent.");
