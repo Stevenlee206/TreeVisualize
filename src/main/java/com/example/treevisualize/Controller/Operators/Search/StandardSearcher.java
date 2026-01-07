@@ -1,6 +1,7 @@
 package com.example.treevisualize.Controller.Operators.Search;
 
 import com.example.treevisualize.Model.Tree.Tree;
+
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent;
 
 public class StandardSearcher implements Searcher {
@@ -15,7 +16,7 @@ public class StandardSearcher implements Searcher {
         tree.notifyEvent(StandardEvent.SEARCH_START, tree.getRoot());
 
         // Use the UI-aware recursive search so events and node-status changes are emitted
-        tree.searchUI(tree.getRoot(), value);
+        tree.search(value);
 
         // Optional: notify end
         tree.notifyEvent(StandardEvent.SEARCH_END, tree.getRoot());

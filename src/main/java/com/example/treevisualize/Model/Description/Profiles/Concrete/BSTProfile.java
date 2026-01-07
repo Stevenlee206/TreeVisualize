@@ -11,7 +11,7 @@ import com.example.treevisualize.Model.PseudoCodeStore.Delete.BSTDeleteStrategy;
 import com.example.treevisualize.Model.PseudoCodeStore.Insert.BSTInsert;
 import com.example.treevisualize.Model.Tree.BinarySearchTree;
 import com.example.treevisualize.View.Visualizer.BinaryTreeRenderer;
-import com.example.treevisualize.Model.PseudoCodeStore.Search.DFSSearchStrategy;
+import com.example.treevisualize.Model.PseudoCodeStore.Search.BSTSearchStrategy;
 
 public class BSTProfile implements TreeProfile {
     @Override
@@ -37,7 +37,7 @@ public class BSTProfile implements TreeProfile {
                 new BSTDescription(),
                 new BSTInsert(),
                 new BSTDeleteStrategy(),
-                new DFSSearchStrategy()
+                new BSTSearchStrategy()
         );
     }
 }

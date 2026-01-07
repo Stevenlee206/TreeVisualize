@@ -1,28 +1,66 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.BinaryTreeNode;
-import com.example.treevisualize.View.Visualizer.Events.StandardEvent;
+import com.example.treevisualize.Model.Node.Node;
+import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import
+import com.example.treevisualize.Model.Node.NodeStatus;
 
 public class BinarySearchTree extends Tree { 
 
     public BinarySearchTree() {
         super();
     }
-    //--- SEARCH ---
-    public BinaryTreeNode search(int value) {
-        return searchBST((BinaryTreeNode) root, value);
+
+    @Override
+    public Node search(int value) {
+        notifyEvent(StandardEvent.START, root);
+        if (root == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+        return searchRecursive((BinaryTreeNode) root, value);
     }
 
-    protected BinaryTreeNode searchBST(BinaryTreeNode current, int value) {
+    private BinaryTreeNode searchRecursive(BinaryTreeNode current, int value) {
         if (current == null) return null;
 
-        if (value == current.getValue()) return current;
-        if (value < current.getValue())
-            return searchBST(current.getLeftChild(), value);
-        else
-            return searchBST(current.getRightChild(), value);
+        // 1. Highlight current node
+        current.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(current);
+        notifyEvent(StandardEvent.SEARCH_CHECK, current);
+
+        // 2. Base Case: Found
+        if (current.getValue() == value) {
+            notifyEvent(StandardEvent.SEARCH_FOUND, current);
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            return current;
+        }
+
+        BinaryTreeNode result;
+        // 3. Binary Search Logic (Visualizing the decision)
+        if (value < current.getValue()) {
+            notifyEvent(StandardEvent.COMPARE_LESS, current);
+            notifyEvent(StandardEvent.GO_LEFT, current);
+            
+            // Clean up current highlight before moving down
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            
+            result = searchRecursive(current.getLeftChild(), value);
+        } else {
+            notifyEvent(StandardEvent.COMPARE_GREATER, current);
+            notifyEvent(StandardEvent.GO_RIGHT, current);
+            
+            current.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(current);
+            
+            result = searchRecursive(current.getRightChild(), value);
+        }
+
+        return result;
     }
-   
+    
 
     // --- INSERT ---
     @Override
@@ -79,7 +117,7 @@ public class BinarySearchTree extends Tree {
         notifyEvent(StandardEvent.DELETE_START, root);
         if (root == null) return;
         // Search đã có notify bên trong
-        if (search(root, value) == null) {
+        if (search(value) == null) {
             notifyError("Cannot delete: value " + value + " not found.");
             return;
         }

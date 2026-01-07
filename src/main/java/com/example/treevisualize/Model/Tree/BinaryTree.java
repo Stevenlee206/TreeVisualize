@@ -1,12 +1,14 @@
 package com.example.treevisualize.Model.Tree;
 
 import com.example.treevisualize.Model.Node.BinaryTreeNode;
+import com.example.treevisualize.Model.Node.NodeStatus;
+import com.example.treevisualize.Model.Node.Node;
 import com.example.treevisualize.View.Visualizer.Events.StandardEvent; // Import Event
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree tùy cấu trúc của bạn)
+public class BinaryTree extends Tree { 
 
     public BinaryTree() {
         super();
@@ -69,7 +71,7 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
         }
 
         notifyEvent(StandardEvent.START, root);
-        BinaryTreeNode parent = (BinaryTreeNode) search(root, parentVal);
+        BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
 
         if (parent == null) {
             notifyError("Cannot find parent: " + parentVal);
@@ -97,7 +99,7 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
 
         if (root == null) return;
 
-        BinaryTreeNode targetNode = (BinaryTreeNode) search(root, value);
+        BinaryTreeNode targetNode = (BinaryTreeNode) search(value);
 
         if (targetNode == null) {
             notifyError("Cannot delete: value " + value + " not found.");
@@ -128,8 +130,57 @@ public class BinaryTree extends Tree { // Kế thừa AbstractTree (hoặc Tree 
             notifyError("Structural error: Node " + value + " doesn't have parent (is not Root).");
         }
     }
+    // --- SEARCH DFS ---
+    @Override
+    public Node search(int value) {
+        notifyEvent(StandardEvent.START, root);
+        if (root == null) {
+            notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
+            return null;
+        }
+        return searchUIRecursive((BinaryTreeNode) root, value);
+    }
 
-    
+    private BinaryTreeNode searchUIRecursive(BinaryTreeNode node, int value) {
+        if (node == null) return null;
+
+        // 1. Highlight current node
+        node.changeStatus(NodeStatus.ACTIVE);
+        notifyNodeChanged(node);
+        notifyEvent(StandardEvent.SEARCH_CHECK, node);
+
+        // 2. Base Case: Found
+        if (node.getValue() == value) {
+            notifyEvent(StandardEvent.SEARCH_FOUND, node);
+            node.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(node);
+            return node;
+        }
+
+        // 3. Recursive Search (DFS logic because it's a simple Binary Tree, not a BST)
+        // Highlight going left
+        notifyEvent(StandardEvent.SEARCH_RECURSE, node); 
+        notifyEvent(StandardEvent.GO_LEFT, node);
+        
+        BinaryTreeNode leftResult = searchUIRecursive(node.getLeftChild(), value);
+        if (leftResult != null) {
+            // Restore status while bubbling up
+            node.changeStatus(NodeStatus.NORMAL);
+            notifyNodeChanged(node);
+            return leftResult;
+        }
+
+        // Highlight going right
+        notifyEvent(StandardEvent.GO_RIGHT, node);
+        BinaryTreeNode rightResult = searchUIRecursive(node.getRightChild(), value);
+        
+        // Final status restoration for this node
+        node.changeStatus(NodeStatus.NORMAL);
+        notifyNodeChanged(node);
+        
+        return rightResult;
+    }
+
 
     // ĐÃ XÓA: getHeight() và getNodeCount()
     // Class cha Tree sẽ tự động xử lý việc này thông qua getChildren() của BinaryTreeNode.

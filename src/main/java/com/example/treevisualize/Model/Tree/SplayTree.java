@@ -14,15 +14,15 @@ public class SplayTree extends BinarySearchTree {
      * Override Search: Tìm xong thì Splay node đó lên gốc
      */
     @Override
-    public BinaryTreeNode search(int value) {
-        BinaryTreeNode found = super.search(value);
+    public Node search(int value) {
+        // notifyEvent(StandardEvent.START, root); // Search BST đã có notify bên trong
+        Node found = super.search(value);
         if (found != null) {
             notifyEvent(SplayEvent.SPLAY_START, found);
-            splay(found);
+            splay((BinaryTreeNode) found);
         }
         return found;
     }
-
 
     /**
      * Override Insert: Chèn xong thì Splay node mới lên gốc
