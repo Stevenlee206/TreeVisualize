@@ -18,6 +18,9 @@ import javafx.util.StringConverter;
 public class VisualizeScreen implements VisualizerControls.ControlListener {
 
     private final Main5 mainApp;
+    
+    private TextField txtNodes;
+    private TextField txtDepth;
 
     // Components (Modules)
     private VisualizerCanvas canvasView;
@@ -61,12 +64,28 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
             mainApp.setSelectedTreeType(newType);
             initializeSystem(newType);
         });
+        
+        txtNodes = new TextField("0");
+        txtNodes.setPrefWidth(50);
+        txtNodes.setEditable(false);
+        txtNodes.setFocusTraversable(false);
+        
+        txtDepth = new TextField("0");
+        txtDepth.setPrefWidth(50);
+        txtDepth.setEditable(false);
+        txtDepth.setFocusTraversable(false);
 
         ToolBar topBar = new ToolBar(
                 btnHome,
                 new Separator(),
                 new Label("Tree Type:"),
-                cboTreeType
+                cboTreeType,
+                new Separator(),
+                new Label("Number of nodes:"),
+                txtNodes,
+                new Separator(),
+                new Label("Depth:"),
+                txtDepth
         );
 
         root.setTop(topBar);
@@ -114,8 +133,15 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
         // 4. Controller Setup
         this.controller = new AnimationController(tree, visualizer, pseudoCodeView, type);
         this.controller.setSpeed(controlsView.getCurrentSpeed());
-
+        controller.setOnFinished(this::updateTreeStats);
         visualizer.render();
+        updateTreeStats();
+    }
+    
+    public void updateTreeStats() {
+    	if (tree == null) return;
+    	txtNodes.setText(String.valueOf(tree.getNodeCount()));
+    	txtDepth.setText(String.valueOf(tree.getHeight()));
     }
 
     // --- TRIỂN KHAI LISTENER (Xử lý sự kiện từ Controls) ---
@@ -151,17 +177,23 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
     }
     @Override
     public void onUndo() {
-        if (controller != null) controller.stepBackward();
+        if (controller != null) {
+        	controller.stepBackward();
+        }
     }
 
     @Override
     public void onRedo() {
-        if (controller != null) controller.stepForward();
+        if (controller != null) {
+        	controller.stepForward();
+        }
     }
 
     @Override
     public void onReplay() {
-        if (controller != null) controller.replay();
+        if (controller != null) {
+        	controller.replay();
+        }
     }
 
 
