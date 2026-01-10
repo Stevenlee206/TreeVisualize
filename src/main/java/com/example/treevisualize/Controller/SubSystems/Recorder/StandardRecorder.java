@@ -68,6 +68,14 @@ public class StandardRecorder implements RecorderStrategy, TreeObserver {
         if (isRecording) {
             capture(-1, "Error: " + message);
         }
+
+        javafx.application.Platform.runLater(() -> {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            alert.setTitle("Lỗi thao tác");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
     @Override
     public void onPseudoStep(int lineIndex) {

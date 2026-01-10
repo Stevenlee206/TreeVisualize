@@ -20,6 +20,10 @@ public class BinaryTree extends Tree {
         notifyEvent(StandardEvent.START, root);
         BinaryTreeNode newNode = new BinaryTreeNode(value);
 
+        if (search(value) != null) {
+            notifyError("The value " + value + " already exist!");
+            return;
+        }
         // Case: Tree is Empty -> Create Root
         if (root == null) {
             notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
@@ -70,6 +74,10 @@ public class BinaryTree extends Tree {
             return;
         }
 
+        if (search(childVal) != null) {
+            notifyError("The value " + childVal + " already exist!");
+            return;
+        }
         notifyEvent(StandardEvent.START, root);
         BinaryTreeNode parent = (BinaryTreeNode) search(parentVal);
 

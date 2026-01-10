@@ -14,6 +14,10 @@ public class GeneralTree extends Tree {
     @Override
     public void insert(int value) {
         notifyEvent(StandardEvent.START, root);
+        if (search(value) != null) {
+            notifyError("The value " + value + " already exist!");
+            return;
+        }
         if (root == null) {
             notifyEvent(StandardEvent.CHECK_ROOT_EMPTY, null);
             root = new GeneralTreeNode(value);
@@ -33,7 +37,10 @@ public class GeneralTree extends Tree {
 
         notifyEvent(StandardEvent.START, root);
         GeneralTreeNode parent = (GeneralTreeNode) search(parentVal);
-
+        if (search(childVal) != null) {
+            notifyError("The value " + childVal + " already exist!");
+            return;
+        }
         if (parent == null) {
             notifyError("Cannot find parent node with value: " + parentVal);
         } else {

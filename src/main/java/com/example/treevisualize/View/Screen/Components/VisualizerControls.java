@@ -165,7 +165,11 @@ public class VisualizerControls extends HBox {
         return b;
     }
 
-    private void showAlert(String msg) {
-        new Alert(Alert.AlertType.ERROR, msg).showAndWait();
+    public void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.WARNING); // Đổi thành WARNING cho lỗi nghiệp vụ
+        alert.setTitle("Thông báo");
+        alert.setHeaderText(null); // Ẩn header để hộp thoại gọn hơn
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }
