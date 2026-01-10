@@ -1,6 +1,8 @@
 package com.example.treevisualize.View.Visualizer.Events;
 
-public enum BSTEvent {
+import com.example.treevisualize.View.Visualizer.AlgorithmEvent;
+
+public enum BSTEvent implements AlgorithmEvent {
     // common
     CHECK_NODE,
     COMPARE_LESS,

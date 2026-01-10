@@ -10,7 +10,7 @@ public class VisualizerCanvas extends Pane {
     private final double[] lastMouse = new double[2]; // Lưu vị trí chuột để Pan
 
     // Listener for canvas clicks (added)
-    public interface CanvasClickListener {
+    private interface CanvasClickListener {
         void onCanvasClick(double x, double y);
     }
 

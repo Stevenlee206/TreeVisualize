@@ -15,17 +15,6 @@ public class RedBlackTreeNode extends BinaryTreeNode {
     public NodeColor getColor() {
         return color;
     }
-    public boolean isRed() {
-        return this.color == NodeColor.RED;
-    }
-    public void flipColor() {
-        if (this.color == NodeColor.RED) {
-            this.color = NodeColor.BLACK;
-        } else {
-            this.color = NodeColor.RED;
-        }
-    }
-
 
     @Override
     public Node copy() {
@@ -48,5 +37,9 @@ public class RedBlackTreeNode extends BinaryTreeNode {
         }
 
         return newNode;
+    }
+
+    public boolean isRed() {
+        return this.getColor() == NodeColor.RED;
     }
 }

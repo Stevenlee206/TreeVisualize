@@ -34,55 +34,16 @@ public class BinaryTreeNode extends Node{
             child.setParent(this);
         }
     }
-
-    public void addChild(BinaryTreeNode child) throws FullNodeException {
-        if (child==null){ return; }
-        if (this.leftChild == null) {
-            this.setLeftChild(child);
-            return;
-        }
-        if (this.rightChild == null) {
-            this.setRightChild(child);
-            return;
-        } throw new FullNodeException("Node "+this.getValue()+" is full.");
-    }
-
-    public void removeChild(BinaryTreeNode child) throws NotFoundException {
-        if (child == null) return;
-        if (this.leftChild != null && this.leftChild.getValue() == child.getValue()) {
-            this.leftChild.setParent(null);
-            this.leftChild = null;
-            return;
-        }
-
-        if (this.rightChild != null && this.rightChild.getValue() == child.getValue()) {
-            this.rightChild.setParent(null);
-            this.rightChild = null;
-            return;
-        }
-        throw new NotFoundException("Node " + this.getValue() + " do not have child with value " + child.getValue());
-    }
-
-
     @Override
     public Node copy() {
-
         BinaryTreeNode newNode = new BinaryTreeNode(this.getValue());
-
-
         newNode.changeStatus(this.getStatus());
-
-
-
         if (getLeftChild() != null) {
             newNode.setLeftChild((BinaryTreeNode) getLeftChild().copy());
         }
-
-
         if (getRightChild() != null) {
             newNode.setRightChild((BinaryTreeNode) getRightChild().copy());
         }
-
         return newNode;
     }
 
