@@ -85,4 +85,12 @@ public class PlaybackDirector implements PlaybackController {
             // Có thể thêm logic log hoặc debug tại đây khi xong hiệu ứng
         });
     }
+    
+    @Override
+    public void stop() {
+        // Ticker là bộ phận giữ nhịp cho hoạt ảnh của bạn
+        if (this.ticker != null) {
+            this.ticker.stop(); // Hoặc ticker.pause() tùy vào hàm bạn đã viết trong lớp Ticker
+        }
+    }
 }

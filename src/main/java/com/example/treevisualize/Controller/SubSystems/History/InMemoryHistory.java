@@ -53,4 +53,14 @@ public class InMemoryHistory implements HistoryStorage {
     public void reset() {
         currentIndex = 0;
     }
+
+    @Override
+    public void clear() {
+        // Sử dụng tên biến 'frames' thay vì 'buffer'
+        if (this.frames != null) { 
+            this.frames.clear(); // Xóa sạch danh sách các khung hình
+        }
+        // Đưa chỉ số về 0 (theo giá trị khởi tạo của bạn)
+        this.currentIndex = 0; //
+    }
 }

@@ -84,4 +84,11 @@ public class StandardRecorder implements RecorderStrategy, TreeObserver {
             capture(lineIndex, "Step " + lineIndex);
         }
     }
+
+    @Override
+    public void reset() {
+        if (buffer != null) {
+            buffer.clear(); // Clear execution history
+        }
+    }
 }

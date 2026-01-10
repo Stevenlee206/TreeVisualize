@@ -201,4 +201,36 @@ public class VisualizeScreen implements VisualizerControls.ControlListener {
     public void onSpeedChanged(double newSpeed) {
         if (controller != null) controller.setSpeed(newSpeed);
     }
+
+    @Override
+    public void onClear() {
+        // 1. Create a confirmation dialog in English
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Clear");
+        alert.setHeaderText("Are you sure you want to clear the tree?");
+        alert.setContentText("This action will delete all nodes and reset the animation history.");
+
+        // 2. Handle the user's response
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // 3. Clear data in Model
+                if (tree != null) {
+                    tree.clear();
+                }
+
+                // 4. Reset history in Controller
+                if (controller != null) {
+                    controller.reset();
+                }
+
+                // 5. Update stats (Nodes and Depth will become 0)
+                updateTreeStats(); //
+
+                // 6. Force immediate re-render of the empty canvas
+                if (visualizer != null) {
+                    visualizer.render();
+                }
+            }
+        });
+    }
 }

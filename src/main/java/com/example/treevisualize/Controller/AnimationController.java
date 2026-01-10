@@ -8,8 +8,6 @@ import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackControll
 import com.example.treevisualize.Controller.SubSystems.Playback.PlaybackDirector;
 import com.example.treevisualize.Controller.SubSystems.Recorder.RecorderStrategy;
 import com.example.treevisualize.Controller.SubSystems.Recorder.StandardRecorder;
-import com.example.treevisualize.Model.Node.Node;
-
 // Import các thành phần bổ trợ
 import com.example.treevisualize.Model.Description.TreeType;
 import com.example.treevisualize.Model.Tree.GeneralTree;
@@ -40,6 +38,7 @@ public class AnimationController {
     private final RecorderStrategy recorder;    // Phòng Ghi Hình (Tạo Snapshot)
     private final HistoryStorage history;       // Phòng Lưu Trữ (Quản lý Undo/Redo)
     private final PlaybackController player;    // Phòng Trình Chiếu (Animation & Render)
+    private final PseudoCodeBlock pseudoCode; // Thêm dòng này
     private Runnable onFinished;
 
     /**
@@ -61,6 +60,8 @@ public class AnimationController {
         // 5. Thiết lập đường dây nóng (Wiring)
         // Khi Player chạy hết một frame, nó sẽ "gõ cửa" xin frame tiếp theo -> Gọi hàm autoNextStep
         this.player.setOnTickRequest(this::autoNextStep);
+
+        this.pseudoCode = pseudoCode; // Lưu lại để dùng cho hàm reset
     }
     
     public void setOnFinished(Runnable r) {
@@ -314,5 +315,21 @@ public class AnimationController {
         }
         if (allNodes.isEmpty()) return null;
         return allNodes.get(new Random().nextInt(allNodes.size()));
+    }
+
+    public void reset() {
+        if (this.recorder != null) {
+            this.recorder.reset(); 
+        }
+        if (this.history != null) {
+            this.history.clear(); 
+        }
+        if (this.player != null) {
+            this.player.stop(); 
+        }
+        // Bây giờ biến pseudoCode đã tồn tại để gọi hàm này
+        if (this.pseudoCode != null) {
+            this.pseudoCode.clearHighlight();
+        }
     }
 }

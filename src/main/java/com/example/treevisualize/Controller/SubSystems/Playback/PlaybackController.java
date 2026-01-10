@@ -7,7 +7,7 @@ public interface PlaybackController {
     void play();
     void pause();
     void setSpeed(double multiplier);
-
+    void stop();
     // Các lệnh hiển thị
     void renderInstant(TreeSnapShot snapshot);
     void renderTransition(TreeSnapShot start, TreeSnapShot end);

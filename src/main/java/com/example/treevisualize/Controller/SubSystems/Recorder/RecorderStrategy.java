@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface RecorderStrategy {
     void startRecording();
+    void reset();
     List<TreeSnapShot> stopRecording();
 }

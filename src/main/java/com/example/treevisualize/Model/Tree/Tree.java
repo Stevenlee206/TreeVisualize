@@ -62,11 +62,6 @@ public abstract class Tree {
     // ===== GETTERS / SETTERS =====
     public Node getRoot() { return root; }
     
-    public void clear() {
-        this.root = null;
-        notifyStructureChanged();
-    }
-    
     public void addObserver(TreeObserver observer) { if (!observers.contains(observer)) observers.add(observer); }
     public void removeObserver(TreeObserver observer) { observers.remove(observer); }
 
@@ -113,6 +108,11 @@ public abstract class Tree {
         for (TreeObserver obs : observers) {
             obs.onPseudoStep(lineIndex); // Báo cho Recorder chụp ảnh
         }
+    }
+
+    public void clear() {
+        this.root = null; // Hủy tham chiếu nút gốc        
+        notifyStructureChanged(); // Gọi hàm này để Canvas tự xóa sạch hình vẽ
     }
 
 }

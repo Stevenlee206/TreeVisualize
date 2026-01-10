@@ -21,4 +21,5 @@ public interface HistoryStorage {
     TreeSnapShot prev(); // Lùi và trả về frame mới
 
     void reset(); // Tua về đầu
+    void clear();
 }

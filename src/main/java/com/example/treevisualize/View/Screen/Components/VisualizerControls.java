@@ -19,6 +19,7 @@ public class VisualizerControls extends HBox {
         void onUndo();
         void onRedo();
         void onReplay();
+        void onClear();
     }
 
     private final TextField tfParentInput;
@@ -80,11 +81,18 @@ public class VisualizerControls extends HBox {
             if (listener != null) listener.onTraverse(cboTraversal.getValue());
         });
 
-        // Layout
+        updateUIForType(initialType);
+
+        Button btnClear = createButton("Clear", "btn-danger", () -> {
+            if (listener != null) listener.onClear();
+        });
+        btnClear.setTooltip(new Tooltip("Delete the entire tree and reset history"));
+
+        // Add to the layout (Example: placed after btnRandom)
         this.getChildren().addAll(
                 tfParentInput, tfInput, btnInsert, btnDelete, btnSearch,
                 new Separator(javafx.geometry.Orientation.VERTICAL),
-                btnRandom,
+                btnRandom, btnClear, // Added here
                 new Separator(javafx.geometry.Orientation.VERTICAL),
                 btnUndo, btnReplay, btnRedo,
                 new Separator(javafx.geometry.Orientation.VERTICAL),
@@ -92,8 +100,6 @@ public class VisualizerControls extends HBox {
                 new Separator(javafx.geometry.Orientation.VERTICAL),
                 new Label("Speed:"), sliderSpeed
         );
-
-        updateUIForType(initialType);
     }
 
     public void setListener(ControlListener listener) {
@@ -167,7 +173,7 @@ public class VisualizerControls extends HBox {
 
     public void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.WARNING); // Đổi thành WARNING cho lỗi nghiệp vụ
-        alert.setTitle("Thông báo");
+        alert.setTitle("System Notification");
         alert.setHeaderText(null); // Ẩn header để hộp thoại gọn hơn
         alert.setContentText(msg);
         alert.showAndWait();
